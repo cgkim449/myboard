@@ -3,16 +3,49 @@
 
 <mapper namespace="com.cgkim.myboard.dao.BoardDao">
 
-    <select id="selectList" resultType="boardVo">
-        select board_id
-             , category_id
-             , board_title
-             , board_content
-             , board_writer
-             , board_view_count
-             , board_password
-             , board_register_date
-             , board_update_date
-          from board;
+    <select id="selectList" resultType="boardListResponse" parameterType="boardSearchRequest">
+        select b.board_id
+             , b.category_id
+             , b.board_title
+             , b.board_content
+             , b.board_writer
+             , b.board_view_count
+             , b.board_password
+             , b.board_register_date
+             , b.board_update_date
+             , ct.category_name
+          from board as b
+          join category ct
+            on b.category_id = ct.category_id
+        <include refid="boardSearchCondition"/>
+      order by b.board_register_date desc, b.board_id desc
+         limit #{offset}, #{limit}
     </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="boardSearchRequest">
+        select count(*)
+          from board
+        <include refid="boardSearchCondition"/>
+    </select>
+
+    <sql id="boardSearchCondition">
+        <where>
+            <if test="fromDate != null">
+                b.board_register_date <![CDATA[>=]]> #{fromDate}
+            </if>
+            <if test="toDate != null">
+                and b.boar_register_date <![CDATA[<=]]> #{toDate}
+            </if>
+            <if test = "categoryId != 0 and categoryId != null">
+                and b.board_category_id = #{categoryId}
+            </if>
+            <if test = "keyword != null">
+                and (
+                     b.board_title like concat('%',#{keyword},'%')
+                     or b.board_content like concat('%',#{keyword},'%')
+                     or b.board_writer like concat('%',#{keyword},'%')
+                    )
+            </if>
+        </where>
+    </sql>
 </mapper>
