@@ -1,4 +1,4 @@
-package com.cgkim.myboard.vo;
+package com.cgkim.myboard.vo.board;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
@@ -8,16 +8,16 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class BoardVo {
+public class BoardListResponse {
     private Long boardId;
-    private Integer categoryId;
     private String boardTitle;
-    private String boardContent;
     private String boardWriter;
     private int boardViewCount;
-    private String boardPassword;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date boardRegisterDate;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date boardUpdateDate;
+
+    private Integer categoryId;
+    private String categoryName;
 }

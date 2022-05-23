@@ -1,9 +1,11 @@
 package com.cgkim.myboard.service;
 
-import com.cgkim.myboard.vo.BoardVo;
+import com.cgkim.myboard.vo.board.BoardListResponse;
+import com.cgkim.myboard.vo.board.BoardSearchRequest;
 
 import java.util.List;
 
 public interface BoardService {
-    List<BoardVo> showBoardList();
+    List<BoardListResponse> getBoardList(BoardSearchRequest boardSearchRequest);
+    int getTotalCounts(BoardSearchRequest boardSearchRequest);
 }
