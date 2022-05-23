@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import BoardServicePlugin from "@/plugins/BoardServicePlugin";
+import vuetify from './plugins/vuetify'
 
 Vue.config.productionTip = false
 
@@ -11,5 +12,6 @@ Vue.use(BoardServicePlugin);
 new Vue({
   router,
   store,
+  vuetify,
   render: h => h(App)
 }).$mount('#app')
