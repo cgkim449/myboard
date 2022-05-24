@@ -1,15 +1,46 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import DefaultLayout from "@/layouts/default/Index"
+import AuthenticationLayout from "@/layouts/authentication/Index"
 import BoardListView from "@/views/BoardListView";
+import LoginView from "@/views/authentication/LoginView";
+import SignUpView from "@/views/authentication/SignUpView";
+import PageNotFoundView from "@/views/PageNotFoundView";
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/boards',
-    name: 'boardList',
-
-    component: BoardListView,
+    path: "/",
+    component: DefaultLayout,
+    children: [
+      {
+        path: "/boards",
+        name: "BoardListView",
+        component: BoardListView,
+      },
+    ],
+  },
+  {
+    path: "/",
+    component: AuthenticationLayout,
+    children: [
+      {
+        path: "/login",
+        name: "LoginView",
+        component: LoginView,
+      },
+      {
+        path: "/signUp",
+        name: "SignUpView",
+        component: SignUpView,
+      },
+    ],
+  },
+  {
+    path: "*",
+    name: "PageNotFoundView",
+    component: PageNotFoundView,
   },
 ]
 

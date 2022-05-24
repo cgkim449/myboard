@@ -2,8 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import BoardServicePlugin from "@/plugins/BoardServicePlugin";
 import vuetify from './plugins/vuetify'
+import BoardServicePlugin from "@/plugins/BoardServicePlugin";
 
 Vue.config.productionTip = false
 
