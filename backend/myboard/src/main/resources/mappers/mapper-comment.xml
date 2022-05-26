@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cgkim.myboard.dao.CommentDao">
+
+    <insert id="insert" parameterType="commentSaveRequest">
+        insert into comment
+            (board_id, comment_nickname, comment_password, comment_content)
+        values
+            (#{boardId}, #{commentNickname}, #{commentPassword}, #{commentContent})
+    </insert>
+    <select id="selectList" resultType="commentListResponse" parameterType="long">
+        select comment_Id
+             , board_Id
+             , comment_nickname
+             , comment_content
+             , comment_register_date
+        from comment
+        where board_id=#{boardId};
+    </select>
+
+</mapper>

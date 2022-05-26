@@ -141,7 +141,7 @@
             </template>
             <template v-slot:item.boardTitle="{item}">
               <span
-                  @click="handleClick(item)"
+                  @click="moveToBoardDetail(item.boardId)"
                   v-bind:style="{cursor: 'pointer'}"
                   class="d-flex start"
               >
@@ -255,7 +255,22 @@ export default {
     };
   },
   async created() {
-    const response = await this.$_BoardService.fetchBoardList();
+    this.searchCondition = {...this.$route.query};
+    if(this.isEmpty(this.searchCondition)) {
+      this.searchCondition = {
+        categoryId: "0",
+        keyword: "",
+        fromDate: "",
+        toDate: "",
+        page: 1,
+      };
+    }
+    if(!isNaN(this.searchCondition.page)) {
+      this.searchCondition.page = Number(this.searchCondition.page);
+    }
+
+
+    const response = await this.$_BoardService.fetchBoardList(this.searchCondition);
     console.log(response.data);
     this.boardList = response.data.boardList;
     this.boardTotalCounts= response.data.boardTotalCounts;
@@ -265,7 +280,7 @@ export default {
   },
   watch: {
     "searchCondition.page"() {
-      this.search();
+      this.movePage();
     },
     async "$route.query"() {
       this.searchCondition = {...this.$route.query};
@@ -294,10 +309,21 @@ export default {
     isEmpty(obj) {
       return Object.keys(obj).length === 0 && obj.constructor === Object;
     },
-    handleClick({boardId}) {
-      console.log(boardId)
+    moveToBoardDetail(boardId) {
+      this.$router.push({
+        path:`/boards/${boardId}`,
+        query: this.searchCondition
+      }).catch(()=>{});
+    },
+    movePage() {
+      this.$router.push({
+        path:'/boards',
+        query: this.searchCondition
+      }).catch(()=>{});
     },
     search() {
+      this.searchCondition.page = 1;
+
       this.$router.push({
         path:'/boards',
         query: this.searchCondition
@@ -309,4 +335,19 @@ export default {
   },
 };
 </script>
+<style scoped>
+.v-text-field >>> input {
+  font-size: 0.875em;
+}
+.v-text-field >>> label {
+  font-size: 0.875em;
+}
+.v-text-field >>> button {
+  font-size: 0.875em;
+}
+
+.v-text-field--outlined >>> fieldset {
+  border-color: rgba(209, 209, 209, 1);
+}
+</style>
 

@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.cgkim.myboard.dao.BoardDao">
-
     <select id="selectList" resultType="boardListResponse" parameterType="boardSearchRequest">
         select b.board_id
              , b.category_id
@@ -49,4 +48,28 @@
             </if>
         </where>
     </sql>
+
+    <select id="selectOne" resultType="boardDetailResponse" parameterType="long">
+        select b.board_id
+             , b.category_id
+             , b.board_title
+             , b.board_content
+             , b.board_writer
+             , b.board_view_count
+             , b.board_password
+             , b.board_has_attach
+             , b.board_register_date
+             , b.board_update_date
+             , ct.category_name
+          from board as b
+          join category ct
+            on b.category_id = ct.category_id
+         where b.board_id = #{boardId}
+    </select>
+
+    <update id="increaseViewCnt" parameterType="long">
+        update board
+           set board_view_count = board_view_count + 1
+         where board_id = #{boardId}
+    </update>
 </mapper>

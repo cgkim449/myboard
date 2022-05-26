@@ -8,4 +8,21 @@ const getBoardList = (searchCondition) => {
     return axiosInstance.get("boards", { params: searchCondition });
 };
 
-export { getBoardList };
+const getBoardDetail = (boardId) => {
+    return axiosInstance.get(
+        `boards/${boardId}`
+    );
+};
+
+const postComment = (comment) => {
+    return axiosInstance.post(
+        "comments",
+        comment);
+}
+
+const getCommentList = (boardId) => {
+    return axiosInstance.get(
+        `comments`, { params: {boardId: boardId} });
+}
+
+export { getBoardList, getBoardDetail, postComment, getCommentList };
