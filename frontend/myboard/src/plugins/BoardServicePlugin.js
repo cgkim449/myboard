@@ -1,8 +1,8 @@
 import { getBoardList } from "@/api";
 
 export const boardServicePlugin = {
-    fetchBoardList: () => {
-        return getBoardList();
+    fetchBoardList: (searchCondition) => {
+        return getBoardList(searchCondition);
     },
 };
 

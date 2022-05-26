@@ -1,64 +1,256 @@
 <template>
-  <v-container fluid>
-    <v-card>
-      <v-simple-table>
-        <template v-slot:default>
-          <thead>
-          <tr>
-            <th class="text-left">
-              번호
-            </th>
-            <th class="text-left">
-              카테고리
-            </th>
-            <th class="text-left">
-              첨부파일
-            </th>
-            <th class="text-left">
-              제목
-            </th>
-            <th class="text-left">
-              작성자
-            </th>
-            <th class="text-left">
-              조회수
-            </th>
-            <th class="text-left">
-              등록일시
-            </th>
-            <th class="text-left">
-              수정일시
-            </th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr
-              v-for="board in boardList"
-              :key="board.boardId"
+  <v-container >
+      <v-row dense>
+        <v-col
+            cols="auto"
+        >
+          <div class="mt-2">
+            등록일
+          </div>
+        </v-col>
+        <v-col
+          cols="2"
+        >
+          <v-menu
+              v-model="menu1"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
           >
-            <td>{{ board.boardId }}</td>
-            <td>{{ board.categoryName }}</td>
-            <td>{{  }}</td>
-            <td>{{ board.boardTitle }}</td>
-            <td>{{ board.boardWriter }}</td>
-            <td>{{ board.boardViewCount }}</td>
-            <td>{{ board.boardRegisterDate }}</td>
-            <td>{{ board.boardUpdateDate }}</td>
-          </tr>
-          </tbody>
-        </template>
-      </v-simple-table>
-    </v-card>
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+
+                  dense
+                  outlined
+                  v-model="searchCondition.fromDate"
+                  label="시작일"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+                v-model="searchCondition.fromDate"
+                @input="menu1 = false"
+            ></v-date-picker>
+          </v-menu>
+        </v-col>
+        <v-col
+            cols="auto"
+        >
+          <div class="mt-2">
+            ~
+          </div>
+        </v-col>
+        <v-col
+          cols="2"
+        >
+          <v-menu
+              v-model="menu2"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                  dense
+                  outlined
+                  v-model="searchCondition.toDate"
+                  label="종료일"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+                v-model="searchCondition.toDate"
+                @input="menu2 = false"
+            ></v-date-picker>
+          </v-menu>
+        </v-col>
+        <v-col
+            cols="2"
+        >
+          <v-select
+              dense
+              outlined
+              v-model="searchCondition.categoryId"
+              :items="items"
+              item-text="categoryName"
+              item-value="categoryId"
+          ></v-select>
+        </v-col>
+
+        <v-col
+        >
+          <v-text-field
+              dense
+              outlined
+              label="검색어를 입력해주세요. (제목 + 작성자 + 내용)"
+              clearable
+              v-model="searchCondition.keyword"
+              v-on:keyup.enter="search"
+          ></v-text-field>
+
+        </v-col>
+        <v-btn
+            normal
+            class="mt-1"
+            color="primary"
+            v-on:click="search"
+        >
+          검색
+        </v-btn>
+    </v-row>
+
+    <v-row>
+      <v-col
+          cols="auto"
+      >
+          총 {{boardTotalCounts}} 건
+      </v-col>
+    </v-row>
+
+    <v-row justify="center">
+      <v-col
+          cols="12"
+      >
+          <v-data-table
+              dense
+              :headers="headers"
+              :items="boardList"
+              hide-default-footer
+              class="elevation-2"
+          >
+            <template v-slot:item.boardHasAttach="{item}">
+              <v-icon
+                  v-if="item.boardHasAttach === 1"
+              >
+                mdi-attachment
+              </v-icon>
+              <v-icon
+                  v-else
+              >
+              </v-icon>
+            </template>
+            <template v-slot:item.boardTitle="{item}">
+              <span
+                  @click="handleClick(item)"
+                  v-bind:style="{cursor: 'pointer'}"
+                  class="d-flex start"
+              >
+                {{item.boardTitle | formatBoardTitle}}
+              </span>
+            </template>
+            <template v-slot:item.boardRegisterDate="{item}">
+              {{item.boardRegisterDate | formatDate}}
+            </template>
+            <template v-slot:item.boardUpdateDate="{item}">
+              {{formatUpdateDate(item)}}
+            </template>
+          </v-data-table>
+      </v-col>
+    </v-row>
+
+    <v-row justify="center">
+      <v-col
+          cols="12"
+      >
+        <div class="text-center">
+          <v-pagination
+              v-model="searchCondition.page"
+              :length="Math.ceil(boardTotalCounts / 10)"
+              :total-visible="10"
+          ></v-pagination>
+        </div>
+      </v-col>
+    </v-row>
+
+    <!--TODO: 등록 버튼-->
   </v-container>
 </template>
 
 <script>
+import {formatDate} from "@/utils/filters";
+
 export default {
   name: "BoardListView",
   components: {},
-
   data() {
     return {
+      date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      menu1: false,
+      menu2: false,
+      items: [
+        { categoryName: '전체 카테고리', categoryId: "0"},
+        { categoryName: 'Java', categoryId: "1"},
+        { categoryName: 'JavaScript', categoryId: "2"},
+        { categoryName: 'Database', categoryId: "3"},
+      ],
+      headers: [
+        {
+          text: '카테고리',
+          align: 'center',
+          sortable: false,
+          value: 'categoryName',
+          width: '10%',
+        },
+        {
+          text: '',
+          align: 'center',
+          sortable: false,
+          value: 'boardHasAttach',
+          width: '1%',
+        },
+        {
+          text: '제목',
+          align: 'center',
+          sortable: false,
+          value: 'boardTitle',
+        },
+        {
+          text: '작성자',
+          align: 'center',
+          sortable: false,
+          value: 'boardWriter',
+          width: '10%',
+        },
+        {
+          text: '조회수',
+          align: 'center',
+          sortable: false,
+          value: 'boardViewCount',
+          width: '7%',
+        },
+        {
+          text: '등록 일시',
+          align: 'center',
+          sortable: false,
+          value: 'boardRegisterDate',
+          width: '13%',
+        },
+        {
+          text: '수정 일시',
+          align: 'center',
+          sortable: false,
+          value: 'boardUpdateDate',
+          width: '13%',
+        },
+      ],
+      searchCondition: {
+        categoryId: "0",
+        keyword: "",
+        fromDate: "",
+        toDate: "",
+        page: 1,
+      },
+      boardTotalCounts: 0,
       boardList: [],
     };
   },
@@ -66,6 +258,54 @@ export default {
     const response = await this.$_BoardService.fetchBoardList();
     console.log(response.data);
     this.boardList = response.data.boardList;
+    this.boardTotalCounts= response.data.boardTotalCounts;
+  },
+  computed: {
+
+  },
+  watch: {
+    "searchCondition.page"() {
+      this.search();
+    },
+    async "$route.query"() {
+      this.searchCondition = {...this.$route.query};
+      if(this.isEmpty(this.searchCondition)) {
+        this.searchCondition = {
+          categoryId: "0",
+          keyword: "",
+          fromDate: "",
+          toDate: "",
+          page: 1,
+        };
+      }
+      if(!isNaN(this.searchCondition.page)) {
+        this.searchCondition.page = Number(this.searchCondition.page);
+      }
+
+      const response = await this.$_BoardService.fetchBoardList(this.searchCondition);
+
+      this.boardList = response.data.boardList;
+      this.boardTotalCounts= response.data.boardTotalCounts;
+    },
+  },
+  methods: {
+
+    // 빈 객체인지 체크
+    isEmpty(obj) {
+      return Object.keys(obj).length === 0 && obj.constructor === Object;
+    },
+    handleClick({boardId}) {
+      console.log(boardId)
+    },
+    search() {
+      this.$router.push({
+        path:'/boards',
+        query: this.searchCondition
+      }).catch(()=>{});
+    },
+    formatUpdateDate(board) {
+      return board.boardRegisterDate === board.boardUpdateDate ? '-' : formatDate(board.boardUpdateDate);
+    }
   },
 };
 </script>

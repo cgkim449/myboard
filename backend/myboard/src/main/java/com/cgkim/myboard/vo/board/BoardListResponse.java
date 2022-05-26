@@ -13,6 +13,7 @@ public class BoardListResponse {
     private String boardTitle;
     private String boardWriter;
     private int boardViewCount;
+    private int boardHasAttach;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date boardRegisterDate;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
