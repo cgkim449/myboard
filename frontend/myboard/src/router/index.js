@@ -7,6 +7,7 @@ import LoginView from "@/views/authentication/LoginView";
 import SignUpView from "@/views/authentication/SignUpView";
 import PageNotFoundView from "@/views/PageNotFoundView";
 import BoardDetailView from "@/views/BoardDetailView";
+import BoardWriteView from "@/views/BoardWriteView";
 
 Vue.use(VueRouter)
 
@@ -19,6 +20,11 @@ const routes = [
         path: "/boards",
         name: "BoardListView",
         component: BoardListView,
+      },
+      {
+        path: "/boards/new",
+        name: "BoardWriteView",
+        component: BoardWriteView,
       },
       {
         path: "/boards/:id",

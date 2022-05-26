@@ -8,7 +8,7 @@
               <v-col
                   cols="auto"
               >
-                <span>{{boardDetail.boardWriter}}</span>
+                <span>{{boardDetail.guestName}}</span>
               </v-col>
 
               <v-spacer></v-spacer>
@@ -53,6 +53,18 @@
             <v-row>
               <v-col>
                 <p>{{boardDetail.boardContent}}</p>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+
+        <v-card outlined class="pt-4 mt-3">
+          <v-card-text >
+            <v-row>
+              <v-col>
+                <p v-for="attach in boardDetail.attachList">
+                  <span v-on:click="$_BoardService.downloadAttach(attach.attachId)"><v-icon>mdi-attachment</v-icon> {{attach.attachName}}.{{attach.attachExtension}}</span>
+                </p>
               </v-col>
             </v-row>
           </v-card-text>

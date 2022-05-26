@@ -11,7 +11,6 @@ import java.util.Date;
 public class BoardListResponse {
     private Long boardId;
     private String boardTitle;
-    private String boardWriter;
     private int boardViewCount;
     private int boardHasAttach;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -21,4 +20,6 @@ public class BoardListResponse {
 
     private Integer categoryId;
     private String categoryName;
+
+    private String guestName;
 }
