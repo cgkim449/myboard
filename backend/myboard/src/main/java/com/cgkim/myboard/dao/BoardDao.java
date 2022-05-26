@@ -1,5 +1,6 @@
 package com.cgkim.myboard.dao;
 
+import com.cgkim.myboard.vo.board.BoardDetailResponse;
 import com.cgkim.myboard.vo.board.BoardListResponse;
 import com.cgkim.myboard.vo.board.BoardSearchRequest;
 import org.apache.ibatis.annotations.Mapper;
@@ -12,4 +13,8 @@ import java.util.List;
 public interface BoardDao {
     List<BoardListResponse> selectList(BoardSearchRequest boardSearchRequest);
     int selectCount(BoardSearchRequest boardSearchRequest);
+
+    void increaseViewCnt(Long boardId);
+
+    BoardDetailResponse selectOne(Long boardId);
 }
