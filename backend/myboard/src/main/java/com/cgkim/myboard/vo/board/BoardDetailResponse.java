@@ -1,5 +1,6 @@
 package com.cgkim.myboard.vo.board;
 
+import com.cgkim.myboard.vo.attach.AttachVo;
 import com.cgkim.myboard.vo.comment.CommentListResponse;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
@@ -14,7 +15,6 @@ public class BoardDetailResponse {
     private Long boardId;
     private String boardTitle;
     private String boardContent;
-    private String boardWriter;
     private int boardViewCount;
     private boolean boardHasAttach;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -26,4 +26,7 @@ public class BoardDetailResponse {
     private String categoryName;
 
     private List<CommentListResponse> commentList;
+    private List<AttachVo> attachList;
+
+    private String guestName;
 }

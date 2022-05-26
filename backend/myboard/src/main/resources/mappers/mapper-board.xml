@@ -2,17 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.cgkim.myboard.dao.BoardDao">
+
     <select id="selectList" resultType="boardListResponse" parameterType="boardSearchRequest">
         select b.board_id
              , b.category_id
              , b.board_title
              , b.board_content
-             , b.board_writer
              , b.board_view_count
-             , b.board_password
              , b.board_has_attach
              , b.board_register_date
              , b.board_update_date
+             , b.guest_name
+             , b.guest_password
              , ct.category_name
           from board as b
           join category ct
@@ -43,7 +44,7 @@
                 and (
                      b.board_title like concat('%',#{keyword},'%')
                      or b.board_content like concat('%',#{keyword},'%')
-                     or b.board_writer like concat('%',#{keyword},'%')
+                     or b.guest_name like concat('%',#{keyword},'%')
                     )
             </if>
         </where>
@@ -54,12 +55,12 @@
              , b.category_id
              , b.board_title
              , b.board_content
-             , b.board_writer
              , b.board_view_count
-             , b.board_password
              , b.board_has_attach
              , b.board_register_date
              , b.board_update_date
+             , b.guest_name
+             , b.guest_password
              , ct.category_name
           from board as b
           join category ct
@@ -72,4 +73,14 @@
            set board_view_count = board_view_count + 1
          where board_id = #{boardId}
     </update>
+    <update id="updateHasAttach" parameterType="map">
+        update board
+        set board_has_attach = #{boardHasAttach}
+        where board_id = #{boardId}
+    </update>
+
+    <insert id="insert" parameterType="boardSaveRequest" useGeneratedKeys="true" keyProperty="boardId">
+        insert into board (category_id, board_title, board_content, guest_name, guest_password)
+        values(#{categoryId}, #{boardTitle}, #{boardContent}, #{guestName}, #{guestPassword});
+    </insert>
 </mapper>

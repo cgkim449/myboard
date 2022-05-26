@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cgkim.myboard.dao.AttachDao">
+    <insert id="insert" parameterType="attachVo">
+        insert into attach (board_id, attach_upload_path, attach_uuid, attach_name, attach_extension, attach_is_image, attach_size)
+        values (#{boardId}, #{attachUploadPath}, #{attachUuid}, #{attachName}, #{attachExtension}, #{attachIsImage}, #{attachSize});
+    </insert>
+
+    <select id="selectCountByBoardId" resultType="int" parameterType="long">
+        select count(*)
+        from attach
+        where board_id = #{boardId};
+    </select>
+
+    <select id="selectList" resultType="attachVo" parameterType="long">
+        select attach_id,
+               board_id,
+               attach_upload_path,
+               attach_uuid,
+               attach_name,
+               attach_extension,
+               attach_is_image,
+               attach_size
+        from attach
+        where board_id = #{boardId};
+    </select>
+    <select id="selectOne" resultType="attachVo" parameterType="long">
+        select attach_id,
+               board_id,
+               attach_upload_path,
+               attach_uuid,
+               attach_name,
+               attach_extension,
+               attach_is_image,
+               attach_size,
+               attach_register_date,
+               attach_update_date
+        from attach
+        where attach_id = #{attachId};
+    </select>
+</mapper>

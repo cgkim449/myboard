@@ -4,6 +4,10 @@ const axiosInstance = axios.create({
     baseURL: process.env.VUE_APP_API_URL,
 });
 
+const saveUser = (user) => {
+    return axiosInstance.post("users", user);
+}
+
 const getBoardList = (searchCondition) => {
     return axiosInstance.get("boards", { params: searchCondition });
 };
@@ -13,6 +17,16 @@ const getBoardDetail = (boardId) => {
         `boards/${boardId}`
     );
 };
+
+const saveBoard = (formData) => {
+
+    return axiosInstance.post(
+        "boards",
+        formData,
+        {headers:{"Content-Type" : "multipart/form-data"}}
+    )
+}
+
 
 const postComment = (comment) => {
     return axiosInstance.post(
@@ -25,4 +39,11 @@ const getCommentList = (boardId) => {
         `comments`, { params: {boardId: boardId} });
 }
 
-export { getBoardList, getBoardDetail, postComment, getCommentList };
+const downloadAttach = (attachId) => {
+    return axiosInstance.get(
+        `attaches/${attachId}`,
+        {responseType: "blob"}
+    );
+};
+
+export { getBoardList, getBoardDetail, postComment, saveUser, getCommentList, saveBoard, downloadAttach };

@@ -115,6 +115,23 @@
       >
           총 {{boardTotalCounts}} 건
       </v-col>
+
+      <v-spacer></v-spacer>
+
+      <v-col
+        cols="auto"
+      >
+        <router-link v-bind:to="{
+                    path: `/boards/new`,
+                    query: this.searchCondition
+                  }">
+          <v-btn
+              color="primary"
+          >
+            글쓰기
+          </v-btn>
+        </router-link>
+      </v-col>
     </v-row>
 
     <v-row justify="center">
@@ -171,8 +188,6 @@
         </div>
       </v-col>
     </v-row>
-
-    <!--TODO: 등록 버튼-->
   </v-container>
 </template>
 
@@ -218,7 +233,7 @@ export default {
           text: '작성자',
           align: 'center',
           sortable: false,
-          value: 'boardWriter',
+          value: 'guestName',
           width: '10%',
         },
         {
