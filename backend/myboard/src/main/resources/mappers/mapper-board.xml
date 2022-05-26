@@ -11,6 +11,7 @@
              , b.board_writer
              , b.board_view_count
              , b.board_password
+             , b.board_has_attach
              , b.board_register_date
              , b.board_update_date
              , ct.category_name
@@ -24,7 +25,7 @@
 
     <select id="selectCount" resultType="java.lang.Integer" parameterType="boardSearchRequest">
         select count(*)
-          from board
+          from board as b
         <include refid="boardSearchCondition"/>
     </select>
 
@@ -34,10 +35,10 @@
                 b.board_register_date <![CDATA[>=]]> #{fromDate}
             </if>
             <if test="toDate != null">
-                and b.boar_register_date <![CDATA[<=]]> #{toDate}
+                and b.board_register_date <![CDATA[<=]]> #{toDate}
             </if>
             <if test = "categoryId != 0 and categoryId != null">
-                and b.board_category_id = #{categoryId}
+                and b.category_id = #{categoryId}
             </if>
             <if test = "keyword != null">
                 and (
