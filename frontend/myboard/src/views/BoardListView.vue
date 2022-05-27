@@ -99,14 +99,18 @@
           ></v-text-field>
 
         </v-col>
-        <v-btn
-            normal
-            class="mt-1"
-            color="primary"
-            v-on:click="search"
+        <v-col
+          cols="auto"
         >
-          검색
-        </v-btn>
+          <v-btn
+              normal
+              class="mt-1"
+              color="primary"
+              v-on:click="search"
+          >
+            검색
+          </v-btn>
+        </v-col>
     </v-row>
 
     <v-row>
@@ -118,18 +122,15 @@
 
       <v-spacer></v-spacer>
 
+<!--      TODO: 보기 형식-->
       <v-col
         cols="auto"
       >
         <router-link v-bind:to="{
-                    path: `/boards/new`,
+                    path: `/boards`,
                     query: this.searchCondition
                   }">
-          <v-btn
-              color="primary"
-          >
-            글쓰기
-          </v-btn>
+
         </router-link>
       </v-col>
     </v-row>
@@ -186,6 +187,25 @@
               :total-visible="10"
           ></v-pagination>
         </div>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-spacer></v-spacer>
+
+      <v-col
+          cols="auto"
+      >
+        <router-link v-bind:to="{
+                    path: `/boards/new`,
+                    query: this.searchCondition
+                  }">
+          <v-btn
+              color="primary"
+          >
+            글쓰기
+          </v-btn>
+        </router-link>
       </v-col>
     </v-row>
   </v-container>
