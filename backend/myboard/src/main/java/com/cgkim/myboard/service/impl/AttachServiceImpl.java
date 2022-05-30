@@ -14,15 +14,28 @@ import java.util.List;
 public class AttachServiceImpl implements AttachService {
     private final AttachDao attachDao;
 
-    /**
-     * 첨부파일 하나 select
-     *
-     * @param attachNo
-     * @return
-     */
     @Override
     public AttachVo get(Long attachId) {
         return attachDao.selectOne(attachId);
     }
 
+    @Override
+    public List<AttachVo> getList(Long boardId) {
+        return attachDao.select(boardId);
+    }
+
+    @Override
+    public List<AttachVo> getList(Long[] attachIdArray) {
+        if(attachIdArray == null || attachIdArray.length == 0) {
+            return null;
+        }
+
+        List<AttachVo> attachVoList = new ArrayList<>();
+
+        for (long attachId : attachIdArray) {
+            attachVoList.add(attachDao.selectOne(attachId));
+        }
+
+        return attachVoList;
+    }
 }
