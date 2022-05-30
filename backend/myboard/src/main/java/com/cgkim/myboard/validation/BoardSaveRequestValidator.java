@@ -55,18 +55,18 @@ public class BoardSaveRequestValidator implements Validator {
     /**
      * 게시글 비밀번호 유효성 검증
      *
-     * @param boardPw
+     * @param password
      * @return
      */
-    private boolean isValid(String boardPw) {
-        if (!(4 <= boardPw.length() && boardPw.length() < 16)) {
+    private boolean isValid(String password) {
+        if (!(4 <= password.length() && password.length() < 16)) {
             return false;
         }
         int alphabet = 0;
         int number = 0;
         int specialSymbol = 0;
 
-        for (char c : boardPw.toCharArray()) {
+        for (char c : password.toCharArray()) {
             if (!('!' <= c && c <= '~')) {
                 return false;
             } else if (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z')) {

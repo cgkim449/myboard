@@ -10,6 +10,7 @@
               로그인
             </div>
             <v-text-field
+                v-model="username"
                 label="이메일"
                 clearable
                 prepend-icon="mdi-email"
@@ -18,6 +19,7 @@
                 label="비밀번호"
                 clearable
                 prepend-icon="mdi-lock-outline"
+                v-on:keyup.enter="login"
             ></v-text-field>
             <v-btn
                 class="mt-6"
@@ -35,7 +37,20 @@
 
 <script>
 export default {
-  name: "LoginPage"
+  name: "LoginPage",
+  data() {
+    return {
+      username: "",
+    }
+  },
+  created() {
+    this.username = this.$route.query.username;
+  },
+  methods: {
+    login() {
+      console.log("login 엔터!")
+    }
+  }
 }
 </script>
 
