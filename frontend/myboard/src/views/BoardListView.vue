@@ -318,7 +318,16 @@ export default {
       this.movePage();
     },
     async "$route.query"() {
+      this.prepareSearchCondition();
+      const response = await this.$_BoardService.fetchBoardList(this.searchCondition);
+      this.boardList = response.data.boardList;
+      this.boardTotalCounts= response.data.boardTotalCounts;
+    },
+  },
+  methods: {
+    prepareSearchCondition() {
       this.searchCondition = {...this.$route.query};
+
       if(this.isEmpty(this.searchCondition)) {
         this.searchCondition = {
           categoryId: "0",
@@ -328,18 +337,11 @@ export default {
           page: 1,
         };
       }
+
       if(!isNaN(this.searchCondition.page)) {
         this.searchCondition.page = Number(this.searchCondition.page);
       }
-
-      const response = await this.$_BoardService.fetchBoardList(this.searchCondition);
-
-      this.boardList = response.data.boardList;
-      this.boardTotalCounts= response.data.boardTotalCounts;
     },
-  },
-  methods: {
-
     // 빈 객체인지 체크
     isEmpty(obj) {
       return Object.keys(obj).length === 0 && obj.constructor === Object;

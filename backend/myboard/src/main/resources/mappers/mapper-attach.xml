@@ -14,29 +14,49 @@
     </select>
 
     <select id="selectList" resultType="attachVo" parameterType="long">
-        select attach_id,
-               board_id,
-               attach_upload_path,
-               attach_uuid,
-               attach_name,
-               attach_extension,
-               attach_is_image,
-               attach_size
-        from attach
-        where board_id = #{boardId};
+        select attach_id
+             , board_id
+             , attach_upload_path
+             , attach_uuid
+             , attach_name
+             , attach_extension
+             , attach_is_image
+             , attach_size
+          from attach
+         where board_id = #{boardId};
     </select>
     <select id="selectOne" resultType="attachVo" parameterType="long">
-        select attach_id,
-               board_id,
-               attach_upload_path,
-               attach_uuid,
-               attach_name,
-               attach_extension,
-               attach_is_image,
-               attach_size,
-               attach_register_date,
-               attach_update_date
-        from attach
-        where attach_id = #{attachId};
+        select attach_id
+             , board_id
+             , attach_upload_path
+             , attach_uuid
+             , attach_name
+             , attach_extension
+             , attach_is_image
+             , attach_size
+             , attach_register_date
+             , attach_update_date
+          from attach
+         where attach_id = #{attachId};
     </select>
+    <select id="select" resultType="attachVo" parameterType="long">
+        select attach_id
+             , board_id
+             , attach_upload_path
+             , attach_uuid
+             , attach_name
+             , attach_extension
+             , attach_is_image
+             , attach_size
+          from attach
+         where board_id = #{boardId};
+    </select>
+
+    <delete id="deleteByBoardId" parameterType="long" >
+        delete from attach where board_id = #{boardId}
+    </delete>
+
+    <delete id="delete" parameterType="long">
+        delete from attach where attach_id = #{attachId}
+    </delete>
 </mapper>

@@ -19,7 +19,6 @@ const getBoardDetail = (boardId) => {
 };
 
 const saveBoard = (formData) => {
-
     return axiosInstance.post(
         "boards",
         formData,
@@ -46,4 +45,25 @@ const downloadAttach = (attachId) => {
     );
 };
 
-export { getBoardList, getBoardDetail, postComment, saveUser, getCommentList, saveBoard, downloadAttach };
+const checkBoardPw = (board) => {
+    console.log(board.guestPassword)
+    return axiosInstance.post(
+        `boards/${board.boardId}/pwCheck`,
+        board);
+}
+
+const deleteBoard = (board) => {
+    return axiosInstance.delete(
+        `boards/${board.boardId}`,
+        {data: board});
+};
+
+const patchBoard = (formData) => {
+    return axiosInstance.patch(
+        `boards/${formData.get('boardId')}`,
+        formData,
+        {headers: {"Content-Type" : "multipart/form-data"}
+        });
+};
+
+export { getBoardList, getBoardDetail, postComment, saveUser, getCommentList, saveBoard, downloadAttach, checkBoardPw, deleteBoard, patchBoard };

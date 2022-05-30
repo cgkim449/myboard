@@ -8,6 +8,8 @@ import SignUpView from "@/views/authentication/SignUpView";
 import PageNotFoundView from "@/views/PageNotFoundView";
 import BoardDetailView from "@/views/BoardDetailView";
 import BoardWriteView from "@/views/BoardWriteView";
+import BoardPwCheck from "@/views/BoardPwCheck";
+import BoardModifyView from "@/views/BoardModifyView";
 
 Vue.use(VueRouter)
 
@@ -30,6 +32,16 @@ const routes = [
         path: "/boards/:id",
         name: "BoardDetailView",
         component: BoardDetailView,
+      },
+      {
+        path: "/boards/:id/pwCheck",
+        name: "BoardPwCheck",
+        component: BoardPwCheck,
+      },
+      {
+        path: "/boards/:id/modify",
+        name: "BoardModifyView",
+        component: BoardModifyView,
       },
     ],
   },

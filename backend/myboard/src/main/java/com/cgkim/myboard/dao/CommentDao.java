@@ -13,4 +13,6 @@ public interface CommentDao {
     int insert(CommentSaveRequest commentSaveRequest);
 
     List<CommentListResponse> selectList(Long boardId);
+
+    void deleteByBoardId(Long boardId);
 }

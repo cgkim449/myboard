@@ -67,6 +67,12 @@
             on b.category_id = ct.category_id
          where b.board_id = #{boardId}
     </select>
+    <select id="selectOneByGuestPassword" resultType="long" parameterType="boardPwCheckRequest">
+        select board_id
+          from board
+         where board_id = #{boardId} and guest_password = #{guestPassword}
+    </select>
+
 
     <update id="increaseViewCnt" parameterType="long">
         update board
@@ -78,9 +84,21 @@
         set board_has_attach = #{boardHasAttach}
         where board_id = #{boardId}
     </update>
+    <update id="update" parameterType="BoardUpdateRequest">
+        update board
+        set guest_name = #{guestName}
+          , board_title = #{boardTitle}
+          , board_content = #{boardContent}
+          , board_update_date = now()
+        where board_id = #{boardId}
+    </update>
 
     <insert id="insert" parameterType="boardSaveRequest" useGeneratedKeys="true" keyProperty="boardId">
         insert into board (category_id, board_title, board_content, guest_name, guest_password)
         values(#{categoryId}, #{boardTitle}, #{boardContent}, #{guestName}, #{guestPassword});
     </insert>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM board WHERE board_id = #{boardId}
+    </delete>
 </mapper>

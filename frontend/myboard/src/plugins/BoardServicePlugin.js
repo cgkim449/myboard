@@ -1,4 +1,13 @@
-import {getBoardDetail, getBoardList, postComment, getCommentList, saveBoard, downloadAttach} from "@/api";
+import {
+    getBoardDetail,
+    getBoardList,
+    postComment,
+    getCommentList,
+    saveBoard,
+    downloadAttach,
+    deleteBoard,
+    patchBoard, checkBoardPw
+} from "@/api";
 
 export const boardServicePlugin = {
     fetchBoardList: (searchCondition) => {
@@ -38,6 +47,15 @@ export const boardServicePlugin = {
             console.log(error);
         }
     },
+    removeBoard(board) {
+        return deleteBoard(board);
+    },
+    updateBoard(formData) {
+        return patchBoard(formData);
+    },
+    checkBoardPw(board) {
+        return checkBoardPw(board);
+    }
 };
 
 export default {
