@@ -9,5 +9,6 @@ public class SignUpRequest {
     private Long userId;
     private String username;
     private String password;
+    private String passwordConfirm;
     private String nickname;
 }

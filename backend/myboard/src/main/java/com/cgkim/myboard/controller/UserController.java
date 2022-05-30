@@ -69,7 +69,7 @@ public class UserController {
      * @return
      */
     @PostMapping
-    public ResponseEntity<SuccessResponse> signUp(@Valid SignUpRequest signUpRequest) {
+    public ResponseEntity<SuccessResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
         return ResponseEntity.ok()
                 .body(new SuccessResponse()
                         .put("signUpResult", userService.signUp(signUpRequest)));

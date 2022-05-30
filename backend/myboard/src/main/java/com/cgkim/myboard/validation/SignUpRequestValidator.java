@@ -23,6 +23,7 @@ public class SignUpRequestValidator implements Validator {
 
         String username = signUpRequest.getUsername();
         String password = signUpRequest.getPassword();
+        String passwordConfirm = signUpRequest.getPasswordConfirm();
         String nickname = signUpRequest.getNickname();
 
         if (username == null /*TODO: 올바른 이메일 형식인지 검증*/) {
@@ -31,6 +32,10 @@ public class SignUpRequestValidator implements Validator {
 
         if (password == null || !isValid(password)) {
             errors.rejectValue("password", "pw", new Object[] {4, 16}, null);
+        } else {
+            if (!(password.equals(passwordConfirm))) {
+                errors.rejectValue("passwordConfirm", "pwConfirm");
+            }
         }
 
         if (nickname == null || !(3 <= nickname.length() && nickname.length() < 5)) {
