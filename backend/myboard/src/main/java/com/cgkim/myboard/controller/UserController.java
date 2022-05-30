@@ -3,7 +3,9 @@ package com.cgkim.myboard.controller;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.UserService;
 import com.cgkim.myboard.validation.BoardUpdateRequestValidator;
+import com.cgkim.myboard.validation.LoginRequestValidator;
 import com.cgkim.myboard.validation.SignUpRequestValidator;
+import com.cgkim.myboard.vo.user.LoginRequest;
 import com.cgkim.myboard.vo.user.SignUpRequest;
 import com.cgkim.myboard.vo.user.UserVo;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final SignUpRequestValidator signUpRequestValidator;
+    private final LoginRequestValidator loginRequestValidator;
 
     /**
      * Validator 등록
@@ -52,7 +55,8 @@ public class UserController {
         }
 
         final List<Validator> validatorList = List.of(
-                signUpRequestValidator
+                signUpRequestValidator,
+                loginRequestValidator
         );
 
         for (Validator validator : validatorList) {
@@ -73,5 +77,21 @@ public class UserController {
         return ResponseEntity.ok()
                 .body(new SuccessResponse()
                         .put("signUpResult", userService.signUp(signUpRequest)));
+    }
+
+    /**
+     * 로그인
+     *
+     * @param loginRequest
+     * @return
+     */
+    @PostMapping("/login")
+    public ResponseEntity<SuccessResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
+
+        UserVo userVo = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+
+        return ResponseEntity.ok()
+                .body(new SuccessResponse()
+                        .put("loginResult", userVo));
     }
 }

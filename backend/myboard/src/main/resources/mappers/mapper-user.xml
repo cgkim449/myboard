@@ -14,7 +14,10 @@
     <select id="selectByUsername" resultType="userVo">
         select user_id
              , username
+             , password
              , nickname
+             , user_register_date
+             , user_update_date
           from user
          where username = #{username}
     </select>

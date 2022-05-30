@@ -19,6 +19,7 @@ public enum ErrorCode { //TODO: properties 로 분리
     // User
     DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "U001", "이미 가입된 이메일입니다."),
     DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "U002", "이미 사용된 사용자 이름입니다."),
+    LOGIN_FAILED(HttpStatus.BAD_REQUEST, "U003", "아이디 또는 비밀번호가 맞지 않습니다."),
 
     // Board
     BOARD_PASSWORD_INCORRECT(HttpStatus.BAD_REQUEST, "B001", "비밀번호가 틀렸습니다."),

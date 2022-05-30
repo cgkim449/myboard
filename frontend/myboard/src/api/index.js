@@ -8,8 +8,12 @@ const saveUser = (user) => {
     return axiosInstance.post("users", user);
 }
 
+const login = (user) => {
+    return axiosInstance.post("users/login", user);
+}
+
 const getBoardList = (searchCondition) => {
-    return axiosInstance.get("boards", { params: searchCondition });
+    return axiosInstance.get("boards", { params: searchCondition});
 };
 
 const getBoardDetail = (boardId) => {
@@ -66,4 +70,16 @@ const patchBoard = (formData) => {
         });
 };
 
-export { getBoardList, getBoardDetail, postComment, saveUser, getCommentList, saveBoard, downloadAttach, checkBoardPw, deleteBoard, patchBoard };
+export {
+    getBoardList,
+    getBoardDetail,
+    postComment,
+    getCommentList,
+    saveBoard,
+    downloadAttach,
+    checkBoardPw,
+    deleteBoard,
+    patchBoard,
+    saveUser,
+    login
+};
