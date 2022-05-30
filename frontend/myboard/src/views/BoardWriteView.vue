@@ -234,6 +234,7 @@ export default {
 
       formData.append("guestName", this.form.guestName);
       formData.append("guestPassword", this.form.guestPassword);
+      formData.append("guestPasswordConfirm", this.form.guestPasswordConfirm);
       formData.append("categoryId", this.form.categoryId);
       formData.append("boardTitle", this.form.boardTitle);
       formData.append("boardContent", this.form.boardContent);
