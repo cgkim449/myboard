@@ -77,7 +77,7 @@ public class BoardController {
     public ResponseEntity<SuccessResponse> getBoardDetail(@PathVariable Long boardId) {
         return ResponseEntity.ok()
                 .body(new SuccessResponse()
-                        .put("board", boardService.viewBoardDetail(boardId)));
+                        .put("boardDetail", boardService.viewBoardDetail(boardId)));
     }
 
     /**
