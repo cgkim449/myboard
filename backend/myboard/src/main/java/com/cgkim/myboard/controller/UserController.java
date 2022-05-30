@@ -1,7 +1,7 @@
 package com.cgkim.myboard.controller;
 
 import com.cgkim.myboard.service.UserService;
-import com.cgkim.myboard.vo.User.UserVo;
+import com.cgkim.myboard.vo.user.UserVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

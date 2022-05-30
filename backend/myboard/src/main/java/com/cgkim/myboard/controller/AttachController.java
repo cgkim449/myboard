@@ -1,5 +1,7 @@
 package com.cgkim.myboard.controller;
 
+import com.cgkim.myboard.exception.AttachNotFoundException;
+import com.cgkim.myboard.exception.ErrorCode;
 import com.cgkim.myboard.service.AttachService;
 import com.cgkim.myboard.vo.attach.AttachVo;
 import lombok.RequiredArgsConstructor;
@@ -38,12 +40,11 @@ public class AttachController {
     public ResponseEntity<Resource> downloadAttach(@PathVariable Long attachId) {
 
         AttachVo attachVo = attachService.get(attachId);
-
         Resource resource = new FileSystemResource(getAbsolutePathOf(attachVo));
 
-//        if(!resource.exists()) {
-//            throw new AttachNotFoundException(ErrorCode.ATTACH_NOT_FOUND);
-//        }
+        if(!resource.exists()) {
+            throw new AttachNotFoundException(ErrorCode.ATTACH_NOT_FOUND);
+        }
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,

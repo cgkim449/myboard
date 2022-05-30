@@ -41,6 +41,21 @@ public class GlobalExceptionHandler {
                 .body(buildErrorResponse(exception.getErrorCode()));
     }
 
+    /**
+     * 게시물 DB에 insert 실패 시, 생성한 첨부파일이 있다면 그 파일을 삭제
+     *
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(BoardInsertFailedException.class)
+    public ResponseEntity<ErrorResponse> boardInsertFailedExceptionHandler(BoardInsertFailedException exception) {
+        log.error("handleBoardInsertFailedException", exception);
+
+        fileHandler.deleteFiles(exception.getAttachSaveList()); // 생성했던 파일 삭제
+        return ResponseEntity
+                .status(exception.getErrorCode().getHttpStatus())
+                .body(buildErrorResponse(exception.getErrorCode()));
+    }
 
     /**
      * 바인딩 예외 처리

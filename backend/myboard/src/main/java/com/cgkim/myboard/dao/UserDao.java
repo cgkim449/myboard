@@ -1,6 +1,6 @@
 package com.cgkim.myboard.dao;
 
-import com.cgkim.myboard.vo.User.UserVo;
+import com.cgkim.myboard.vo.user.UserVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

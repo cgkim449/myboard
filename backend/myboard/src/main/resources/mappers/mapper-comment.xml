@@ -3,23 +3,25 @@
 
 <mapper namespace="com.cgkim.myboard.dao.CommentDao">
 
-    <insert id="insert" parameterType="commentSaveRequest">
-        insert into comment
-            (board_id, comment_nickname, comment_password, comment_content)
-        values
-            (#{boardId}, #{commentNickname}, #{commentPassword}, #{commentContent})
-    </insert>
     <select id="selectList" resultType="commentListResponse" parameterType="long">
         select comment_Id
              , board_Id
              , comment_nickname
              , comment_content
              , comment_register_date
-        from comment
-        where board_id=#{boardId};
+          from comment
+         where board_id=#{boardId};
     </select>
 
+
+    <insert id="insert" parameterType="commentSaveRequest">
+        insert into comment(board_id, comment_nickname, comment_password, comment_content)
+        values(#{boardId}, #{commentNickname}, #{commentPassword}, #{commentContent})
+    </insert>
+
     <delete id="deleteByBoardId" parameterType="long" >
-        delete from comment where board_id = #{boardId}
+        delete
+          from comment
+         where board_id = #{boardId}
     </delete>
 </mapper>

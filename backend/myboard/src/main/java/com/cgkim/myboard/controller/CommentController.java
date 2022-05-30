@@ -1,5 +1,6 @@
 package com.cgkim.myboard.controller;
 
+import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.CommentService;
 import com.cgkim.myboard.vo.comment.CommentListResponse;
 import com.cgkim.myboard.vo.comment.CommentSaveRequest;
@@ -20,17 +21,30 @@ import java.util.Map;
 public class CommentController {
     final CommentService commentService;
 
+    /**
+     * 특정 게시물의 댓글 리스트
+     *
+     * @param boardId
+     * @return
+     */
     @GetMapping
-    public ResponseEntity<?> getCommentList(Long boardId) {
-        List<CommentListResponse> commentList =  commentService.getCommentList(boardId);
-
-        return ResponseEntity.ok().body(Map.of("commentList", commentList));
+    public ResponseEntity<SuccessResponse> getCommentList(Long boardId) {
+        return ResponseEntity.ok()
+                .body(new SuccessResponse()
+                        .put("commentList", commentService.getCommentList(boardId)));
     }
 
+    /**
+     * 댓글 작성
+     *
+     * @param commentSaveRequest
+     * @return
+     */
     @PostMapping
-    public ResponseEntity<Void> write(@RequestBody CommentSaveRequest commentSaveRequest) {
+    public ResponseEntity<SuccessResponse> write(@RequestBody CommentSaveRequest commentSaveRequest) {
         commentService.writeComment(commentSaveRequest);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                .body(new SuccessResponse());
     }
 }

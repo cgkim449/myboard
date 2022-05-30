@@ -10,9 +10,7 @@ import java.util.List;
 @Repository
 @Mapper
 public interface CommentDao {
-    int insert(CommentSaveRequest commentSaveRequest);
-
     List<CommentListResponse> selectList(Long boardId);
-
+    int insert(CommentSaveRequest commentSaveRequest);
     void deleteByBoardId(Long boardId);
 }
