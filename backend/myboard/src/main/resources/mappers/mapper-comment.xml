@@ -19,4 +19,7 @@
         where board_id=#{boardId};
     </select>
 
+    <delete id="deleteByBoardId" parameterType="long" >
+        delete from comment where board_id = #{boardId}
+    </delete>
 </mapper>

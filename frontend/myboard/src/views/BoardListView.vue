@@ -99,14 +99,18 @@
           ></v-text-field>
 
         </v-col>
-        <v-btn
-            normal
-            class="mt-1"
-            color="primary"
-            v-on:click="search"
+        <v-col
+          cols="auto"
         >
-          검색
-        </v-btn>
+          <v-btn
+              normal
+              class="mt-1"
+              color="primary"
+              v-on:click="search"
+          >
+            검색
+          </v-btn>
+        </v-col>
     </v-row>
 
     <v-row>
@@ -118,18 +122,15 @@
 
       <v-spacer></v-spacer>
 
+<!--      TODO: 보기 형식-->
       <v-col
         cols="auto"
       >
         <router-link v-bind:to="{
-                    path: `/boards/new`,
+                    path: `/boards`,
                     query: this.searchCondition
                   }">
-          <v-btn
-              color="primary"
-          >
-            글쓰기
-          </v-btn>
+
         </router-link>
       </v-col>
     </v-row>
@@ -186,6 +187,25 @@
               :total-visible="10"
           ></v-pagination>
         </div>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-spacer></v-spacer>
+
+      <v-col
+          cols="auto"
+      >
+        <router-link v-bind:to="{
+                    path: `/boards/new`,
+                    query: this.searchCondition
+                  }">
+          <v-btn
+              color="primary"
+          >
+            글쓰기
+          </v-btn>
+        </router-link>
       </v-col>
     </v-row>
   </v-container>
@@ -298,7 +318,16 @@ export default {
       this.movePage();
     },
     async "$route.query"() {
+      this.prepareSearchCondition();
+      const response = await this.$_BoardService.fetchBoardList(this.searchCondition);
+      this.boardList = response.data.boardList;
+      this.boardTotalCounts= response.data.boardTotalCounts;
+    },
+  },
+  methods: {
+    prepareSearchCondition() {
       this.searchCondition = {...this.$route.query};
+
       if(this.isEmpty(this.searchCondition)) {
         this.searchCondition = {
           categoryId: "0",
@@ -308,18 +337,11 @@ export default {
           page: 1,
         };
       }
+
       if(!isNaN(this.searchCondition.page)) {
         this.searchCondition.page = Number(this.searchCondition.page);
       }
-
-      const response = await this.$_BoardService.fetchBoardList(this.searchCondition);
-
-      this.boardList = response.data.boardList;
-      this.boardTotalCounts= response.data.boardTotalCounts;
     },
-  },
-  methods: {
-
     // 빈 객체인지 체크
     isEmpty(obj) {
       return Object.keys(obj).length === 0 && obj.constructor === Object;

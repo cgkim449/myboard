@@ -15,10 +15,10 @@ public interface AttachDao {
     List<AttachVo> selectList(Long boardId);
 
     AttachVo selectOne(Long attachId);
+    List<AttachVo> select(Long boardId);
 
-//    void deleteByBoardNo(Long boardNo);
-//    void delete(Long attachNo);
-//    List<AttachVo> select(Long boardNo);
-//
+    void deleteByBoardId(Long boardId);
+
+    void delete(Long attachId);
 
 }
