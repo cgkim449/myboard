@@ -1,5 +1,6 @@
 package com.cgkim.myboard.controller;
 
+import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.AttachService;
 import com.cgkim.myboard.service.BoardService;
 import com.cgkim.myboard.util.FileHandler;
@@ -7,7 +8,6 @@ import com.cgkim.myboard.vo.attach.AttachVo;
 import com.cgkim.myboard.vo.attach.FileSaveRequest;
 import com.cgkim.myboard.vo.board.BoardDeleteRequest;
 import com.cgkim.myboard.vo.board.BoardDetailResponse;
-import com.cgkim.myboard.vo.board.BoardListResponse;
 import com.cgkim.myboard.vo.board.BoardPwCheckRequest;
 import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSearchRequest;
@@ -39,8 +39,8 @@ import java.util.Map;
 @RequestMapping("/boards")
 public class BoardController {
 
-    private final AttachService attachService;
     private final BoardService boardService;
+    private final AttachService attachService;
     private final FileHandler fileHandler;
 
     @InitBinder
@@ -53,70 +53,111 @@ public class BoardController {
         webDataBinder.registerCustomEditor(Date.class, new CustomDateEditor(simpleDateFormat, true));
     }
 
+    /**
+     * 게시물 목록
+     *
+     * @param boardSearchRequest
+     * @return
+     */
     @GetMapping
-    public ResponseEntity<?> getBoardList(BoardSearchRequest boardSearchRequest){
-
-        List<BoardListResponse> boardListResponse = boardService.getBoardList(boardSearchRequest);
-        int boardTotalCounts = boardService.getTotalCounts(boardSearchRequest);
-
-        return ResponseEntity.ok().body(Map.of("boardList", boardListResponse, "boardTotalCounts", boardTotalCounts));
+    public ResponseEntity<SuccessResponse> getBoardList(BoardSearchRequest boardSearchRequest){
+        return ResponseEntity.ok()
+                .body(new SuccessResponse()
+                        .put("boardList", boardService.getBoardList(boardSearchRequest))
+                        .put("boardTotalCounts", boardService.getTotalCounts(boardSearchRequest)));
     }
 
+    /**
+     * 게시물 상세보기
+     *
+     * @param boardId
+     * @return
+     */
     @GetMapping("/{boardId}")
-    public ResponseEntity<?> getBoardDetail(@PathVariable Long boardId) {
-        BoardDetailResponse boardDetailResponse = boardService.viewBoardDetail(boardId);
-
-        return ResponseEntity.ok().body(Map.of("boardDetail", boardDetailResponse));
+    public ResponseEntity<SuccessResponse> getBoardDetail(@PathVariable Long boardId) {
+        return ResponseEntity.ok()
+                .body(new SuccessResponse()
+                        .put("boardDetail", boardService.viewBoardDetail(boardId)));
     }
 
-    //TODO: 서버에서 유효성 검증
+    /**
+     * 게시물 등록
+     *
+     * @param boardSaveRequest
+     * @param fileSaveRequest
+     * @return
+     * @throws IOException
+     */
     @PostMapping
-    public ResponseEntity<?> writeBoard(BoardSaveRequest boardSaveRequest,
-                                        FileSaveRequest fileSaveRequest) throws IOException {
+    public ResponseEntity<SuccessResponse> writeBoard(
+            BoardSaveRequest boardSaveRequest,
+            FileSaveRequest fileSaveRequest
+    ) throws IOException {
+        //TODO: validation
         List<AttachVo> attachInsertList = fileHandler.saveFiles(fileSaveRequest.getMultipartFiles()); // 파일 생성 (C://upload)
         long boardId = boardService.write(boardSaveRequest, attachInsertList); // 게시물, 파일 insert (DB)
 
         return ResponseEntity.ok()
-                .body(Map.of("boardId", boardId));
+                .body(new SuccessResponse()
+                        .put("boardId", boardId));
     }
 
-    @PostMapping("/{boardId}/pwCheck")
-    public ResponseEntity<?> pwCheck(@RequestBody BoardPwCheckRequest boardPwCheckRequest) {
-        Long result = boardService.pwCheck(boardPwCheckRequest);
-        if(result == null) {
-            return ResponseEntity.badRequest().body("비밀번호 틀림");
-        }
-        return ResponseEntity.ok().build();
-    }
+    /**
+     * 게시물 삭제
+     *
+     * @param boardDeleteRequest
+     * @return
+     */
 
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<?> deleteBoard(@RequestBody BoardDeleteRequest boardDeleteRequest) {
-        System.out.println(boardDeleteRequest);
-        Long result = boardService.pwCheck(boardDeleteRequest.getBoardId(), boardDeleteRequest.getGuestPassword()); // 비밀번호 체크
-        if(result == null) {
-            return ResponseEntity.badRequest().body("비밀번호 틀림");
-        }
+    public ResponseEntity<SuccessResponse> deleteBoard(@RequestBody BoardDeleteRequest boardDeleteRequest) {
+
+        boardService.pwCheck(boardDeleteRequest.getBoardId(), boardDeleteRequest.getGuestPassword()); // 비밀번호 체크
         List<AttachVo> attachDeleteList = attachService.getList(boardDeleteRequest.getBoardId()); // 삭제할 파일 리스트
         boardService.delete(boardDeleteRequest.getBoardId()); // 게시물, 댓글, 파일 삭제(db)
         fileHandler.deleteFiles(attachDeleteList); // 파일 삭제(C://upload)
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                .body(new SuccessResponse());
     }
 
-    @PatchMapping("/{boardNo}")
-    public ResponseEntity<?> updateBoard(BoardUpdateRequest boardUpdateRequest,
-                                         FileSaveRequest fileSaveRequest,
-                                         Long[] attachDeleteRequest) throws IOException {
 
-        Long result = boardService.pwCheck(boardUpdateRequest.getBoardId(), boardUpdateRequest.getGuestPassword()); // 비밀번호 체크
-        if(result == null) {
-            return ResponseEntity.badRequest().body("비밀번호 틀림");
-        }
+    /**
+     * 게시물 수정
+     *
+     * @param boardUpdateRequest
+     * @param fileSaveRequest
+     * @param attachDeleteRequest
+     * @return
+     * @throws IOException
+     */
+    @PatchMapping("/{boardId}")
+    public ResponseEntity<SuccessResponse> updateBoard(
+            BoardUpdateRequest boardUpdateRequest,
+            FileSaveRequest fileSaveRequest,
+            Long[] attachDeleteRequest
+    ) throws IOException {
+        //TODO: validation
+        boardService.pwCheck(boardUpdateRequest.getBoardId(), boardUpdateRequest.getGuestPassword()); // 비밀번호 체크
         List<AttachVo> attachDeleteList = attachService.getList(attachDeleteRequest); // 삭제할 첨부파일 리스트
         List<AttachVo> attachInsertList = fileHandler.saveFiles(fileSaveRequest.getMultipartFiles()); // 새로 추가한 파일 생성
         boardService.modify(boardUpdateRequest, attachInsertList, attachDeleteList); // 게시물 수정 및 파일 삭제(DB)
         fileHandler.deleteFiles(attachDeleteList); // 파일 삭제
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                .body(new SuccessResponse());
+    }
+
+    /**
+     * 게시물 비밀번호 확인
+     *
+     * @param boardPwCheckRequest
+     * @return
+     */
+    @PostMapping("/{boardId}/pwCheck")
+    public ResponseEntity<SuccessResponse> pwCheck(@RequestBody BoardPwCheckRequest boardPwCheckRequest) {
+        boardService.pwCheck(boardPwCheckRequest);
+        return ResponseEntity.ok()
+                .body(new SuccessResponse());
     }
 }

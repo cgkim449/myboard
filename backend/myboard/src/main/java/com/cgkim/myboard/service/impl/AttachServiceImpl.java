@@ -14,16 +14,34 @@ import java.util.List;
 public class AttachServiceImpl implements AttachService {
     private final AttachDao attachDao;
 
+    /**
+     * 특정 게시물의 첨부파일 리스트
+     *
+     * @param boardId
+     * @return
+     */
+    @Override
+    public List<AttachVo> getList(Long boardId) {
+        return attachDao.selectList(boardId);
+    }
+
+    /**
+     * 첨부파일 한개 select
+     *
+     * @param attachId
+     * @return
+     */
     @Override
     public AttachVo get(Long attachId) {
         return attachDao.selectOne(attachId);
     }
 
-    @Override
-    public List<AttachVo> getList(Long boardId) {
-        return attachDao.select(boardId);
-    }
-
+    /**
+     * 첨부파일 id로 첨부파일 select
+     *
+     * @param attachIdArray
+     * @return
+     */
     @Override
     public List<AttachVo> getList(Long[] attachIdArray) {
         if(attachIdArray == null || attachIdArray.length == 0) {

@@ -1,4 +1,4 @@
-package com.cgkim.myboard.vo.User;
+package com.cgkim.myboard.vo.user;
 
 import lombok.Getter;
 import lombok.Setter;

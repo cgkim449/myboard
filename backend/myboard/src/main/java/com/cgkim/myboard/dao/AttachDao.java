@@ -9,16 +9,11 @@ import java.util.List;
 @Repository
 @Mapper
 public interface AttachDao {
-    int insert(AttachVo attach);
-    int selectCountByBoardId(long boardId);
-
     List<AttachVo> selectList(Long boardId);
-
     AttachVo selectOne(Long attachId);
-    List<AttachVo> select(Long boardId);
-
+    int selectCountByBoardId(long boardId);
+    int insert(AttachVo attach);
     void deleteByBoardId(Long boardId);
-
     void delete(Long attachId);
 
 }

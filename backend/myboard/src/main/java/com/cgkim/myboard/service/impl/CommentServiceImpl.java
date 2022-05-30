@@ -15,11 +15,22 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService {
     final CommentDao commentDao;
 
+    /**
+     * 특정 게시물의 댓글 리스트
+     *
+     * @param boardId
+     * @return
+     */
     @Override
     public List<CommentListResponse> getCommentList(Long boardId) {
         return commentDao.selectList(boardId);
     }
 
+    /**
+     * 댓글 작성
+     *
+     * @param commentSaveRequest
+     */
     @Override
     public void writeComment(CommentSaveRequest commentSaveRequest) {
         commentDao.insert(commentSaveRequest);

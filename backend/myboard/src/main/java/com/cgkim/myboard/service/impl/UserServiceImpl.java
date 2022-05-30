@@ -2,7 +2,7 @@ package com.cgkim.myboard.service.impl;
 
 import com.cgkim.myboard.dao.UserDao;
 import com.cgkim.myboard.service.UserService;
-import com.cgkim.myboard.vo.User.UserVo;
+import com.cgkim.myboard.vo.user.UserVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

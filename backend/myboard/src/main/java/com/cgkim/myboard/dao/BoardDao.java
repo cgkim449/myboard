@@ -17,18 +17,11 @@ import java.util.Map;
 public interface BoardDao {
     List<BoardListResponse> selectList(BoardSearchRequest boardSearchRequest);
     int selectCount(BoardSearchRequest boardSearchRequest);
-
     void increaseViewCnt(Long boardId);
-
     BoardDetailResponse selectOne(Long boardId);
-
     void insert(BoardSaveRequest boardSaveRequest);
-
     void updateHasAttach(Map<String, Object> updateHasAttachMap);
-
     Long selectOneByGuestPassword(BoardPwCheckRequest boardPwCheckRequest);
-
     void delete(Long boardId);
-
     int update(BoardUpdateRequest boardUpdateRequest);
 }

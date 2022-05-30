@@ -15,21 +15,26 @@
                 clearable
                 prepend-icon="mdi-lock-outline"
             ></v-text-field>
-
-            <router-link v-bind:to="{path: `/boards/${board.boardId}`, query: searchCondition}">
-              <v-btn
-                  class="mt-6"
-                  large
-                  outlined
-                  color="primary"
-              >취소</v-btn>
-            </router-link>
-            <v-btn
-                v-on:click="pwCheck()"
-                class="mt-6"
-                large
-                color="primary"
-            >확인</v-btn>
+            <v-row justify="center">
+              <v-col cols="auto">
+                <router-link v-bind:to="{path: `/boards/${board.boardId}`, query: searchCondition}">
+                  <v-btn
+                      class="mt-6"
+                      large
+                      outlined
+                      color="primary"
+                  >취소</v-btn>
+                </router-link>
+              </v-col>
+              <v-col cols="auto">
+                <v-btn
+                    v-on:click="pwCheck()"
+                    class="mt-6"
+                    large
+                    color="primary"
+                >확인</v-btn>
+              </v-col>
+            </v-row>
           </v-card-text>
         </v-card>
       </v-col>

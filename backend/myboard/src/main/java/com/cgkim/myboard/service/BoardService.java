@@ -17,8 +17,8 @@ public interface BoardService {
     BoardDetailResponse viewBoardDetail(Long boardId);
 
     long write(BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
-    Long pwCheck(Long boardId, String guestPassword);
-    Long pwCheck(BoardPwCheckRequest boardPwCheckRequest);
+    void pwCheck(Long boardId, String guestPassword);
+    void pwCheck(BoardPwCheckRequest boardPwCheckRequest);
     @Transactional(rollbackFor = Exception.class)
     void delete(Long boardNo);
 
