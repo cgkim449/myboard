@@ -85,7 +85,7 @@ export default {
         };
         try {
           const response = await this.$_UserService.login(user);
-          alert(`${response.data.loginResult.nickname}님, 로그인 되셨습니다.`)
+          alert(`${response.data.nickname}님, 로그인 되셨습니다.`)
           // TODO: 원래 가려던 페이지로 이동해야함
         } catch (error) {
           alert(error.response.data.errorMessage)
