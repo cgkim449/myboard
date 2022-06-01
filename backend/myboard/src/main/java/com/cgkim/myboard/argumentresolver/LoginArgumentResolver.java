@@ -1,6 +1,6 @@
 package com.cgkim.myboard.argumentresolver;
 
-import com.cgkim.myboard.vo.user.UserVo;
+import com.cgkim.myboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -10,10 +10,14 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Slf4j
-@Component
 @RequiredArgsConstructor
-public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
+@Component
+public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
+
+    private final UserService userService;
 
     /**
      *
@@ -22,10 +26,10 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
 
-        boolean hasLoginUserAnnotation = parameter.hasParameterAnnotation(LoginUser.class);
-        boolean hasUserVoType = UserVo.class.isAssignableFrom(parameter.getParameterType());
+        boolean hasLoginAnnotation = parameter.hasParameterAnnotation(Login.class);
+        boolean hasLongType = Long.class.isAssignableFrom(parameter.getParameterType());
 
-        return hasLoginUserAnnotation && hasUserVoType;
+        return hasLoginAnnotation && hasLongType;
     }
 
     @Override
@@ -35,8 +39,9 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
             NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory
     ) {
-        log.info("resolveArgument 실행");
-        //TODO: 비회원, 회원
-        return null;
+        //TODO: webRequest.get
+        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
+        String username = (String) request.getAttribute("username");
+        return userService.getUserId(username);
     }
 }

@@ -1,11 +1,11 @@
-import {saveUser, login} from "@/api";
+import {loginUser, createUser} from "@/api/auth";
 
 export const userServicePlugin = {
     signUp: (user) => {
-        return saveUser(user);
+        return createUser(user);
     },
     login: (user) => {
-        return login(user);
+        return loginUser(user);
     },
 };
 

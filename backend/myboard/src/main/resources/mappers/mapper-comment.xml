@@ -6,7 +6,7 @@
     <select id="selectList" resultType="commentListResponse" parameterType="long">
         select comment_Id
              , board_Id
-             , comment_nickname
+             , guest_nickname
              , comment_content
              , comment_register_date
           from comment
@@ -15,8 +15,8 @@
 
 
     <insert id="insert" parameterType="commentSaveRequest">
-        insert into comment(board_id, comment_nickname, comment_password, comment_content)
-        values(#{boardId}, #{commentNickname}, #{commentPassword}, #{commentContent})
+        insert into comment(board_id, guest_nickname, guest_password, comment_content)
+        values(#{boardId}, #{guestNickname}, #{guestPassword}, #{commentContent})
     </insert>
 
     <delete id="deleteByBoardId" parameterType="long" >

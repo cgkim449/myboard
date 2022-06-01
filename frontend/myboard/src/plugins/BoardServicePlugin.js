@@ -1,13 +1,9 @@
 import {
-    getBoardDetail,
-    getBoardList,
-    postComment,
-    getCommentList,
-    saveBoard,
-    downloadAttach,
-    deleteBoard,
-    patchBoard, checkBoardPw
+
 } from "@/api";
+import {checkBoardPw, deleteBoard, getBoardDetail, getBoardList, patchBoard, createBoard} from "@/api/boards";
+import {getCommentList, createComment} from "@/api/comments";
+import {downloadAttach} from "@/api/attaches";
 
 export const boardServicePlugin = {
     fetchBoardList: (searchCondition) => {
@@ -17,10 +13,10 @@ export const boardServicePlugin = {
         return getBoardDetail(boardId);
     },
     writeBoard(formData) {
-        return saveBoard(formData);
+        return createBoard(formData);
     },
     writeComment(comment) {
-        return postComment(comment);
+        return createComment(comment);
     },
     fetchCommentList(boardNo) {
         try {

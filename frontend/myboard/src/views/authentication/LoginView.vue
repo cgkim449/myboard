@@ -4,6 +4,7 @@
       <v-col cols="auto">
         <v-card
             width="460"
+            outlined
         >
           <v-form
               ref="form"
@@ -33,7 +34,6 @@
                   class="mt-6"
                   block
                   x-large
-                  rounded
                   color="primary"
               >로그인</v-btn>
             </v-card-text>
@@ -45,6 +45,8 @@
 </template>
 
 <script>
+import {saveTokenToCookie, saveUserNameToCookie} from "@/utils/cookies";
+
 export default {
   name: "LoginPage",
   data() {
@@ -84,9 +86,9 @@ export default {
           password: this.password,
         };
         try {
-          const response = await this.$_UserService.login(user);
-          alert(`${response.data.nickname}님, 로그인 되셨습니다.`)
-          // TODO: 원래 가려던 페이지로 이동해야함
+          const data = await this.$store.dispatch("LOGIN", user);
+          await this.$router.push("/boards");
+          //TODO: 원래 가려던 페이지로 이동해야함
         } catch (error) {
           alert(error.response.data.errorMessage)
         }

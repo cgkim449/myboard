@@ -3,6 +3,7 @@
     <v-row justify="center">
       <v-col cols="auto">
         <v-card
+            outlined
             width="460"
         >
           <v-card-text class="text-center px-12 py-16">
@@ -51,7 +52,6 @@
                   class="mt-6"
                   block
                   x-large
-                  rounded
                   color="primary"
               >
                 가입하기

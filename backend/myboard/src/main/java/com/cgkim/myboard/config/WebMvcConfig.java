@@ -25,7 +25,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         HttpMethod.PATCH.name(),
                         HttpMethod.DELETE.name()
                 )
-                .exposedHeaders("Content-Disposition");
+                .exposedHeaders("Content-Disposition")
+                .exposedHeaders("Authorization");
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.cgkim.myboard.config.jwt;
 
-import com.cgkim.myboard.argumentresolver.LoginUserArgumentResolver;
+import com.cgkim.myboard.argumentresolver.GuestArgumentResolver;
+import com.cgkim.myboard.argumentresolver.LoginArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -14,10 +15,11 @@ import java.util.List;
 public class JwtConfig implements WebMvcConfigurer {
 
     private final JwtInterceptor jwtInterceptor;
-    private final LoginUserArgumentResolver loginUserArgumentResolver;
+    private final LoginArgumentResolver loginArgumentResolver;
+    private final GuestArgumentResolver guestArgumentResolver;
 
     /**
-     * JwtInterceptor 등록
+     * Interceptor 등록
      *
      * @param registry
      */
@@ -29,12 +31,13 @@ public class JwtConfig implements WebMvcConfigurer {
     }
 
     /**
-     * LoginUserArgumentResolver 등록
+     * ArgumentResolver 등록
      *
      * @param resolvers initially an empty list
      */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(loginUserArgumentResolver);
+        resolvers.add(loginArgumentResolver);
+        resolvers.add(guestArgumentResolver);
     }
 }

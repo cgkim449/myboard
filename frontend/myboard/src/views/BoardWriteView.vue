@@ -6,35 +6,41 @@
             @submit.prevent="submit"
         >
           <v-container fluid>
-            <v-row>
-              <v-col>
-                <v-text-field
-                    v-model="form.guestName"
-                    :rules="rules.guestName"
-                    color="purple darken-2"
-                    label="닉네임"
-                    required
-                ></v-text-field>
-              </v-col>
-              <v-col>
-                <v-text-field
-                    v-model="form.guestPassword"
-                    :rules="rules.guestPassword"
-                    color="purple darken-2"
-                    label="비밀번호"
-                    required
-                ></v-text-field>
-              </v-col>
-              <v-col>
-                <v-text-field
-                    v-model="form.guestPasswordConfirm"
-                    :rules="rules.guestPasswordConfirm"
-                    color="blue darken-2"
-                    label="비밀번호 확인"
-                    required
-                ></v-text-field>
-              </v-col>
-            </v-row>
+            <template v-if="$store.getters.isLogin">
+
+            </template>
+
+            <template v-else>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                      v-model="form.guestName"
+                      :rules="rules.guestName"
+                      color="purple darken-2"
+                      label="닉네임"
+                      required
+                  ></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field
+                      v-model="form.guestPassword"
+                      :rules="rules.guestPassword"
+                      color="purple darken-2"
+                      label="비밀번호"
+                      required
+                  ></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field
+                      v-model="form.guestPasswordConfirm"
+                      :rules="rules.guestPasswordConfirm"
+                      color="blue darken-2"
+                      label="비밀번호 확인"
+                      required
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+            </template>
 
             <v-row>
               <v-col

@@ -59,4 +59,14 @@ public class UserServiceImpl implements UserService {
 
         return userVo;
     }
+
+    @Override
+    public UserVo getUserDetail(String username) {
+        return userDao.selectByUsername(username);
+    }
+
+    @Override
+    public Long getUserId(String username) {
+        return userDao.selectUserIdByUsername(username);
+    }
 }

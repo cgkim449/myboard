@@ -6,9 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BoardSaveRequest {
-    private String guestName;
-    private String guestPassword;
-    private String guestPasswordConfirm;
     private Integer categoryId;
     private String boardTitle;
     private String boardContent;

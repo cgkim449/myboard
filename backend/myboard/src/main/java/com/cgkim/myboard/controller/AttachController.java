@@ -46,7 +46,8 @@ public class AttachController {
             throw new AttachNotFoundException(ErrorCode.ATTACH_NOT_FOUND);
         }
 
-        return ResponseEntity.ok()
+        return ResponseEntity
+                .ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         ContentDisposition.attachment()
                                 .filename(attachVo.getFullName(), StandardCharsets.UTF_8)

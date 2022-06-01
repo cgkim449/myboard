@@ -75,7 +75,8 @@ public class UserController {
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
-        return ResponseEntity.ok()
+        return ResponseEntity
+                .ok()
                 .body(new SuccessResponse()
                         .put("signUpResult", userService.signUp(signUpRequest)));
     }
@@ -93,11 +94,11 @@ public class UserController {
         // 토큰 생성
         String token = jwtProvider.createToken(loginUser.getUsername());
 
-        return ResponseEntity.ok()
-                .header("Authorization", "Bearer " + token)
+        return ResponseEntity
+                .ok()
                 .body(new SuccessResponse()
-                        .put("userId", loginUser.getUserId())
                         .put("username", loginUser.getUsername())
-                        .put("nickname", loginUser.getNickname()));
+                        .put("nickname", loginUser.getNickname())
+                        .put("token", token));
     }
 }

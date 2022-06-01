@@ -33,6 +33,11 @@
           from user
          where nickname = #{nickname}
     </select>
+    <select id="selectUserIdByUsername" resultType="java.lang.Long">
+        select user_id
+          from user
+         where username = #{username}
+    </select>
 
     <insert id="insert" parameterType="signUpRequest" useGeneratedKeys="true" keyProperty="userId">
         insert into user

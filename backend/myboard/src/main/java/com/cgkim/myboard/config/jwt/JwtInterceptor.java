@@ -1,8 +1,6 @@
 package com.cgkim.myboard.config.jwt;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.cgkim.myboard.exception.ErrorCode;
-import com.cgkim.myboard.exception.InvalidJwtTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -29,18 +27,25 @@ public class JwtInterceptor implements HandlerInterceptor {
             HttpServletResponse response,
             Object handler
     ) {
+        //CORS 설정
+        if (request.getMethod().equals("OPTIONS")) {
+            return true;
+        }
         String requestURI = request.getRequestURI();
         log.info("JwtInterceptor 실행 {}", requestURI);
 
         //헤더에서 토큰 추출
         String token = extractToken(request);
-        //토큰 검증
-        DecodedJWT jwt = jwtProvider.validateToken(token);
-        //username 추출
-        String username = jwt.getSubject();
-        log.info("username: {}", username);
-        //request 에 보관
-        request.setAttribute("username", username);
+        log.info("token: {}", token);
+
+        if(token != null) { //로그인 사용자이면 토큰 검증함
+            //토큰 검증
+            DecodedJWT jwt = jwtProvider.validateToken(token);
+            //토큰에서 username 추출
+            String username = jwt.getSubject();
+            //username 을 request 에 보관: LoginArgumentResolver 에서 꺼내기 위해
+            request.setAttribute("username", username);
+        }
         return true;
     }
 
@@ -54,12 +59,12 @@ public class JwtInterceptor implements HandlerInterceptor {
      * @return
      */
     private String extractToken(HttpServletRequest request) {
-        String header = request.getHeader(HEADER);
+        String headerValue = request.getHeader(HEADER);
 
-        if(header == null) { //인증실패
-            throw new InvalidJwtTokenException(ErrorCode.INVALID_JWT_TOKEN);
+        if(headerValue == null) { //TODO: token null
+            return null;
         } else {
-            return header.replace(SCHEMA + " ", "");
+            return headerValue.replace(SCHEMA + " ", "");
         }
     }
 }
