@@ -3,11 +3,13 @@ package com.cgkim.myboard.advice;
 import com.cgkim.myboard.exception.BoardInsertFailedException;
 import com.cgkim.myboard.exception.BusinessException;
 import com.cgkim.myboard.exception.ErrorCode;
+import com.cgkim.myboard.exception.InvalidJwtTokenException;
 import com.cgkim.myboard.response.ErrorResponse;
 import com.cgkim.myboard.util.FileHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -26,6 +28,20 @@ public class GlobalExceptionHandler {
 
     private final MessageSource messageSource;
     private final FileHandler fileHandler;
+
+    /**
+     * 올바르지 않은 토큰
+     *
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(InvalidJwtTokenException.class)
+    public ResponseEntity<ErrorResponse> InvalidJwtTokenExceptionHandler(InvalidJwtTokenException exception) {
+        log.error("handleInvalidJwtTokenException", exception);
+        return ResponseEntity
+                .status(exception.getErrorCode().getHttpStatus())
+                .body(buildErrorResponse(exception.getErrorCode()));
+    }
 
     /**
      * 최대한 여기서 모든 비즈니스 로직 예외처리

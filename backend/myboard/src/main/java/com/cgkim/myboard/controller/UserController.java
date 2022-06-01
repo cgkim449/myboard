@@ -1,14 +1,15 @@
 package com.cgkim.myboard.controller;
 
+import com.cgkim.myboard.config.jwt.JwtProvider;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.UserService;
-import com.cgkim.myboard.validation.BoardUpdateRequestValidator;
+import com.cgkim.myboard.validation.LoginRequestValidator;
 import com.cgkim.myboard.validation.SignUpRequestValidator;
+import com.cgkim.myboard.vo.user.LoginRequest;
 import com.cgkim.myboard.vo.user.SignUpRequest;
 import com.cgkim.myboard.vo.user.UserVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
@@ -18,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -30,6 +31,9 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final SignUpRequestValidator signUpRequestValidator;
+    private final LoginRequestValidator loginRequestValidator;
+
+    private final JwtProvider jwtProvider;
 
     /**
      * Validator 등록
@@ -52,7 +56,8 @@ public class UserController {
         }
 
         final List<Validator> validatorList = List.of(
-                signUpRequestValidator
+                signUpRequestValidator,
+                loginRequestValidator
         );
 
         for (Validator validator : validatorList) {
@@ -70,8 +75,30 @@ public class UserController {
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
-        return ResponseEntity.ok()
+        return ResponseEntity
+                .ok()
                 .body(new SuccessResponse()
                         .put("signUpResult", userService.signUp(signUpRequest)));
+    }
+
+    /**
+     * 로그인
+     *
+     * @param loginRequest
+     * @return
+     */
+    @PostMapping("/login")
+    public ResponseEntity<SuccessResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
+        // 로그인
+        UserVo loginUser = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+        // 토큰 생성
+        String token = jwtProvider.createToken(loginUser.getUsername());
+
+        return ResponseEntity
+                .ok()
+                .body(new SuccessResponse()
+                        .put("username", loginUser.getUsername())
+                        .put("nickname", loginUser.getNickname())
+                        .put("token", token));
     }
 }

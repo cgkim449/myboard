@@ -29,7 +29,8 @@ public class CommentController {
      */
     @GetMapping
     public ResponseEntity<SuccessResponse> getCommentList(Long boardId) {
-        return ResponseEntity.ok()
+        return ResponseEntity
+                .ok()
                 .body(new SuccessResponse()
                         .put("commentList", commentService.getCommentList(boardId)));
     }
@@ -44,7 +45,8 @@ public class CommentController {
     public ResponseEntity<SuccessResponse> write(@RequestBody CommentSaveRequest commentSaveRequest) {
         commentService.writeComment(commentSaveRequest);
 
-        return ResponseEntity.ok()
+        return ResponseEntity
+                .ok()
                 .body(new SuccessResponse());
     }
 }

@@ -14,6 +14,8 @@ import com.cgkim.myboard.vo.board.BoardPwCheckRequest;
 import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSearchRequest;
 import com.cgkim.myboard.vo.board.BoardUpdateRequest;
+import com.cgkim.myboard.vo.board.BoardVo;
+import com.cgkim.myboard.vo.user.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,19 +68,84 @@ public class BoardServiceImpl implements BoardService {
         return boardDetailResponse;
     }
 
+//    /**
+//     * 게시물 등록
+//     *
+//     * @param boardSaveRequest
+//     * @param attachInsertList
+//     * @return
+//     */
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public long write(BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList) {
+//        try {
+//            boardDao.insert(boardSaveRequest); // 게시물 insert
+//            long boardId = boardSaveRequest.getBoardId();
+//
+//            if (attachInsertList != null && !attachInsertList.isEmpty()) {
+//                insertAttaches(attachInsertList, boardSaveRequest.getBoardId());  // 첨부파일 insert
+//                updateHasAttach(boardId);
+//            }
+//
+//            return boardId; // 등록한 게시물 번호 리턴
+//        } catch (Exception e) { // 게시물 등록 실패시 생성했던 파일 삭제하기 위해
+//            throw new BoardInsertFailedException(attachInsertList, ErrorCode.BOARD_INSERT_FAILED);
+//        }
+//    }
+
     /**
-     * 게시물 등록
+     * 비로그인 사용자 게시물 등록
      *
+     * @param guestSaveRequest
      * @param boardSaveRequest
      * @param attachInsertList
      * @return
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public long write(BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList) {
+    public long write(GuestSaveRequest guestSaveRequest, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList) {
         try {
-            boardDao.insert(boardSaveRequest); // 게시물 insert
-            long boardId = boardSaveRequest.getBoardId();
+            BoardVo boardVo = BoardVo.builder()
+                    .categoryId(boardSaveRequest.getCategoryId())
+                    .boardTitle(boardSaveRequest.getBoardTitle())
+                    .boardContent(boardSaveRequest.getBoardContent())
+                    .guestNickname(guestSaveRequest.getGuestNickname())
+                    .guestPassword(guestSaveRequest.getGuestPassword())
+                    .build();
+
+            boardDao.insertGuestBoard(boardVo); // 게시물 insert
+            long boardId = boardVo.getBoardId();
+
+            if (attachInsertList != null && !attachInsertList.isEmpty()) {
+                insertAttaches(attachInsertList, boardSaveRequest.getBoardId());  // 첨부파일 insert
+                updateHasAttach(boardId);
+            }
+
+            return boardId; // 등록한 게시물 번호 리턴
+        } catch (Exception e) { // 게시물 등록 실패시 생성했던 파일 삭제하기 위해
+            throw new BoardInsertFailedException(attachInsertList, ErrorCode.BOARD_INSERT_FAILED);
+        }
+    }
+
+    /**
+     * 로그인 사용자 게시물 등록
+     *
+     * @param userId
+     * @param boardSaveRequest
+     * @param attachInsertList
+     * @return
+     */
+    @Override
+    public long write(Long userId, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList) {
+        try {
+            BoardVo boardVo = BoardVo.builder()
+                    .categoryId(boardSaveRequest.getCategoryId())
+                    .boardTitle(boardSaveRequest.getBoardTitle())
+                    .boardContent(boardSaveRequest.getBoardContent())
+                    .userId(userId)
+                    .build();
+
+            boardDao.insertLoginUserBoard(boardVo); // 게시물 insert
+            long boardId = boardVo.getBoardId();
 
             if (attachInsertList != null && !attachInsertList.isEmpty()) {
                 insertAttaches(attachInsertList, boardSaveRequest.getBoardId());  // 첨부파일 insert

@@ -25,7 +25,7 @@
                   dense
                   outlined
                   v-model="searchCondition.fromDate"
-                  label="시작일"
+                  label="From"
                   prepend-icon="mdi-calendar"
                   readonly
                   v-bind="attrs"
@@ -61,7 +61,7 @@
                   dense
                   outlined
                   v-model="searchCondition.toDate"
-                  label="종료일"
+                  label="To"
                   prepend-icon="mdi-calendar"
                   readonly
                   v-bind="attrs"

@@ -1,5 +1,7 @@
 package com.cgkim.myboard.controller;
 
+import com.cgkim.myboard.argumentresolver.Guest;
+import com.cgkim.myboard.argumentresolver.Login;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.AttachService;
 import com.cgkim.myboard.service.BoardService;
@@ -7,6 +9,7 @@ import com.cgkim.myboard.util.FileHandler;
 import com.cgkim.myboard.validation.BoardSaveRequestValidator;
 import com.cgkim.myboard.validation.BoardUpdateRequestValidator;
 import com.cgkim.myboard.validation.FileSaveRequestValidator;
+import com.cgkim.myboard.validation.GuestSaveRequestValidator;
 import com.cgkim.myboard.vo.attach.AttachVo;
 import com.cgkim.myboard.vo.attach.FileSaveRequest;
 import com.cgkim.myboard.vo.board.BoardDeleteRequest;
@@ -14,6 +17,8 @@ import com.cgkim.myboard.vo.board.BoardPwCheckRequest;
 import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSearchRequest;
 import com.cgkim.myboard.vo.board.BoardUpdateRequest;
+import com.cgkim.myboard.vo.user.GuestSaveRequest;
+import com.cgkim.myboard.vo.user.UserVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -35,7 +40,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -49,6 +53,7 @@ public class BoardController {
     private final BoardSaveRequestValidator boardSaveRequestValidator;
     private final FileSaveRequestValidator fileSaveRequestValidator;
     private final BoardUpdateRequestValidator boardUpdateRequestValidator;
+    private final GuestSaveRequestValidator guestSaveRequestValidator;
 
     /**
      * PropertyEditor, Validator 등록
@@ -84,7 +89,9 @@ public class BoardController {
         final List<Validator> validatorList = List.of(
                 boardSaveRequestValidator,
                 boardUpdateRequestValidator,
-                fileSaveRequestValidator);
+                fileSaveRequestValidator,
+                guestSaveRequestValidator
+        );
 
         for (Validator validator : validatorList) {
             if (validator.supports(webDataBinder.getTarget().getClass())) {
@@ -101,7 +108,8 @@ public class BoardController {
      */
     @GetMapping
     public ResponseEntity<SuccessResponse> getBoardList(BoardSearchRequest boardSearchRequest){
-        return ResponseEntity.ok()
+        return ResponseEntity
+                .ok()
                 .body(new SuccessResponse()
                         .put("boardList", boardService.getBoardList(boardSearchRequest))
                         .put("boardTotalCounts", boardService.getTotalCounts(boardSearchRequest)));
@@ -115,7 +123,8 @@ public class BoardController {
      */
     @GetMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> getBoardDetail(@PathVariable Long boardId) {
-        return ResponseEntity.ok()
+        return ResponseEntity
+                .ok()
                 .body(new SuccessResponse()
                         .put("boardDetail", boardService.viewBoardDetail(boardId)));
     }
@@ -130,15 +139,28 @@ public class BoardController {
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> writeBoard(
+            @Login Long userId,
+            @Guest GuestSaveRequest guestSaveRequest,
             @Valid BoardSaveRequest boardSaveRequest,
             @Valid FileSaveRequest fileSaveRequest
     ) throws IOException {
         List<AttachVo> attachInsertList = fileHandler.saveFiles(fileSaveRequest.getMultipartFiles()); // 파일 생성 (C://upload)
-        long boardId = boardService.write(boardSaveRequest, attachInsertList); // 게시물, 파일 insert (DB)
 
-        return ResponseEntity.ok()
+        long boardId = 0;
+        if(isLogin(userId)) { // 로그인 글쓰기
+            boardId = boardService.write(userId, boardSaveRequest, attachInsertList);
+        } else { // 비 로그인 글쓰기
+            boardId = boardService.write(guestSaveRequest, boardSaveRequest, attachInsertList);
+        }
+
+        return ResponseEntity
+                .ok()
                 .body(new SuccessResponse()
                         .put("boardId", boardId));
+    }
+
+    private boolean isLogin(Long userId) {
+        return userId != null;
     }
 
     /**
@@ -159,7 +181,8 @@ public class BoardController {
         boardService.delete(boardDeleteRequest.getBoardId()); // 게시물, 댓글, 파일 삭제(db)
         fileHandler.deleteFiles(attachDeleteList); // 파일 삭제(C://upload)
 
-        return ResponseEntity.ok()
+        return ResponseEntity
+                .ok()
                 .body(new SuccessResponse());
     }
 
@@ -186,7 +209,8 @@ public class BoardController {
         boardService.modify(boardUpdateRequest, attachInsertList, attachDeleteList); // 게시물 수정 및 파일 삭제(DB)
         fileHandler.deleteFiles(attachDeleteList); // 파일 삭제
 
-        return ResponseEntity.ok()
+        return ResponseEntity
+                .ok()
                 .body(new SuccessResponse());
     }
 
@@ -199,7 +223,8 @@ public class BoardController {
     @PostMapping("/{boardId}/pwCheck")
     public ResponseEntity<SuccessResponse> pwCheck(@RequestBody BoardPwCheckRequest boardPwCheckRequest) {
         boardService.pwCheck(boardPwCheckRequest);
-        return ResponseEntity.ok()
+        return ResponseEntity
+                .ok()
                 .body(new SuccessResponse());
     }
 }

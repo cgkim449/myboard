@@ -7,6 +7,7 @@ import com.cgkim.myboard.vo.board.BoardPwCheckRequest;
 import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSearchRequest;
 import com.cgkim.myboard.vo.board.BoardUpdateRequest;
+import com.cgkim.myboard.vo.user.GuestSaveRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -15,8 +16,12 @@ public interface BoardService {
     List<BoardListResponse> getBoardList(BoardSearchRequest boardSearchRequest);
     int getTotalCounts(BoardSearchRequest boardSearchRequest);
     BoardDetailResponse viewBoardDetail(Long boardId);
-
-    long write(BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
+//    @Transactional(rollbackFor = Exception.class)
+//    long write(BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
+    @Transactional(rollbackFor = Exception.class)
+    long write(GuestSaveRequest guestSaveRequest, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
+    @Transactional(rollbackFor = Exception.class)
+    long write(Long userId, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
     void pwCheck(Long boardId, String guestPassword);
     void pwCheck(BoardPwCheckRequest boardPwCheckRequest);
     @Transactional(rollbackFor = Exception.class)

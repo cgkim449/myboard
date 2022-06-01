@@ -8,7 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class BoardUpdateRequest {
 
-    private String guestName;
+    private String guestNickname;
     private String boardTitle;
     private String boardContent;
 

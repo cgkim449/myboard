@@ -3,6 +3,7 @@
     <v-row justify="center">
       <v-col cols="auto">
         <v-card
+            outlined
             width="460"
         >
           <v-card-text class="text-center px-12 py-16">
@@ -51,7 +52,6 @@
                   class="mt-6"
                   block
                   x-large
-                  rounded
                   color="primary"
               >
                 가입하기
@@ -71,13 +71,10 @@ export default {
   name: "SignUpPage",
   data() {
     const defaultForm = Object.freeze({
-      guestName: '',
-      guestPassword: '',
-      guestPasswordConfirm: '',
-      categoryId: '',
-      boardTitle: '',
-      boardContent: '',
-      multipartFiles: [],
+      username: "",
+      nickname: "",
+      password: "",
+      passwordConfirm: "",
     })
     return {
       username: "",
@@ -104,6 +101,13 @@ export default {
     submit () {
       this.resetForm()
     },
+    moveToLoginPage(username) {
+      console.log(username)
+      this.$router.push({
+        path:`/login`,
+        query: {"username": username}
+      }).catch(()=>{});
+    },
     async signUp() {
       if(this.validateForm()) {
         const user = {
@@ -114,27 +118,12 @@ export default {
         };
         try {
           const response = await this.$_UserService.signUp(user);
-          this.initForm();
           alert(`${response.data.signUpResult.nickname}님, 회원가입 되셨습니다.`)
-          console.log(response.data.signUpResult.username)
           this.moveToLoginPage(response.data.signUpResult.username);
         } catch (error) {
           alert(error.response.data.errorMessage)
         }
       }
-    },
-    initForm() {
-      this.username = "";
-      this.password = "";
-      this.passwordConfirm = "";
-      this.nickname = "";
-    },
-    moveToLoginPage(username) {
-      console.log(username)
-      this.$router.push({
-        path:`/login`,
-        query: {"username": username}
-      }).catch(()=>{});
     },
     validatePassword(password) {
       if(!(4 <= password.length && password.length < 16)) {

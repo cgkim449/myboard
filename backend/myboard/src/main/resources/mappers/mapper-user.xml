@@ -14,7 +14,10 @@
     <select id="selectByUsername" resultType="userVo">
         select user_id
              , username
+             , password
              , nickname
+             , user_register_date
+             , user_update_date
           from user
          where username = #{username}
     </select>
@@ -29,6 +32,11 @@
         select count(*)
           from user
          where nickname = #{nickname}
+    </select>
+    <select id="selectUserIdByUsername" resultType="java.lang.Long">
+        select user_id
+          from user
+         where username = #{username}
     </select>
 
     <insert id="insert" parameterType="signUpRequest" useGeneratedKeys="true" keyProperty="userId">

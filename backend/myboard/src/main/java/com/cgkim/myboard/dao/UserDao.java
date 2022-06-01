@@ -14,4 +14,6 @@ public interface UserDao {
     UserVo selectByUsername(String username);
     int selectCountByUsername(String username);
     int selectCountByNickname(String nickname);
+
+    Long selectUserIdByUsername(String username);
 }

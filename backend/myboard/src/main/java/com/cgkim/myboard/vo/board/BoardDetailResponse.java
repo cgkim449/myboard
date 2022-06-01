@@ -28,5 +28,5 @@ public class BoardDetailResponse {
     private List<CommentListResponse> commentList;
     private List<AttachVo> attachList;
 
-    private String guestName;
+    private String guestNickname;
 }

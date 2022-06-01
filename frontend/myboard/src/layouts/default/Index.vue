@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <DefaultBar @drawer="drawer = !drawer"></DefaultBar>
+    <DefaultBar @drawer="switchDrawer"></DefaultBar>
     <DefaultNavigation v-model="drawer"></DefaultNavigation>
     <DefaultView></DefaultView>
   </v-app>
@@ -22,7 +22,12 @@ export default {
     return {
       drawer: false,
     }
-  }
+  },
+  methods: {
+    switchDrawer() {
+      this.drawer = !this.drawer;
+    },
+  },
 }
 </script>
 

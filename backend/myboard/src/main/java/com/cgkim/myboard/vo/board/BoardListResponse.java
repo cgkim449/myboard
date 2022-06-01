@@ -21,5 +21,5 @@ public class BoardListResponse {
     private Integer categoryId;
     private String categoryName;
 
-    private String guestName;
+    private String guestNickname;
 }
