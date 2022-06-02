@@ -22,11 +22,6 @@ public class BoardUpdateRequestValidator implements Validator {
 
         String boardTitle = boardUpdateRequest.getBoardTitle();
         String boardContent = boardUpdateRequest.getBoardContent();
-        String guestNickname = boardUpdateRequest.getGuestNickname();
-
-        if (guestNickname == null || !(3 <= guestNickname.length() && guestNickname.length() < 5)) {
-            errors.rejectValue("guestNickname", "length", new Object[] {3, 5}, null);
-        }
 
         if (boardTitle == null || !(4 <= boardTitle.length() && boardTitle.length() < 100)) {
             errors.rejectValue("boardTitle", "length", new Object[] {4, 100}, null);

@@ -2,10 +2,7 @@ package com.cgkim.myboard.dao;
 
 import com.cgkim.myboard.vo.board.BoardDetailResponse;
 import com.cgkim.myboard.vo.board.BoardListResponse;
-import com.cgkim.myboard.vo.board.BoardPwCheckRequest;
-import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSearchRequest;
-import com.cgkim.myboard.vo.board.BoardUpdateRequest;
 import com.cgkim.myboard.vo.board.BoardVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -21,9 +18,11 @@ public interface BoardDao {
     void increaseViewCnt(Long boardId);
     BoardDetailResponse selectOne(Long boardId);
     void updateHasAttach(Map<String, Object> updateHasAttachMap);
-    Long selectOneByGuestPassword(BoardPwCheckRequest boardPwCheckRequest);
+    Long selectOneByGuestPassword(Map<String, Object> map);
     void delete(Long boardId);
-    int update(BoardUpdateRequest boardUpdateRequest);
+    int update(Map<String, Object> map);
     void insertGuestBoard(BoardVo boardVo);
     void insertLoginUserBoard(BoardVo boardVo);
+
+    Long selectUserId(Long boardId);
 }

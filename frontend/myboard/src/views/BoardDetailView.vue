@@ -1,14 +1,21 @@
 <template>
   <v-container v-if="!isEmpty(boardDetail)">
-    <v-row>
-      <v-col>
-        <v-card outlined min-height="400">
-          <v-card-text>
+    <v-row justify="center">
+      <v-col
+        cols="11"
+      >
+        <v-card outlined min-height="400" class="pa-1">
+          <v-card-text class="mt-1">
             <v-row algin="center">
               <v-col
                   cols="auto"
               >
-                <span>{{boardDetail.guestName}}</span>
+                <template v-if="boardDetail.guestNickname === null">
+                  <span>{{ boardDetail.nickname }}</span>
+                </template>
+                <template v-else>
+                  <span>{{ boardDetail.guestNickname }}</span>
+                </template>
               </v-col>
 
               <v-spacer></v-spacer>
@@ -58,25 +65,32 @@
           </v-card-text>
         </v-card>
 
-        <v-card outlined class="pt-4 mt-3">
-          <v-card-text >
-            <v-row>
-              <v-col>
-                <p v-for="attach in boardDetail.attachList">
-                  <span v-on:click="$_BoardService.downloadAttach(attach.attachId)"><v-icon>mdi-attachment</v-icon> {{attach.attachName}}.{{attach.attachExtension}}</span>
-                </p>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
+        <template v-if="boardDetail.boardHasAttach">
+          <v-card outlined class="px-1 pt-1 mt-3">
+            <v-card-title class="text-subtitle-1 grey--text">
+              첨부파일 {{ boardDetail.attachList.length }}개
+            </v-card-title>
+            <v-card-text>
+              <p v-for="attach in boardDetail.attachList">
+                <span v-on:click="$_BoardService.downloadAttach(attach.attachId)" v-bind:style="{cursor: 'pointer'}">
+                  <v-icon>mdi-attachment</v-icon>
+                  {{attach.attachName}}.{{attach.attachExtension}}
+                </span>
+              </p>
+            </v-card-text>
+          </v-card>
+        </template>
 
-        <v-card outlined class="pt-4 mt-3">
+        <v-card outlined class="px-1 pt-1 mt-3">
+          <v-card-title class="text-subtitle-1 grey--text">
+            댓글 {{ boardDetail.commentList.length }}개
+          </v-card-title>
           <v-card-text v-for="comment in boardDetail.commentList">
             <v-row>
               <v-col
                   cols="1"
               >
-                {{comment.commentNickname}}
+                {{comment.guestNickname}}
               </v-col>
               <v-col>
                 {{comment.commentContent}}
@@ -95,10 +109,16 @@
               <v-col
                   cols="2"
               >
-                <v-text-field label="닉네임" dense  outlined style="height: 48px !important;" v-model="comment.commentNickname">
-                </v-text-field>
-                <v-text-field label="비밀번호" dense  outlined style="height: 48px !important;" v-model="comment.commentPassword">
-                </v-text-field>
+                <template v-if="$store.getters.isLogin">
+                  <v-text-field  disabled dense  outlined style="height: 48px !important;" v-model="$store.state.nickname">
+                  </v-text-field>
+                </template>
+                <template v-else>
+                  <v-text-field label="닉네임" dense  outlined style="height: 48px !important;" v-model="comment.guestNickname">
+                  </v-text-field>
+                  <v-text-field  label="비밀번호" dense  outlined style="height: 48px !important;" v-model="comment.guestPassword">
+                  </v-text-field>
+                </template>
               </v-col>
               <v-col>
                 <v-textarea
@@ -148,40 +168,181 @@
                   </v-btn>
                 </router-link>
               </v-col>
-              <v-col
-                  cols="auto"
-              >
-                <router-link v-bind:to="{
-                  path: `/boards/${boardDetail.boardId}/pwCheck`,
-                  query: {action: 'modify', ...searchCondition}}">
-                  <v-btn
-                      color="primary"
-                      outlined
+
+<!--              1.(로그인 사용자)본인 글이면 수정 삭제 버튼 보임.-->
+                <template v-if="$store.getters.isLogin && $store.state.username === boardDetail.username">
+                  <v-col
+                    cols="auto"
                   >
-                    수정
-                  </v-btn>
-                </router-link>
-              </v-col>
-              <v-col
-                  cols="auto"
-              >
-                <router-link v-bind:to="{
-                  path: `/boards/${boardDetail.boardId}/pwCheck`,
-                  query: {action: 'delete', ...searchCondition}}">
-                  <v-btn
-                      color="primary"
-                      outlined
+                    <router-link v-bind:to="{
+                      path: `/boards/${boardDetail.boardId}/modify`,
+                      query: this.searchCondition
+                    }">
+                      <v-btn
+                          outlined
+                          color="primary"
+                      >
+                        수정
+                      </v-btn>
+                    </router-link>
+                  </v-col>
+
+                  <v-col
+                    cols="auto"
                   >
-                    삭제
-                  </v-btn>
-                </router-link>
-              </v-col>
+                      <v-btn
+                          outlined
+                          color="primary"
+                          @click="pwCheck('delete')"
+                      >
+                        삭제
+                      </v-btn>
+                  </v-col>
+                </template>
+<!--              2.(모든 사용자)다른 회원 글이면 수정 삭제 버튼안보임.-->
+              <template v-else-if="boardDetail.username !== null">
+
+              </template>
+<!--                3. 익명 글이면 누구나 수정 삭제 버튼 눌렀을시 모달 뜸-->
+                <template v-else>
+                  <v-col
+                      cols="auto"
+                  >
+                    <v-dialog
+                        v-model="modifyBoardDialog"
+                        max-width="400px"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                            outlined
+                            color="primary"
+                            v-bind="attrs"
+                            v-on="on"
+                        >
+                          수정
+                        </v-btn>
+                      </template>
+                      <v-card>
+                        <v-card-title>
+                          <span class="text-h5">비밀번호 확인</span>
+                        </v-card-title>
+                        <v-card-text>
+                          <v-container>
+                            <v-row>
+                              <v-col
+                                  cols="12"
+                              >
+                                <v-text-field
+                                    type="password"
+                                    clearable
+                                    prepend-icon="mdi-lock-outline"
+                                    v-model="guestBoardPwCheckRequest.guestPassword"
+                                    label="비밀번호를 입력해주세요."
+                                    v-on:keyup.enter="pwCheck('modify')"
+                                ></v-text-field>
+                              </v-col>
+
+                            </v-row>
+                          </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="modifyBoardDialog = false"
+                          >
+                            취소
+                          </v-btn>
+                          <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="pwCheck('modify')"
+                          >
+                            확인
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+                  </v-col>
+
+
+                  <v-col
+                      cols="auto"
+                  >
+                    <v-dialog
+                        v-model="deleteBoardDialog"
+                        max-width="400px"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                            outlined
+                            color="primary"
+                            v-bind="attrs"
+                            v-on="on"
+                        >
+                          삭제
+                        </v-btn>
+                      </template>
+                      <v-card>
+                        <v-card-title>
+                          <span class="text-h5">비밀번호 확인</span>
+                        </v-card-title>
+                        <v-card-text>
+                          <v-container>
+                            <v-row>
+                              <v-col
+                                  cols="12"
+                              >
+                                <v-text-field
+                                    clearable
+                                    type="password"
+                                    prepend-icon="mdi-lock-outline"
+                                    v-model="guestBoardPwCheckRequest.guestPassword"
+                                    label="비밀번호를 입력해주세요."
+                                    v-on:keyup.enter="pwCheck('delete')"
+                                ></v-text-field>
+                              </v-col>
+
+                            </v-row>
+                          </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="deleteBoardDialog = false"
+                          >
+                            취소
+                          </v-btn>
+                          <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="pwCheck('delete')"
+                          >
+                            확인
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+                  </v-col>
+                </template>
+              <!--                비회원 모달 끝-->
+
+
             </v-row>
           </v-card-text>
         </v-card>
 
       </v-col>
     </v-row>
+
+
+
+
+
+
   </v-container>
 </template>
 
@@ -190,10 +351,23 @@ export default {
   name: "BoardDetailView",
   data() {
     return {
+      modifyBoardDialog: false,
+      deleteBoardDialog: false,
       boardDetail: {},
       comment: {},
       searchCondition: {},
+      guestBoardPwCheckRequest: {
+        guestPassword: "",
+      },
     }
+  },
+  computed: {
+    closeModifyBoardDialog() {
+      return this.initGuestBoardPwCheckRequest(this.modifyBoardDialog);
+    },
+    closeDeleteBoardDialog() {
+      return this.initGuestBoardPwCheckRequest(this.deleteBoardDialog);
+    },
   },
   async created() {
     this.searchCondition = {...this.$route.query};
@@ -203,6 +377,11 @@ export default {
     console.log(this.boardDetail);
   },
   methods: {
+    initGuestBoardPwCheckRequest(dialog) {
+      if(!dialog) {
+        this.guestBoardPwCheckRequest = {};
+      }
+    },
     isEmpty(obj) {
       return Object.keys(obj).length === 0 && obj.constructor === Object;
     },
@@ -220,10 +399,37 @@ export default {
       }
     },
     initComment() {
-      this.comment.commentNickname = "";
-      this.comment.commentPassword = "";
       this.comment.commentContent = "";
+      this.comment.guestNickname = "";
+      this.comment.guestPassword = "";
     },
+    async pwCheck(action) {
+      this.guestBoardPwCheckRequest.boardId = this.boardDetail.boardId;
+      try {
+        if(action === 'delete') {
+          // TODO: 회원 게시글 삭제 해야됨..
+          await this.$_BoardService.removeBoard(this.guestBoardPwCheckRequest);
+          alert('삭제되었습니다.');
+          this.goToBoardList();
+        } else if(action === 'modify') {
+          await this.$_BoardService.checkBoardPw(this.guestBoardPwCheckRequest);
+          this.goToBoardModify();
+        }
+      } catch (error) {
+        alert(error.response.data.errorMessage);
+      }
+    },
+    goToBoardList() {
+      this.$router.push({
+        path: '/boards'
+        , query: this.searchCondition
+      });
+    },
+    goToBoardModify() {
+      this.$router.push({
+        path: `/boards/${this.boardDetail.boardId}/modify`
+        , query: this.searchCondition});
+    }
   }
 }
 </script>

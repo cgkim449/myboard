@@ -28,5 +28,9 @@ public class BoardDetailResponse {
     private List<CommentListResponse> commentList;
     private List<AttachVo> attachList;
 
-    private String guestNickname;
+    private String guestNickname; // 비로그인 사용자 닉네임
+
+    private String username; // 로그인 사용자 이메일
+    private String nickname; // 로그인 사용자 닉네임
+
 }

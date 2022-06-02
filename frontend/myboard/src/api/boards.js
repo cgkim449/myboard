@@ -12,9 +12,6 @@ const getBoardList = (searchCondition) => {
 
 /**
  * 게시글 상세 조회 API
- *
- * @param boardId
- * @returns {*}
  */
 const getBoardDetail = (boardId) => {
     return boardsInstance.get(
@@ -24,9 +21,6 @@ const getBoardDetail = (boardId) => {
 
 /**
  * 게시글 작성 API
- *
- * @param formData
- * @returns {*}
  */
 const createBoard = (formData) => {
     return boardsInstance.post(
@@ -38,41 +32,36 @@ const createBoard = (formData) => {
 
 /**
  * 게시글 삭제 API
- *
- * @param board
- * @returns {*}
  */
-const deleteBoard = (board) => {
+const deleteBoard = (request) => {
+    console.log(request.guestPassword)
     return boardsInstance.delete(
-        `/${board.boardId}`,
-        {data: board});
+        `/${request.boardId}`,
+        {data: {guestPassword: request.guestPassword}});
 };
 
 /**
  * 게시글 수정 API
- *
- * @param formData
- * @returns {*}
  */
 const patchBoard = (formData) => {
     return boardsInstance.patch(
         `/${formData.get('boardId')}`,
         formData,
-        {headers: {"Content-Type" : "multipart/form-data"}
+        {headers: {"Content-Type" : "multipart/form-data"},
         });
 };
 
 /**
  * 게시글 익명 작성자 비밀번호 확인 API
- *
- * @param board
- * @returns {*}
  */
 const checkBoardPw = (board) => {
     console.log(board.guestPassword)
+    let form = new FormData()
+    form.append('guestPassword', board.guestPassword)
     return boardsInstance.post(
-        `/${board.boardId}/pwCheck`,
-        board);
+            `/${board.boardId}/pwCheck`,
+        form
+    );
 }
 
 export {

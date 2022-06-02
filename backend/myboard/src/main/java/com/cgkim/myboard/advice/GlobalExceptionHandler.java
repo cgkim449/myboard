@@ -1,15 +1,16 @@
 package com.cgkim.myboard.advice;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.cgkim.myboard.exception.BoardInsertFailedException;
 import com.cgkim.myboard.exception.BusinessException;
 import com.cgkim.myboard.exception.ErrorCode;
-import com.cgkim.myboard.exception.InvalidJwtTokenException;
+import com.cgkim.myboard.exception.TokenInvalidException;
 import com.cgkim.myboard.response.ErrorResponse;
 import com.cgkim.myboard.util.FileHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -30,24 +31,7 @@ public class GlobalExceptionHandler {
     private final FileHandler fileHandler;
 
     /**
-     * 올바르지 않은 토큰
-     *
-     * @param exception
-     * @return
-     */
-    @ExceptionHandler(InvalidJwtTokenException.class)
-    public ResponseEntity<ErrorResponse> InvalidJwtTokenExceptionHandler(InvalidJwtTokenException exception) {
-        log.error("handleInvalidJwtTokenException", exception);
-        return ResponseEntity
-                .status(exception.getErrorCode().getHttpStatus())
-                .body(buildErrorResponse(exception.getErrorCode()));
-    }
-
-    /**
      * 최대한 여기서 모든 비즈니스 로직 예외처리
-     *
-     * @param exception
-     * @return
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> businessExceptionHandler(BusinessException exception) {
@@ -59,9 +43,6 @@ public class GlobalExceptionHandler {
 
     /**
      * 게시물 DB에 insert 실패 시, 생성한 첨부파일이 있다면 그 파일을 삭제
-     *
-     * @param exception
-     * @return
      */
     @ExceptionHandler(BoardInsertFailedException.class)
     public ResponseEntity<ErrorResponse> boardInsertFailedExceptionHandler(BoardInsertFailedException exception) {
@@ -74,11 +55,31 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 민료된 토큰 = 로그아웃
+     * @return TODO: redirect 상태코드 location 주면됨 참고
+     */
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<ErrorResponse> TokenExpiredExceptionHandler(TokenExpiredException exception) {
+        log.error("TokenExpiredExceptionException", exception);
+        return ResponseEntity
+                .status(ErrorCode.TOKEN_EXPIRED.getHttpStatus())
+                .body(buildErrorResponse(ErrorCode.TOKEN_EXPIRED));
+    }
+
+    /**
+     * 유효하지 않은 토큰
+     * @return 401
+     */
+    @ExceptionHandler(JWTVerificationException.class)
+    public ResponseEntity<ErrorResponse> JWTVerificationExceptionHandler(JWTVerificationException exception) {
+        log.error("JWTVerificationExceptionException", exception);
+        return ResponseEntity
+                .status(ErrorCode.TOKEN_INVALID.getHttpStatus())
+                .body(buildErrorResponse(ErrorCode.TOKEN_INVALID));
+    }
+
+    /**
      * 바인딩 예외 처리
-     *
-     * @param exception
-     * @param bindingResult
-     * @return
      */
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ErrorResponse> bindExceptionHandler(BindException exception, BindingResult bindingResult) {
@@ -91,9 +92,6 @@ public class GlobalExceptionHandler {
 
     /**
      * 최대 업로드 크기 초과 예외 처리
-     *
-     * @param exception
-     * @return
      */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> maxUploadSizeExceededExceptionHandler(MaxUploadSizeExceededException exception) {
@@ -105,9 +103,6 @@ public class GlobalExceptionHandler {
 
     /**
      * 모든 예외를 처리
-     * 
-     * @param exception
-     * @return
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> exceptionHandler(Exception exception) {

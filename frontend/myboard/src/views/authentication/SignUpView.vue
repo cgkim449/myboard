@@ -19,34 +19,48 @@
               <v-text-field
                   v-model="username"
                   :rules="rules.username"
-                  label="이메일"
+                  label="이메일*"
                   clearable
                   prepend-icon="mdi-email"
               ></v-text-field>
               <v-text-field
                   v-model="nickname"
                   :rules="rules.nickname"
-                  label="이름"
+                  label="이름*"
+                  hint="3글자 이상, 5글자 미만입니다."
                   clearable
                   prepend-icon="mdi-email"
               ></v-text-field>
               <v-text-field
+                  :append-icon="showPasswordText ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="showPasswordText ? 'text' : 'password'"
+                  hint="영문/숫자/특수문자 포함 4글자 이상, 16글자 미만입니다."
+                  @click:append="showPasswordText = !showPasswordText"
                   v-model="password"
                   :rules="rules.password"
-                  label="비밀번호"
+                  label="비밀번호*"
+                  counter
                   clearable
                   prepend-icon="mdi-lock-outline"
               >
               </v-text-field>
               <v-text-field
+                  :append-icon="showPasswordConfirmText ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="showPasswordConfirmText ? 'text' : 'password'"
+                  @click:append="showPasswordConfirmText = !showPasswordConfirmText"
+                  counter
+
                   v-model="passwordConfirm"
                   :rules="rules.passwordConfirm"
-                  label="비밀번호 확인"
+                  label="비밀번호 확인*"
                   clearable
                   prepend-icon="mdi-lock-outline"
                   v-on:keyup.enter="signUp"
               >
               </v-text-field>
+
+              <small>*필수 입력</small>
+
               <v-btn
                   v-on:click="signUp"
                   class="mt-6"
@@ -77,13 +91,15 @@ export default {
       passwordConfirm: "",
     })
     return {
+      showPasswordText: false,
+      showPasswordConfirmText: false,
       username: "",
       nickname: "",
       password: "",
       passwordConfirm: "",
       rules: {
         nickname: [val => (3 <= (val || '').length && (val || '').length < 5) || '3글자 이상, 5글자 미만입니다.',],
-        username: [val => (val || '').length > 0 || '필수 값입니다.'],
+        username: [val => (val || '').length > 0 || '이메일을 입력해주세요.'],
         password: [val => (this.validatePassword(val || '') || '영문/숫자/특수문자 포함 4글자 이상, 16글자 미만입니다.'),],
         passwordConfirm: [val => this.password === val || `비밀번호가 일치하지 않습니다.`,],
       },

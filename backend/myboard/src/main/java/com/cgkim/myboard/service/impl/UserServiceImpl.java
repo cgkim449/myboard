@@ -1,8 +1,8 @@
 package com.cgkim.myboard.service.impl;
 
 import com.cgkim.myboard.dao.UserDao;
-import com.cgkim.myboard.exception.DuplicateNicknameException;
-import com.cgkim.myboard.exception.DuplicateUsernameException;
+import com.cgkim.myboard.exception.NicknameDuplicateException;
+import com.cgkim.myboard.exception.UsernameDuplicateException;
 import com.cgkim.myboard.exception.ErrorCode;
 import com.cgkim.myboard.exception.LoginFailedException;
 import com.cgkim.myboard.service.UserService;
@@ -22,11 +22,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
         if(userDao.selectCountByUsername(signUpRequest.getUsername()) > 0) {
-            throw new DuplicateUsernameException(ErrorCode.DUPLICATE_USERNAME);
+            throw new UsernameDuplicateException(ErrorCode.USERNAME_DUPLICATE);
         }
 
         if(userDao.selectCountByNickname(signUpRequest.getNickname()) > 0) {
-            throw new DuplicateNicknameException(ErrorCode.DUPLICATE_NICKNAME);
+            throw new NicknameDuplicateException(ErrorCode.NICKNAME_DUPLICATE);
         }
 
         userDao.insert(signUpRequest);

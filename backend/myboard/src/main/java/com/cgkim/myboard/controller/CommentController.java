@@ -2,7 +2,6 @@ package com.cgkim.myboard.controller;
 
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.CommentService;
-import com.cgkim.myboard.vo.comment.CommentListResponse;
 import com.cgkim.myboard.vo.comment.CommentSaveRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/comments")
@@ -42,7 +38,9 @@ public class CommentController {
      * @return
      */
     @PostMapping
-    public ResponseEntity<SuccessResponse> write(@RequestBody CommentSaveRequest commentSaveRequest) {
+    public ResponseEntity<SuccessResponse> write(
+            @RequestBody CommentSaveRequest commentSaveRequest
+    ) {
         commentService.writeComment(commentSaveRequest);
 
         return ResponseEntity

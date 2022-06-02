@@ -7,7 +7,8 @@ import lombok.Getter;
 @Getter
 public class CommentSaveRequest {
     private Long boardId;
-    private String commentNickname;
-    private String commentPassword;
     private String commentContent;
+
+    private String guestNickname;
+    private String guestPassword;
 }
