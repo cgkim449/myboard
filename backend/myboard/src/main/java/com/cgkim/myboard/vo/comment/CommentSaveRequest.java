@@ -9,6 +9,4 @@ public class CommentSaveRequest {
     private Long boardId;
     private String commentContent;
 
-    private String guestNickname;
-    private String guestPassword;
 }

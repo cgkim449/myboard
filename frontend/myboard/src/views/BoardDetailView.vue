@@ -87,11 +87,20 @@
           </v-card-title>
           <v-card-text v-for="comment in boardDetail.commentList">
             <v-row>
-              <v-col
-                  cols="1"
-              >
-                {{comment.guestNickname}}
-              </v-col>
+              <template v-if="comment.nickname == null">
+                <v-col
+                    cols="1"
+                >
+                  {{comment.guestNickname}}
+                </v-col>
+              </template>
+              <template v-else>
+                <v-col
+                    cols="1"
+                >
+                  {{comment.nickname}}
+                </v-col>
+              </template>
               <v-col>
                 {{comment.commentContent}}
               </v-col>
@@ -354,7 +363,12 @@ export default {
       modifyBoardDialog: false,
       deleteBoardDialog: false,
       boardDetail: {},
-      comment: {},
+      comment: {
+        boardId: 0,
+        commentContent: "",
+        guestPassword: "",
+        guestNickname: "",
+      },
       searchCondition: {},
       guestBoardPwCheckRequest: {
         guestPassword: "",

@@ -126,9 +126,9 @@ public class BoardController {
     ) throws IOException {
         List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles()); //첨부파일 생성 (C://upload)
         long boardId;
-        if(isLogin(userId)) { //로그인 사용자 글 작성
+        if(isLogin(userId)) { //회원 글작성
             boardId = boardService.write(userId, boardSaveRequest, attachInsertList);
-        } else { //익명 글 작성
+        } else { //익명 글작성
             boardId = boardService.write(guestSaveRequest, boardSaveRequest, attachInsertList);
         }
         return ResponseEntity

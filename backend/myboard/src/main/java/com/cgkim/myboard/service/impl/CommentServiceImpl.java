@@ -5,6 +5,8 @@ import com.cgkim.myboard.dao.CommentDao;
 import com.cgkim.myboard.service.CommentService;
 import com.cgkim.myboard.vo.comment.CommentListResponse;
 import com.cgkim.myboard.vo.comment.CommentSaveRequest;
+import com.cgkim.myboard.vo.comment.CommentVo;
+import com.cgkim.myboard.vo.user.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,25 +18,34 @@ public class CommentServiceImpl implements CommentService {
     final CommentDao commentDao;
 
     /**
-     * 특정 게시물의 댓글 리스트
-     *
-     * @param boardId
-     * @return
+     * 댓글 리스트
      */
     @Override
     public List<CommentListResponse> getCommentList(Long boardId) {
         return commentDao.selectList(boardId);
     }
 
-    /**
-     * 댓글 작성
-     *
-     * @param commentSaveRequest
-     */
     @Override
-    public void writeComment(CommentSaveRequest commentSaveRequest) {
-        commentDao.insert(commentSaveRequest);
+    public void writeComment(Long userId, CommentSaveRequest commentSaveRequest) {
+
+        commentDao.insertUserComment(
+                CommentVo.builder()
+                        .boardId(commentSaveRequest.getBoardId())
+                        .commentContent(commentSaveRequest.getCommentContent())
+                        .userId(userId)
+                        .build()
+        );
     }
 
-
+    @Override
+    public void writeComment(GuestSaveRequest guestSaveRequest, CommentSaveRequest commentSaveRequest) {
+        commentDao.insertGuestComment(
+                CommentVo.builder()
+                        .boardId(commentSaveRequest.getBoardId())
+                        .commentContent(commentSaveRequest.getCommentContent())
+                        .guestNickname(guestSaveRequest.getGuestNickname())
+                        .guestPassword(guestSaveRequest.getGuestPassword())
+                        .build()
+        );
+    }
 }

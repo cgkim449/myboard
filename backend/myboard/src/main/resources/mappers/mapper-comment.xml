@@ -4,17 +4,23 @@
 <mapper namespace="com.cgkim.myboard.dao.CommentDao">
 
     <select id="selectList" resultType="commentListResponse" parameterType="long">
-        select comment_Id
-             , board_Id
-             , guest_nickname
-             , comment_content
-             , comment_register_date
-          from comment
+        select c.comment_Id
+             , c.board_Id
+             , c.guest_nickname
+             , c.comment_content
+             , c.comment_register_date
+             , u.nickname
+          from comment c
+     left join user u
+            on u.user_id = c.user_id
          where board_id=#{boardId};
     </select>
 
-
-    <insert id="insert" parameterType="commentSaveRequest">
+    <insert id="insertUserComment" parameterType="commentVo">
+        insert into comment(board_id, user_id, comment_content)
+        values(#{boardId}, #{userId}, #{commentContent})
+    </insert>
+    <insert id="insertGuestComment" parameterType="commentVo">
         insert into comment(board_id, guest_nickname, guest_password, comment_content)
         values(#{boardId}, #{guestNickname}, #{guestPassword}, #{commentContent})
     </insert>
