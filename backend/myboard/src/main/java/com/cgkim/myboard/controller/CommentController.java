@@ -67,9 +67,6 @@ public class CommentController {
 
     /**
      * 특정 게시물의 댓글 리스트
-     *
-     * @param boardId
-     * @return
      */
     @GetMapping
     public ResponseEntity<SuccessResponse> getCommentList(Long boardId) {
@@ -81,9 +78,6 @@ public class CommentController {
 
     /**
      * 댓글 작성
-     *
-     * @param commentSaveRequest
-     * @return
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> write(

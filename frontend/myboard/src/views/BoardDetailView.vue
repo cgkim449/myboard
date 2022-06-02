@@ -89,14 +89,14 @@
             <v-row>
               <template v-if="comment.nickname == null">
                 <v-col
-                    cols="1"
+                    cols="2"
                 >
                   {{comment.guestNickname}}
                 </v-col>
               </template>
               <template v-else>
                 <v-col
-                    cols="1"
+                    cols="2"
                 >
                   {{comment.nickname}}
                 </v-col>
@@ -113,24 +113,44 @@
             <v-divider></v-divider>
           </v-card-text>
 
+
+          <v-form
+              ref="form"
+              @submit.prevent="submit"
+          >
           <v-card-text>
             <v-row dense>
               <v-col
                   cols="2"
               >
                 <template v-if="$store.getters.isLogin">
-                  <v-text-field  disabled dense  outlined style="height: 48px !important;" v-model="$store.state.nickname">
+                  <v-text-field  disabled dense style="height: 48px !important; " outlined  v-model="$store.state.nickname">
                   </v-text-field>
                 </template>
+
                 <template v-else>
-                  <v-text-field label="닉네임" dense  outlined style="height: 48px !important;" v-model="comment.guestNickname">
+                  <v-text-field
+                      dense
+                      style="height: 49px !important;"
+                      label="닉네임"
+                      outlined
+                      v-model="comment.guestNickname"
+                  >
                   </v-text-field>
-                  <v-text-field  label="비밀번호" dense  outlined style="height: 48px !important;" v-model="comment.guestPassword">
+                  <v-text-field
+                      dense
+                      style="height: 50px !important;"
+                      type="password"
+                      label="비밀번호"
+                      outlined
+                      v-model="comment.guestPassword"
+                  >
                   </v-text-field>
                 </template>
               </v-col>
               <v-col>
                 <v-textarea
+                    dense
                     v-model="comment.commentContent"
                     outlined
                     rows="3"
@@ -146,7 +166,7 @@
               >
                 <v-btn
                     outlined
-                    height="94"
+                    height="90"
                     width="94"
                     color="primary"
                     v-on:click="writeComment"
@@ -155,8 +175,10 @@
                 </v-btn>
               </v-col>
 
+
             </v-row>
           </v-card-text>
+          </v-form>
         </v-card>
 
         <v-card elevation="0">
@@ -359,7 +381,14 @@
 export default {
   name: "BoardDetailView",
   data() {
+    const defaultForm = Object.freeze({
+      guestNickname: '',
+      guestPassword: '',
+      commentContent: '',
+    })
+
     return {
+      defaultForm,
       modifyBoardDialog: false,
       deleteBoardDialog: false,
       boardDetail: {},
@@ -391,6 +420,37 @@ export default {
     console.log(this.boardDetail);
   },
   methods: {
+    validateBoardPw(guestPassword) {
+      if(!(4 <= guestPassword.length && guestPassword.length < 16)) {
+        return false;
+      }
+      let alphabet = 0;
+      let number = 0;
+      let specialSymbol = 0;
+
+      for (let i = 0; i < guestPassword.length; i++) {
+        let ascii = guestPassword.charCodeAt(i);
+
+        if (!('!'.charCodeAt(0) <= ascii && ascii <= '~'.charCodeAt(0))) {
+          return false;
+        } else if (('A'.charCodeAt(0) <= ascii && ascii <= 'Z'.charCodeAt(0)) || ('a'.charCodeAt(0) <= ascii && ascii <= 'z'.charCodeAt(0))) {
+          alphabet++;
+        } else if ('0'.charCodeAt(0) <= ascii && ascii <= '9'.charCodeAt(0)) {
+          number++;
+        } else {
+          specialSymbol++;
+        }
+      }
+
+      return alphabet != 0 && number != 0 && specialSymbol != 0;
+    },
+    resetForm () {
+      this.form = Object.assign({}, this.defaultForm)
+      this.$refs.form.reset()
+    },
+    submit () {
+      this.resetForm()
+    },
     initGuestBoardPwCheckRequest(dialog) {
       if(!dialog) {
         this.guestBoardPwCheckRequest = {};
@@ -400,17 +460,23 @@ export default {
       return Object.keys(obj).length === 0 && obj.constructor === Object;
     },
     async writeComment() {
-      try {
-        this.comment.boardId = this.boardDetail.boardId;
+      if(this.validateForm()) {
+        try {
+          this.comment.boardId = this.boardDetail.boardId;
 
-        await this.$_BoardService.writeComment(this.comment);
-        const response = await this.$_BoardService.fetchCommentList(this.boardDetail.boardId);
-        this.boardDetail.commentList = response.data.commentList;
+          await this.$_BoardService.writeComment(this.comment);
+          const response = await this.$_BoardService.fetchCommentList(this.boardDetail.boardId);
+          this.boardDetail.commentList = response.data.commentList;
 
-        this.initComment();
-      } catch (error) {
-        console.log(error)
+          this.initComment();
+        } catch (error) {
+          //TODO: 프론트에서 유효성 검증
+          alert(error.response.data.fieldErrorDetails[0].fieldErrorMessage)
+        }
       }
+    },
+    validateForm() {
+      return this.$refs.form.validate()
     },
     initComment() {
       this.comment.commentContent = "";
