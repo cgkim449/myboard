@@ -15,21 +15,20 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
+public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final UserService userService;
 
     /**
-     *
      * @return true 면 resolveArgument()가 호출됨
      */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
 
-        boolean hasLoginAnnotation = parameter.hasParameterAnnotation(Login.class);
+        boolean hasLoginUserAnnotation = parameter.hasParameterAnnotation(LoginUser.class);
         boolean hasLongType = Long.class.isAssignableFrom(parameter.getParameterType());
 
-        return hasLoginAnnotation && hasLongType;
+        return hasLoginUserAnnotation && hasLongType;
     }
 
     @Override

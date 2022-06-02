@@ -4,16 +4,14 @@ import com.cgkim.myboard.dao.AttachDao;
 import com.cgkim.myboard.dao.BoardDao;
 import com.cgkim.myboard.dao.CommentDao;
 import com.cgkim.myboard.exception.BoardInsertFailedException;
-import com.cgkim.myboard.exception.BoardPasswordIncorrectException;
+import com.cgkim.myboard.exception.GuestPasswordMismatchException;
 import com.cgkim.myboard.exception.ErrorCode;
 import com.cgkim.myboard.service.BoardService;
 import com.cgkim.myboard.vo.attach.AttachVo;
 import com.cgkim.myboard.vo.board.BoardDetailResponse;
 import com.cgkim.myboard.vo.board.BoardListResponse;
-import com.cgkim.myboard.vo.board.BoardPwCheckRequest;
 import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSearchRequest;
-import com.cgkim.myboard.vo.board.BoardUpdateRequest;
 import com.cgkim.myboard.vo.board.BoardVo;
 import com.cgkim.myboard.vo.user.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
@@ -116,7 +114,7 @@ public class BoardServiceImpl implements BoardService {
             long boardId = boardVo.getBoardId();
 
             if (attachInsertList != null && !attachInsertList.isEmpty()) {
-                insertAttaches(attachInsertList, boardSaveRequest.getBoardId());  // 첨부파일 insert
+                insertAttaches(attachInsertList, boardId);  // 첨부파일 insert
                 updateHasAttach(boardId);
             }
 
@@ -148,7 +146,7 @@ public class BoardServiceImpl implements BoardService {
             long boardId = boardVo.getBoardId();
 
             if (attachInsertList != null && !attachInsertList.isEmpty()) {
-                insertAttaches(attachInsertList, boardSaveRequest.getBoardId());  // 첨부파일 insert
+                insertAttaches(attachInsertList, boardId);  // 첨부파일 insert
                 updateHasAttach(boardId);
             }
 
@@ -161,24 +159,37 @@ public class BoardServiceImpl implements BoardService {
     /**
      * 게시물 수정
      *
-     * @param boardUpdateRequest
-     * @param attachSaveList
+     * @param boardId
+     * @param boardContent
+     * @param boardTitle
+     * @param attachInsertList
      * @param attachDeleteList
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void modify(BoardUpdateRequest boardUpdateRequest, List<AttachVo> attachSaveList, List<AttachVo> attachDeleteList) {
-
-        if(attachDeleteList != null && attachDeleteList.size() > 0) { // 첨부파일 db 삭제
+    public void modify(
+            Long boardId,
+            String boardContent,
+            String boardTitle,
+            List<AttachVo> attachInsertList,
+            List<AttachVo> attachDeleteList
+    ) {
+        if(attachDeleteList != null && attachDeleteList.size() > 0) { //첨부파일 delete
             deleteAttaches(attachDeleteList);
         }
 
-        if(attachSaveList != null && attachSaveList.size() > 0) { // 첨부파일 db 삽입
-            insertAttaches(attachSaveList, boardUpdateRequest.getBoardId());
+        if(attachInsertList != null && attachInsertList.size() > 0) { //첨부파일 insert
+            insertAttaches(attachInsertList, boardId);
         }
 
-        boardDao.update(boardUpdateRequest);  // 게시물 db 업데이트
-        updateHasAttach(boardUpdateRequest.getBoardId());  // 첨부파일 유무 여부 업데이트
+        boardDao.update(Map.of("boardId", boardId, "boardTitle", boardTitle, "boardContent", boardContent));  //게시물 update
+        updateHasAttach(boardId);  //첨부파일 유무 update
+    }
+
+    @Override
+    public boolean checkAnonymous(Long boardId) {
+        boolean isAnonymous = boardDao.selectUserId(boardId) == null;
+        return isAnonymous;
     }
 
     /**
@@ -196,28 +207,14 @@ public class BoardServiceImpl implements BoardService {
 
     /**
      * 게시물 비밀번호 확인
-     *
-     * @param boardId
-     * @param guestPassword
      */
     @Override
-    public void pwCheck(Long boardId, String guestPassword) {
-        pwCheck(BoardPwCheckRequest.builder().boardId(boardId).guestPassword(guestPassword).build());
-    }
-
-    /**
-     * 게시물 비밀번호 확인
-     *
-     * @param boardPwCheckRequest
-     */
-    @Override
-    public void pwCheck(BoardPwCheckRequest boardPwCheckRequest) {
-        Long result = boardDao.selectOneByGuestPassword(boardPwCheckRequest);
+    public void checkGuestPassword(Long boardId, String guestPassword) {
+        Long result = boardDao.selectOneByGuestPassword(Map.of("boardId", boardId, "guestPassword", guestPassword));
         if(result == null) {
-            throw new BoardPasswordIncorrectException(ErrorCode.BOARD_PASSWORD_INCORRECT);
+            throw new GuestPasswordMismatchException(ErrorCode.GUEST_PASSWORD_MISMATCH);
         }
     }
-
 
     /**
      * 첨부파일 insert

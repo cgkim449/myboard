@@ -7,32 +7,40 @@
           @submit.prevent="submit"
       >
         <v-container fluid>
-          <v-row>
-            <v-col>
-              <v-text-field
-                  v-model="form.guestName"
-                  :rules="rules.guestName"
-                  color="purple darken-2"
-                  label="닉네임"
-                  required
-              ></v-text-field>
-            </v-col>
-            <v-col>
-              <v-text-field
-                  v-model="form.guestPassword"
-                  :rules="rules.guestPassword"
-                  color="purple darken-2"
-                  label="비밀번호"
-                  required
-              ></v-text-field>
-            </v-col>
-          </v-row>
+
+          <!--              본인 글이면 맨위 row 안보임-->
+          <template v-if="$store.getters.isLogin && $store.state.username === boardDetail.username">
+          </template>
+          <template v-else>
+            <v-row>
+              <v-col>
+                <v-text-field
+                    disabled
+                    v-model="boardDetail.guestNickname"
+                    color="purple darken-2"
+                    required
+                ></v-text-field>
+              </v-col>
+              <v-col>
+                <v-text-field
+                    type="password"
+                    v-model="form.guestPassword"
+                    :rules="rules.guestPassword"
+                    color="purple darken-2"
+                    label="비밀번호"
+                    hint="작성하셨을 때의 비밀번호를 입력해주세요."
+                    required
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </template>
 
           <v-row>
             <v-col
                 cols="2"
             >
               <v-select
+                  disabled
                   readonly
                   v-model="boardDetail.categoryId"
                   :items="items"
@@ -69,7 +77,7 @@
               <v-row>
                 <v-col>
                   <p v-for="attach in boardDetail.attachList">
-                    <span v-on:click="$_BoardService.downloadAttach(attach.attachId)">
+                    <span v-on:click="$_BoardService.downloadAttach(attach.attachId)" style="cursor:pointer;">
                       <v-icon>mdi-attachment</v-icon>
                       {{attach.attachName}}.{{attach.attachExtension}} - {{attach.attachSize}} byte
 
@@ -99,7 +107,7 @@
                 cols="auto"
             >
               <router-link v-bind:to="{
-                    path: `/boards`,
+                    path: `/boards/${boardDetail.boardId}`,
                     query: this.searchCondition
                   }">
                 <v-btn
@@ -139,11 +147,12 @@ export default {
     return {
       fileInputKey: 0,
       form: {
+        guestPassword: "",
         multipartFiles: [],
         deleteAttaches: [],
       },
       rules: {
-        guestName: [val => (3 <= (val || '').length && (val || '').length < 5) || '3글자 이상, 5글자 미만입니다.',],
+        guestPassword: [val => (val || '').length > 0 || '비밀번호를 입력해주세요.'],
         boardTitle: [val => (4 <= (val || '').length && (val || '').length < 20) || '4글자 이상, 20글자 미만입니다.'],
         boardContent: [val => (4 <= (val || '').length && (val || '').length < 2000) || '4글자 이상, 2000글자 미만입니다.'],
       },
@@ -163,11 +172,8 @@ export default {
     let boardId = this.$route.params.id;
     const response = await this.$_BoardService.fetchBoard(boardId);
     this.boardDetail = response.data.boardDetail;
-    console.log(this.form)
-    this.form.guestName = response.data.boardDetail.guestName;
     this.form.boardTitle = response.data.boardDetail.boardTitle;
     this.form.boardContent = response.data.boardDetail.boardContent;
-    console.log(this.form)
   },
   methods: {
     removeFile(item) {
@@ -199,14 +205,18 @@ export default {
         }
         let formData = this.prepareFormData();
 
-        const {data} = await this.$_BoardService.updateBoard(formData);
+        try {
+          const {data} = await this.$_BoardService.updateBoard(formData);
+          this.moveToBoardDetail(this.boardDetail.boardId);
+        } catch (error) {
+          alert(error.response.data.errorMessage)
+        }
 
-        this.moveToBoardList();
       }
     },
-    moveToBoardList() {
+    moveToBoardDetail(boardId) {
       this.$router.push({
-        path:`/boards`,
+        path:`/boards/${boardId}`,
         query: this.searchCondition
       }).catch(()=>{});
     },
@@ -216,10 +226,9 @@ export default {
     prepareFormData() {
       let formData = new FormData();
 
+      formData.append("guestPassword", this.form.guestPassword);
       formData.append("boardId", this.boardDetail.boardId);
       formData.append("categoryId", this.boardDetail.categoryId);
-      formData.append("guestName", this.form.guestName);
-      formData.append("guestPassword", this.form.guestPassword);
       formData.append("boardTitle", this.form.boardTitle);
       formData.append("boardContent", this.form.boardContent);
       formData.append("attachDeleteRequest", this.form.deleteAttaches);

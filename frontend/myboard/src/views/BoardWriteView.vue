@@ -14,8 +14,8 @@
               <v-row>
                 <v-col>
                   <v-text-field
-                      v-model="form.guestName"
-                      :rules="rules.guestName"
+                      v-model="form.guestNickname"
+                      :rules="rules.guestNickname"
                       color="purple darken-2"
                       label="닉네임"
                       required
@@ -26,6 +26,7 @@
                       v-model="form.guestPassword"
                       :rules="rules.guestPassword"
                       color="purple darken-2"
+                      type="password"
                       label="비밀번호"
                       required
                   ></v-text-field>
@@ -35,6 +36,7 @@
                       v-model="form.guestPasswordConfirm"
                       :rules="rules.guestPasswordConfirm"
                       color="blue darken-2"
+                      type="password"
                       label="비밀번호 확인"
                       required
                   ></v-text-field>
@@ -173,7 +175,7 @@ export default {
   name: "BoardWriteView",
   data: function () {
     const defaultForm = Object.freeze({
-      guestName: '',
+      guestNickname: '',
       guestPassword: '',
       guestPasswordConfirm: '',
       categoryId: '',
@@ -185,12 +187,12 @@ export default {
     return {
       form: Object.assign({}, defaultForm),
       rules: {
-        guestName: [val => (3 <= (val || '').length && (val || '').length < 5) || '3글자 이상, 5글자 미만입니다.',],
+        guestNickname: [val => (3 <= (val || '').length && (val || '').length < 5) || '3글자 이상, 5글자 미만입니다.',],
         guestPassword: [val => (this.validateBoardPw(val || '') || '영문/숫자/특수문자 포함 4글자 이상, 16글자 미만입니다.'),],
         guestPasswordConfirm: [val => this.form.guestPassword === val || `비밀번호가 일치하지 않습니다.`,],
-        categoryId: [val => (val || '').length > 0 || 'This field is required'],
-        boardTitle: [val => (4 <= (val || '').length && (val || '').length < 20) || '4글자 이상, 20글자 미만입니다.'],
-        boardContent: [val => (4 <= (val || '').length && (val || '').length < 2000) || '4글자 이상, 2000글자 미만입니다.'],
+        categoryId: [val => (val || '').length > 0 || '카테고리를 선택해주세요.'],
+        boardTitle: [val => (4 <= (val || '').length && (val || '').length < 20) || '제목은 4글자 이상, 20글자 미만입니다.'],
+        boardContent: [val => (4 <= (val || '').length && (val || '').length < 2000) || '내용은 4글자 이상, 2000글자 미만입니다.'],
         multipartFiles: [value => {
           return this.validateMultipartFiles(value);
         },],
@@ -238,7 +240,7 @@ export default {
     prepareFormData() {
       let formData = new FormData();
 
-      formData.append("guestName", this.form.guestName);
+      formData.append("guestNickname", this.form.guestNickname);
       formData.append("guestPassword", this.form.guestPassword);
       formData.append("guestPasswordConfirm", this.form.guestPasswordConfirm);
       formData.append("categoryId", this.form.categoryId);

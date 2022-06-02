@@ -23,6 +23,9 @@
               ></v-text-field>
               <v-text-field
                   v-model="password"
+                  :append-icon="showPasswordText ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="showPasswordText ? 'text' : 'password'"
+                  @click:append="showPasswordText = !showPasswordText"
                   :rules="rules.password"
                   label="비밀번호"
                   clearable
@@ -45,8 +48,7 @@
 </template>
 
 <script>
-import {saveTokenToCookie, saveUserNameToCookie} from "@/utils/cookies";
-
+//TODO: 토큰 만료됐을때 뭔가 요청을 보내면 로그아웃? 아니면 로그아웃되셨습니다 alert 보여주고 현재 있는 페이지 새로고침?
 export default {
   name: "LoginPage",
   data() {
@@ -55,11 +57,12 @@ export default {
       password: "",
     })
     return {
+      showPasswordText: false,
       username: "",
       password: "",
       rules: {
-        username: [val => (val || '').length > 0 || '필수 값입니다.'],
-        password: [val => (val || '').length > 0 || '필수 값입니다.'],
+        username: [val => (val || '').length > 0 || '이메일을 입력해주세요.'],
+        password: [val => (val || '').length > 0 || '비밀번호를 입력해주세요.'],
       },
       defaultForm,
     }

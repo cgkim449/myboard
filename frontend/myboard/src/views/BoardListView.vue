@@ -166,6 +166,14 @@
                 {{item.boardTitle | formatBoardTitle}}
               </span>
             </template>
+            <template v-slot:item.guestNickname="{item}">
+              <span v-if="item.guestNickname === null">
+                {{ item.nickname }}
+              </span>
+              <span v-if="item.guestNickname !== null">
+                {{ item.guestNickname }}
+              </span>
+            </template>
             <template v-slot:item.boardRegisterDate="{item}">
               {{item.boardRegisterDate | formatDate}}
             </template>
@@ -253,7 +261,7 @@ export default {
           text: '작성자',
           align: 'center',
           sortable: false,
-          value: 'guestName',
+          value: 'guestNickname',
           width: '10%',
         },
         {

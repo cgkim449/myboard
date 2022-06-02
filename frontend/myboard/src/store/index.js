@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {getTokenFromCookie, getUserNameFromCookie, saveTokenToCookie, saveUserNameToCookie} from "@/utils/cookies";
+import {getTokenFromCookie, getUsernameFromCookie, saveTokenToCookie, saveUsernameToCookie, getNicknameFromCookie, saveNicknameToCookie} from "@/utils/cookies";
 import {loginUser} from "@/api/auth";
 
 Vue.use(Vuex)
@@ -8,7 +8,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     token: getTokenFromCookie() || "",
-    username: getUserNameFromCookie() || "",
+    username: getUsernameFromCookie() || "",
+    nickname: getNicknameFromCookie() || "",
   },
   getters: {
     isLogin(state) {
@@ -19,14 +20,20 @@ export default new Vuex.Store({
     setToken(state, token) {
       state.token = token;
     },
+    clearToken(state) {
+      state.token = "";
+    },
     setUsername(state, username) {
       state.username = username;
     },
     clearUsername(state) {
       state.username = "";
     },
-    clearToken(state) {
-      state.token = "";
+    setNickname(state, nickname) {
+      state.nickname = nickname;
+    },
+    clearNickname(state) {
+      state.nickname = "";
     },
   },
   actions: {
@@ -34,8 +41,10 @@ export default new Vuex.Store({
       const { data } = await loginUser(user);
       commit("setToken", data.token);
       commit("setUsername", data.username);
+      commit("setNickname", data.nickname);
       saveTokenToCookie(data.token);
-      saveUserNameToCookie(data.username);
+      saveUsernameToCookie(data.username);
+      saveNicknameToCookie(data.nickname);
       return data;
     },
   },

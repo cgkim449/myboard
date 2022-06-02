@@ -3,10 +3,6 @@ function saveTokenToCookie(value) {
     document.cookie = `token=${value}`;
 }
 
-function saveUserNameToCookie(value) {
-    document.cookie = `username=${value}`;
-}
-
 function getTokenFromCookie() {
     return document.cookie.replace(
         /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
@@ -14,12 +10,28 @@ function getTokenFromCookie() {
     );
 }
 
-function getUserNameFromCookie() {
+function saveUsernameToCookie(value) {
+    document.cookie = `username=${value}`;
+}
+
+function getUsernameFromCookie() {
     return document.cookie.replace(
         /(?:(?:^|.*;\s*)username\s*=\s*([^;]*).*$)|^.*$/,
         '$1',
     );
 }
+
+function saveNicknameToCookie(value) {
+    document.cookie = `nickname=${value}`;
+}
+
+function getNicknameFromCookie() {
+    return document.cookie.replace(
+        /(?:(?:^|.*;\s*)nickname\s*=\s*([^;]*).*$)|^.*$/,
+        '$1',
+    );
+}
+
 
 function deleteCookie(value) {
     document.cookie = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
@@ -27,8 +39,10 @@ function deleteCookie(value) {
 
 export {
     saveTokenToCookie,
-    saveUserNameToCookie,
     getTokenFromCookie,
-    getUserNameFromCookie,
+    saveUsernameToCookie,
+    getUsernameFromCookie,
+    saveNicknameToCookie,
+    getNicknameFromCookie,
     deleteCookie,
 };

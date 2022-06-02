@@ -37,8 +37,6 @@ public class UserController {
 
     /**
      * Validator 등록
-     *
-     * @param webDataBinder
      */
     @InitBinder
     public void initBinder(WebDataBinder webDataBinder) {
@@ -47,8 +45,6 @@ public class UserController {
 
     /**
      * Validator 등록
-     *
-     * @param webDataBinder
      */
     private void addValidators(WebDataBinder webDataBinder) {
         if (webDataBinder.getTarget() == null) {
@@ -69,9 +65,6 @@ public class UserController {
 
     /**
      * 회원가입
-     *
-     * @param signUpRequest
-     * @return
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
@@ -83,9 +76,7 @@ public class UserController {
 
     /**
      * 로그인
-     *
-     * @param loginRequest
-     * @return
+     * TODO: 성공시 원래 request URI 인가 거기로 redirect?
      */
     @PostMapping("/login")
     public ResponseEntity<SuccessResponse> login(@RequestBody @Valid LoginRequest loginRequest) {

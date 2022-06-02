@@ -1,13 +1,10 @@
 package com.cgkim.myboard.vo.board;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.Setter;
 
-@AllArgsConstructor
 @Getter
-@ToString
+@Setter
 public class BoardDeleteRequest {
-    Long boardId;
     String guestPassword;
 }

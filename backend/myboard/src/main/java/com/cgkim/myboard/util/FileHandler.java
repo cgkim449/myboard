@@ -30,7 +30,7 @@ public class FileHandler {
         FileHandler.basePath = basePath;
     }
 
-    public List<AttachVo> saveFiles(MultipartFile[] multipartFiles) throws IOException {
+    public List<AttachVo> createFiles(MultipartFile[] multipartFiles) throws IOException {
         if(multipartFiles == null) {
             return null;
         }

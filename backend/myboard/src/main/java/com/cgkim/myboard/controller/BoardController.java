@@ -1,7 +1,8 @@
 package com.cgkim.myboard.controller;
 
+import com.cgkim.myboard.argumentresolver.CheckGuestPassword;
+import com.cgkim.myboard.argumentresolver.LoginUser;
 import com.cgkim.myboard.argumentresolver.Guest;
-import com.cgkim.myboard.argumentresolver.Login;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.AttachService;
 import com.cgkim.myboard.service.BoardService;
@@ -12,13 +13,10 @@ import com.cgkim.myboard.validation.FileSaveRequestValidator;
 import com.cgkim.myboard.validation.GuestSaveRequestValidator;
 import com.cgkim.myboard.vo.attach.AttachVo;
 import com.cgkim.myboard.vo.attach.FileSaveRequest;
-import com.cgkim.myboard.vo.board.BoardDeleteRequest;
-import com.cgkim.myboard.vo.board.BoardPwCheckRequest;
 import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSearchRequest;
 import com.cgkim.myboard.vo.board.BoardUpdateRequest;
 import com.cgkim.myboard.vo.user.GuestSaveRequest;
-import com.cgkim.myboard.vo.user.UserVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -31,7 +29,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,8 +54,6 @@ public class BoardController {
 
     /**
      * PropertyEditor, Validator 등록
-     *
-     * @param webDataBinder
      */
     @InitBinder
     public void initBinder(WebDataBinder webDataBinder) {
@@ -68,8 +63,6 @@ public class BoardController {
 
     /**
      * PropertyEditor 등록
-     *
-     * @param webDataBinder
      */
     private void addPropertyEditors(WebDataBinder webDataBinder) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -78,8 +71,6 @@ public class BoardController {
 
     /**
      * Validator 등록
-     *
-     * @param webDataBinder
      */
     private void addValidators(WebDataBinder webDataBinder) {
         if (webDataBinder.getTarget() == null) {
@@ -101,10 +92,7 @@ public class BoardController {
     }
 
     /**
-     * 게시물 목록
-     *
-     * @param boardSearchRequest
-     * @return
+     * 게시물 목록 API
      */
     @GetMapping
     public ResponseEntity<SuccessResponse> getBoardList(BoardSearchRequest boardSearchRequest){
@@ -116,10 +104,7 @@ public class BoardController {
     }
 
     /**
-     * 게시물 상세보기
-     *
-     * @param boardId
-     * @return
+     * 게시물 상세 보기 API
      */
     @GetMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> getBoardDetail(@PathVariable Long boardId) {
@@ -130,29 +115,22 @@ public class BoardController {
     }
 
     /**
-     * 게시물 등록
-     *
-     * @param boardSaveRequest
-     * @param fileSaveRequest
-     * @return
-     * @throws IOException
+     * 게시물 등록 API
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> writeBoard(
-            @Login Long userId,
+            @LoginUser Long userId,
             @Guest GuestSaveRequest guestSaveRequest,
             @Valid BoardSaveRequest boardSaveRequest,
             @Valid FileSaveRequest fileSaveRequest
     ) throws IOException {
-        List<AttachVo> attachInsertList = fileHandler.saveFiles(fileSaveRequest.getMultipartFiles()); // 파일 생성 (C://upload)
-
-        long boardId = 0;
-        if(isLogin(userId)) { // 로그인 글쓰기
+        List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles()); //첨부파일 생성 (C://upload)
+        long boardId;
+        if(isLogin(userId)) { //로그인 사용자 글 작성
             boardId = boardService.write(userId, boardSaveRequest, attachInsertList);
-        } else { // 비 로그인 글쓰기
+        } else { //익명 글 작성
             boardId = boardService.write(guestSaveRequest, boardSaveRequest, attachInsertList);
         }
-
         return ResponseEntity
                 .ok()
                 .body(new SuccessResponse()
@@ -164,65 +142,55 @@ public class BoardController {
     }
 
     /**
-     * 게시물 삭제
-     *
-     * @param boardDeleteRequest
-     * @return
-     */
-
-    @DeleteMapping("/{boardId}")
-    public ResponseEntity<SuccessResponse> deleteBoard(
-            @PathVariable Long boardId,
-            @RequestBody BoardDeleteRequest boardDeleteRequest
-    ) {
-        //TODO: BoardDeleteRequest frontend 수정. 글 수정도 마찬가지
-        boardService.pwCheck(boardId, boardDeleteRequest.getGuestPassword()); // 비밀번호 체크
-        List<AttachVo> attachDeleteList = attachService.getList(boardDeleteRequest.getBoardId()); // 삭제할 파일 리스트
-        boardService.delete(boardDeleteRequest.getBoardId()); // 게시물, 댓글, 파일 삭제(db)
-        fileHandler.deleteFiles(attachDeleteList); // 파일 삭제(C://upload)
-
-        return ResponseEntity
-                .ok()
-                .body(new SuccessResponse());
-    }
-
-
-    /**
-     * 게시물 수정
-     *
-     * @param boardUpdateRequest
-     * @param fileSaveRequest
-     * @param attachDeleteRequest
-     * @return
-     * @throws IOException
+     * 게시물 수정 API
      */
     @PatchMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> updateBoard(
             @PathVariable Long boardId,
+            @CheckGuestPassword String guestPassword,
             @Valid BoardUpdateRequest boardUpdateRequest,
             @Valid FileSaveRequest fileSaveRequest,
             Long[] attachDeleteRequest
     ) throws IOException {
-        boardService.pwCheck(boardId, boardUpdateRequest.getGuestPassword()); // 비밀번호 체크
-        List<AttachVo> attachDeleteList = attachService.getList(attachDeleteRequest); // 삭제할 첨부파일 리스트
-        List<AttachVo> attachInsertList = fileHandler.saveFiles(fileSaveRequest.getMultipartFiles()); // 새로 추가한 파일 생성
-        boardService.modify(boardUpdateRequest, attachInsertList, attachDeleteList); // 게시물 수정 및 파일 삭제(DB)
-        fileHandler.deleteFiles(attachDeleteList); // 파일 삭제
-
+        List<AttachVo> attachDeleteList = attachService.getList(attachDeleteRequest); //첨부파일 삭제 리스트
+        List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles());//첨부파일 삽입 리스트
+        boardService.modify( //게시글 수정, 첨부파일 수정
+                boardId,
+                boardUpdateRequest.getBoardContent(),
+                boardUpdateRequest.getBoardTitle(),
+                attachInsertList,
+                attachDeleteList
+        );
+        fileHandler.deleteFiles(attachDeleteList); //첨부파일 삭제 (C://upload)
         return ResponseEntity
                 .ok()
                 .body(new SuccessResponse());
     }
 
     /**
-     * 게시물 비밀번호 확인
-     *
-     * @param boardPwCheckRequest
-     * @return
+     * 게시물 삭제 API
+     */
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<SuccessResponse> deleteBoard(
+            @PathVariable Long boardId,
+            @CheckGuestPassword String guestPassword
+    ) {
+        List<AttachVo> attachDeleteList = attachService.getList(boardId); //첨부파일 삭제 리스트
+        boardService.delete(boardId); //게시물 삭제
+        fileHandler.deleteFiles(attachDeleteList); //첨부파일 삭제 (C://upload)
+        return ResponseEntity
+                .ok()
+                .body(new SuccessResponse());
+    }
+
+    /**
+     * 익명 글 비밀번호 체크 API
      */
     @PostMapping("/{boardId}/pwCheck")
-    public ResponseEntity<SuccessResponse> pwCheck(@RequestBody BoardPwCheckRequest boardPwCheckRequest) {
-        boardService.pwCheck(boardPwCheckRequest);
+    public ResponseEntity<SuccessResponse> checkGuestPassword(
+            @PathVariable Long boardId,
+            @CheckGuestPassword String guestPassword
+    ) {
         return ResponseEntity
                 .ok()
                 .body(new SuccessResponse());

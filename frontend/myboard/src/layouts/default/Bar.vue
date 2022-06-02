@@ -48,10 +48,12 @@ export default {
   name: "DefaultBar",
   methods: {
     logoutUser() {
-      this.$store.commit("clearUsername");
       this.$store.commit("clearToken");
-      deleteCookie("username");
+      this.$store.commit("clearUsername");
+      this.$store.commit("clearNickname");
       deleteCookie("token");
+      deleteCookie("username");
+      deleteCookie("nickname");
       this.$router.push("/login");
     },
   },

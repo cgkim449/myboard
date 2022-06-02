@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class GuestArgumentResolver implements HandlerMethodArgumentResolver {
 
-
     /**
      *
      * @return true 면 resolveArgument()가 호출됨
@@ -43,10 +42,9 @@ public class GuestArgumentResolver implements HandlerMethodArgumentResolver {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String username = (String) request.getAttribute("username");
 
-        if(username == null) { // 비로그인일시 guestSaveRequest 유효성 검증
-
+        if(username == null) { //익명 사용자이면 guestSaveRequest 유효성 검증
             GuestSaveRequest guestSaveRequest = new GuestSaveRequest();
-            String name = ModelFactory.getNameForParameter(parameter); // name = "guestVo"
+            String name = ModelFactory.getNameForParameter(parameter); // name = "guestSaveRequest"
             WebDataBinder binder = binderFactory.createBinder(webRequest, guestSaveRequest, name);
 
             //TODO: 리팩토링
