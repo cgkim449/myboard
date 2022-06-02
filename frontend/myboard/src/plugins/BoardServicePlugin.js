@@ -1,5 +1,5 @@
 import {checkBoardPw, deleteBoard, getBoardDetail, getBoardList, patchBoard, createBoard} from "@/api/boards";
-import {getCommentList, createComment} from "@/api/comments";
+import {getCommentList, createComment, deleteComment} from "@/api/comments";
 import {downloadAttach} from "@/api/attaches";
 
 export const boardServicePlugin = {
@@ -12,6 +12,16 @@ export const boardServicePlugin = {
     writeBoard(formData) {
         return createBoard(formData);
     },
+
+    removeBoard(board) {
+        return deleteBoard(board);
+    },
+    updateBoard(formData) {
+        return patchBoard(formData);
+    },
+    checkBoardPw(board) {
+        return checkBoardPw(board);
+    },
     writeComment(comment) {
         return createComment(comment);
     },
@@ -21,6 +31,9 @@ export const boardServicePlugin = {
         } catch (error) {
             console.log(error.response.data);
         }
+    },
+    removeComment(comment) {
+        return deleteComment(comment);
     },
     async downloadAttach(attachId) {
         try {
@@ -41,15 +54,6 @@ export const boardServicePlugin = {
             console.log(error);
         }
     },
-    removeBoard(board) {
-        return deleteBoard(board);
-    },
-    updateBoard(formData) {
-        return patchBoard(formData);
-    },
-    checkBoardPw(board) {
-        return checkBoardPw(board);
-    }
 };
 
 export default {

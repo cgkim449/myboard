@@ -23,6 +23,5 @@ public interface BoardDao {
     int update(Map<String, Object> map);
     void insertGuestBoard(BoardVo boardVo);
     void insertLoginUserBoard(BoardVo boardVo);
-
     Long selectUserId(Long boardId);
 }

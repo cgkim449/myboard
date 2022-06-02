@@ -4,17 +4,33 @@
 <mapper namespace="com.cgkim.myboard.dao.CommentDao">
 
     <select id="selectList" resultType="commentListResponse" parameterType="long">
-        select comment_Id
-             , board_Id
-             , guest_nickname
-             , comment_content
-             , comment_register_date
-          from comment
+        select c.comment_Id
+             , c.board_Id
+             , c.guest_nickname
+             , c.comment_content
+             , c.comment_register_date
+             , u.nickname
+          from comment c
+     left join user u
+            on u.user_id = c.user_id
          where board_id=#{boardId};
     </select>
+    <select id="selectUserId" resultType="java.lang.Long" parameterType="long">
+        select user_id
+          from comment
+         where comment_id = #{commentId}
+    </select>
+    <select id="selectOneByGuestPassword" resultType="java.lang.Long" parameterType="map">
+        select comment_id
+          from comment
+         where comment_id = #{commentId} and guest_password = #{guestPassword}
+    </select>
 
-
-    <insert id="insert" parameterType="commentSaveRequest">
+    <insert id="insertUserComment" parameterType="commentVo">
+        insert into comment(board_id, user_id, comment_content)
+        values(#{boardId}, #{userId}, #{commentContent})
+    </insert>
+    <insert id="insertGuestComment" parameterType="commentVo">
         insert into comment(board_id, guest_nickname, guest_password, comment_content)
         values(#{boardId}, #{guestNickname}, #{guestPassword}, #{commentContent})
     </insert>
@@ -23,5 +39,10 @@
         delete
           from comment
          where board_id = #{boardId}
+    </delete>
+    <delete id="deleteByCommentId" parameterType="long" >
+        delete
+          from comment
+         where comment_id = #{commentId}
     </delete>
 </mapper>

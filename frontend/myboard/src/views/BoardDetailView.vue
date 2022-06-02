@@ -86,15 +86,78 @@
             댓글 {{ boardDetail.commentList.length }}개
           </v-card-title>
           <v-card-text v-for="comment in boardDetail.commentList">
-            <v-row>
-              <v-col
-                  cols="1"
-              >
-                {{comment.guestNickname}}
-              </v-col>
+            <v-row dense>
+              <template v-if="comment.nickname == null">
+                <v-col
+                    cols="2"
+                >
+                  {{comment.guestNickname}}
+                </v-col>
+              </template>
+              <template v-else>
+                <v-col
+                    cols="2"
+                >
+                  {{comment.nickname}}
+                </v-col>
+              </template>
               <v-col>
                 {{comment.commentContent}}
               </v-col>
+
+
+
+<!--익명 댓글-->
+              <template v-if="comment.nickname === null">
+                <v-col
+                    cols="auto"
+                >
+                      <v-btn
+                          icon
+                          x-small
+                          color="red lighten-2"
+                          class="mb-1"
+                          von="on"
+
+                          @click.stop="removeCommentDialog = true"
+                          @click="clickRemoveGuestCommentDialog(comment.commentId)"
+                      >
+                        x
+                      </v-btn>
+                </v-col>
+              </template>
+<!--              로그인사용자: 내댓글 삭제-->
+              <template v-else-if="$store.state.nickname === comment.nickname">
+                <v-col
+                  cols="auto"
+                >
+                  <v-btn
+                      icon
+                      x-small
+                      color="red lighten-2"
+                      class="mb-1"
+                      @click="removeComment(comment.commentId)"
+                  >
+                    x
+                  </v-btn>
+                </v-col>
+              </template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
               <v-col
                   cols="auto"
               >
@@ -104,24 +167,44 @@
             <v-divider></v-divider>
           </v-card-text>
 
+
+          <v-form
+              ref="form"
+              @submit.prevent="submit"
+          >
           <v-card-text>
             <v-row dense>
               <v-col
                   cols="2"
               >
                 <template v-if="$store.getters.isLogin">
-                  <v-text-field  disabled dense  outlined style="height: 48px !important;" v-model="$store.state.nickname">
+                  <v-text-field  disabled dense style="height: 48px !important; " outlined  v-model="$store.state.nickname">
                   </v-text-field>
                 </template>
+
                 <template v-else>
-                  <v-text-field label="닉네임" dense  outlined style="height: 48px !important;" v-model="comment.guestNickname">
+                  <v-text-field
+                      dense
+                      style="height: 49px !important;"
+                      label="닉네임"
+                      outlined
+                      v-model="comment.guestNickname"
+                  >
                   </v-text-field>
-                  <v-text-field  label="비밀번호" dense  outlined style="height: 48px !important;" v-model="comment.guestPassword">
+                  <v-text-field
+                      dense
+                      style="height: 50px !important;"
+                      type="password"
+                      label="비밀번호"
+                      outlined
+                      v-model="comment.guestPassword"
+                  >
                   </v-text-field>
                 </template>
               </v-col>
               <v-col>
                 <v-textarea
+                    dense
                     v-model="comment.commentContent"
                     outlined
                     rows="3"
@@ -137,7 +220,7 @@
               >
                 <v-btn
                     outlined
-                    height="94"
+                    height="90"
                     width="94"
                     color="primary"
                     v-on:click="writeComment"
@@ -146,8 +229,10 @@
                 </v-btn>
               </v-col>
 
+
             </v-row>
           </v-card-text>
+          </v-form>
         </v-card>
 
         <v-card elevation="0">
@@ -341,6 +426,54 @@
 
 
 
+<!--익명댓글 삭제 모달-->
+    <v-dialog
+        v-model="removeCommentDialog"
+        max-width="290"
+    >
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">비밀번호 확인</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col
+                  cols="12"
+              >
+                <v-text-field
+                    clearable
+                    type="password"
+                    prepend-icon="mdi-lock-outline"
+                    v-model="guestCommentPwCheckRequest.guestPassword"
+                    label="비밀번호를 입력해주세요."
+                    v-on:keyup.enter="removeComment(guestCommentPwCheckRequest.commentId)"
+                ></v-text-field>
+              </v-col>
+
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+              color="blue darken-1"
+              text
+              @click="removeCommentDialog = false"
+          >
+            취소
+          </v-btn>
+          <v-btn
+              color="blue darken-1"
+              text
+              @click="removeComment(guestCommentPwCheckRequest.commentId)"
+          >
+            확인
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
 
 
   </v-container>
@@ -350,13 +483,29 @@
 export default {
   name: "BoardDetailView",
   data() {
+    const defaultForm = Object.freeze({
+      guestNickname: '',
+      guestPassword: '',
+      commentContent: '',
+    })
+
     return {
+      defaultForm,
       modifyBoardDialog: false,
       deleteBoardDialog: false,
+      removeCommentDialog: false,
       boardDetail: {},
-      comment: {},
+      comment: {
+        boardId: 0,
+        commentContent: "",
+        guestPassword: "",
+        guestNickname: "",
+      },
       searchCondition: {},
       guestBoardPwCheckRequest: {
+        guestPassword: "",
+      },
+      guestCommentPwCheckRequest: {
         guestPassword: "",
       },
     }
@@ -368,6 +517,9 @@ export default {
     closeDeleteBoardDialog() {
       return this.initGuestBoardPwCheckRequest(this.deleteBoardDialog);
     },
+    closeRemoveCommentDialog() {
+      return this.initGuestCommentPwCheckRequest(this.removeCommentDialog);
+    },
   },
   async created() {
     this.searchCondition = {...this.$route.query};
@@ -377,31 +529,91 @@ export default {
     console.log(this.boardDetail);
   },
   methods: {
+//TODO: 댓글 작성 유효성 검증 만들어야됨. 중복 코드임.
+    validateBoardPw(guestPassword) {
+      if(!(4 <= guestPassword.length && guestPassword.length < 16)) {
+        return false;
+      }
+      let alphabet = 0;
+      let number = 0;
+      let specialSymbol = 0;
+
+      for (let i = 0; i < guestPassword.length; i++) {
+        let ascii = guestPassword.charCodeAt(i);
+
+        if (!('!'.charCodeAt(0) <= ascii && ascii <= '~'.charCodeAt(0))) {
+          return false;
+        } else if (('A'.charCodeAt(0) <= ascii && ascii <= 'Z'.charCodeAt(0)) || ('a'.charCodeAt(0) <= ascii && ascii <= 'z'.charCodeAt(0))) {
+          alphabet++;
+        } else if ('0'.charCodeAt(0) <= ascii && ascii <= '9'.charCodeAt(0)) {
+          number++;
+        } else {
+          specialSymbol++;
+        }
+      }
+
+      return alphabet != 0 && number != 0 && specialSymbol != 0;
+    },
+    resetForm () {
+      this.form = Object.assign({}, this.defaultForm)
+      this.$refs.form.reset()
+    },
+    submit () {
+      this.resetForm()
+    },
     initGuestBoardPwCheckRequest(dialog) {
       if(!dialog) {
         this.guestBoardPwCheckRequest = {};
+      }
+    },
+    initGuestCommentPwCheckRequest(dialog) {
+      if(!dialog) {
+        this.guestCommentPwCheckRequest = {};
       }
     },
     isEmpty(obj) {
       return Object.keys(obj).length === 0 && obj.constructor === Object;
     },
     async writeComment() {
-      try {
-        this.comment.boardId = this.boardDetail.boardId;
+      if(this.validateForm()) {
+        try {
+          this.comment.boardId = this.boardDetail.boardId;
 
-        await this.$_BoardService.writeComment(this.comment);
-        const response = await this.$_BoardService.fetchCommentList(this.boardDetail.boardId);
-        this.boardDetail.commentList = response.data.commentList;
+          await this.$_BoardService.writeComment(this.comment);
 
-        this.initComment();
-      } catch (error) {
-        console.log(error)
+          const response = await this.$_BoardService.fetchCommentList(this.boardDetail.boardId);
+          this.boardDetail.commentList = response.data.commentList;
+
+          this.initComment();
+        } catch (error) {
+          //TODO: 프론트에서 유효성 검증
+          alert(error.response.data.fieldErrorDetails[0].fieldErrorMessage)
+        }
       }
+    },
+    validateForm() {
+      return this.$refs.form.validate()
     },
     initComment() {
       this.comment.commentContent = "";
       this.comment.guestNickname = "";
       this.comment.guestPassword = "";
+    },
+    async clickRemoveGuestCommentDialog(commentId) {
+      console.log(commentId)
+      this.guestCommentPwCheckRequest.commentId = commentId;
+    },
+    async removeComment(commentId) {
+      this.guestCommentPwCheckRequest.commentId = commentId;
+      try {
+          await this.$_BoardService.removeComment(this.guestCommentPwCheckRequest);
+          alert('삭제되었습니다.');
+          this.removeCommentDialog = false
+          const response = await this.$_BoardService.fetchCommentList(this.boardDetail.boardId);
+          this.boardDetail.commentList = response.data.commentList;
+      } catch (error) {
+        alert(error.response.data.errorMessage);
+      }
     },
     async pwCheck(action) {
       this.guestBoardPwCheckRequest.boardId = this.boardDetail.boardId;

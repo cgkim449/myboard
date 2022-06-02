@@ -16,4 +16,6 @@ public class CommentListResponse {
     private Date commentRegisterDate;
 
     private String guestNickname;
+
+    private String nickname;
 }
