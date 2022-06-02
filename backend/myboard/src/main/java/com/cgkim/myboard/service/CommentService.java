@@ -13,4 +13,10 @@ public interface CommentService {
     void writeComment(Long userId, CommentSaveRequest commentSaveRequest);
 
     void writeComment(GuestSaveRequest guestSaveRequest, CommentSaveRequest commentSaveRequest);
+
+    void delete(Long commentId);
+
+    boolean checkAnonymous(Long commentId);
+
+    void checkGuestPassword(Long commentId, String guestPassword);
 }

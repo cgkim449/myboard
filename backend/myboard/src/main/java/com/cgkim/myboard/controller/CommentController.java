@@ -1,5 +1,6 @@
 package com.cgkim.myboard.controller;
 
+import com.cgkim.myboard.argumentresolver.CheckGuestPassword;
 import com.cgkim.myboard.argumentresolver.Guest;
 import com.cgkim.myboard.argumentresolver.LoginUser;
 import com.cgkim.myboard.response.SuccessResponse;
@@ -16,8 +17,10 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,7 +69,7 @@ public class CommentController {
     }
 
     /**
-     * 특정 게시물의 댓글 리스트
+     * 특정 게시물의 댓글 목록 API
      */
     @GetMapping
     public ResponseEntity<SuccessResponse> getCommentList(Long boardId) {
@@ -77,7 +80,7 @@ public class CommentController {
     }
 
     /**
-     * 댓글 작성
+     * 댓글 작성 API
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> write(
@@ -97,5 +100,19 @@ public class CommentController {
 
     private boolean isLogin(Long userId) {
         return userId != null;
+    }
+
+    /**
+     * 댓글 삭제 API
+     */
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<SuccessResponse> deleteComment(
+            @PathVariable Long commentId,
+            @CheckGuestPassword String guestPassword
+    ) {
+        commentService.delete(commentId); //댓글
+        return ResponseEntity
+                .ok()
+                .body(new SuccessResponse());
     }
 }

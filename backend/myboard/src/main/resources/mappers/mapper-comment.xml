@@ -15,6 +15,16 @@
             on u.user_id = c.user_id
          where board_id=#{boardId};
     </select>
+    <select id="selectUserId" resultType="java.lang.Long" parameterType="long">
+        select user_id
+          from comment
+         where comment_id = #{commentId}
+    </select>
+    <select id="selectOneByGuestPassword" resultType="java.lang.Long" parameterType="map">
+        select comment_id
+          from comment
+         where comment_id = #{commentId} and guest_password = #{guestPassword}
+    </select>
 
     <insert id="insertUserComment" parameterType="commentVo">
         insert into comment(board_id, user_id, comment_content)
@@ -29,5 +39,10 @@
         delete
           from comment
          where board_id = #{boardId}
+    </delete>
+    <delete id="deleteByCommentId" parameterType="long" >
+        delete
+          from comment
+         where comment_id = #{commentId}
     </delete>
 </mapper>

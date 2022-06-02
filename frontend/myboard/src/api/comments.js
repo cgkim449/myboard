@@ -1,4 +1,4 @@
-import {commentsInstance} from "@/api/index";
+import {boardsInstance, commentsInstance} from "@/api/index";
 
 /**
  * 댓글 작성 API
@@ -22,7 +22,18 @@ const getCommentList = (boardId) => {
         "/", { params: {boardId: boardId} });
 }
 
+/**
+ * 댓글 삭제 API
+ */
+const deleteComment = (request) => {
+    console.log(request.guestPassword)
+    return commentsInstance.delete(
+        `/${request.commentId}`,
+        {data: {guestPassword: request.guestPassword}});
+};
+
 export {
     createComment,
-    getCommentList
+    getCommentList,
+    deleteComment
 }
