@@ -1,4 +1,4 @@
-package com.cgkim.myboard.config.jwt;
+package com.cgkim.myboard.jwt;
 
 import com.cgkim.myboard.argumentresolver.GuestArgumentResolver;
 import com.cgkim.myboard.argumentresolver.CheckGuestPasswordArgumentResolver;
@@ -22,20 +22,16 @@ public class JwtConfig implements WebMvcConfigurer {
 
     /**
      * Interceptor 등록
-     *
-     * @param registry
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/users/login");
+                .excludePathPatterns("/users/login", "/users/signUp");
     }
 
     /**
      * ArgumentResolver 등록
-     *
-     * @param resolvers initially an empty list
      */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {

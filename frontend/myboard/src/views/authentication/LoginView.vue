@@ -48,7 +48,6 @@
 </template>
 
 <script>
-//TODO: 토큰 만료됐을때 뭔가 요청을 보내면 로그아웃? 아니면 로그아웃되셨습니다 alert 보여주고 현재 있는 페이지 새로고침?
 export default {
   name: "LoginPage",
   data() {
@@ -57,6 +56,7 @@ export default {
       password: "",
     })
     return {
+      prevRoute: null,
       showPasswordText: false,
       username: "",
       password: "",
@@ -82,16 +82,15 @@ export default {
       this.resetForm()
     },
     async login() {
-      console.log("login 엔터!")
       if (this.validateForm()) {
         const user = {
           username: this.username,
           password: this.password,
         };
         try {
+
           const data = await this.$store.dispatch("LOGIN", user);
-          await this.$router.push("/boards");
-          //TODO: 원래 가려던 페이지로 이동해야함
+          await this.$router.go(-1);
         } catch (error) {
           alert(error.response.data.errorMessage)
         }

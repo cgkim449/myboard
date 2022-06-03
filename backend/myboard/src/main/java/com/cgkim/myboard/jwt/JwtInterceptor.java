@@ -1,4 +1,4 @@
-package com.cgkim.myboard.config.jwt;
+package com.cgkim.myboard.jwt;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +18,6 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     /**
      * 인증이 필요한 요청에 대해 토큰 검증
-     *
-     * @return
      */
     @Override
     public boolean preHandle(
@@ -27,25 +25,19 @@ public class JwtInterceptor implements HandlerInterceptor {
             HttpServletResponse response,
             Object handler
     ) {
-        //CORS 설정
+        //TODO: CORS 설정
         if (request.getMethod().equals("OPTIONS")) {
             return true;
         }
-        String requestURI = request.getRequestURI();
-        log.info("JwtInterceptor 실행 {}", requestURI);
 
-        //헤더에서 토큰 추출
-        String token = extractToken(request);
-        log.info("token: {}", token);
-
-        if(token != null) { //로그인 사용자이면 토큰 검증함
-            //토큰 검증
-            DecodedJWT jwt = jwtProvider.validateToken(token);
-            //토큰에서 username 추출
-            String username = jwt.getSubject();
-            //username 을 request 에 보관: LoginArgumentResolver 에서 꺼내기 위해
+        String token = extractTokenFrom(request);
+        String username = null;
+        if(token != null) {
+            DecodedJWT jwt = jwtProvider.validate(token);
+            username = jwt.getSubject();
             request.setAttribute("username", username);
         }
+        request.setAttribute("isLogin", username != null);
         return true;
     }
 
@@ -54,17 +46,12 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     /**
      * 헤더에서 토큰 추출
-     *
-     * @param request
-     * @return
      */
-    private String extractToken(HttpServletRequest request) {
+    private String extractTokenFrom(HttpServletRequest request) {
         String headerValue = request.getHeader(HEADER);
-
-        if(headerValue == null) { //TODO: token null
+        if(headerValue == null) {
             return null;
-        } else {
-            return headerValue.replace(SCHEMA + " ", "");
         }
+        return headerValue.replace(SCHEMA + " ", "");
     }
 }

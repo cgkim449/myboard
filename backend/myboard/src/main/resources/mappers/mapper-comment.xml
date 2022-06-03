@@ -26,11 +26,11 @@
          where comment_id = #{commentId} and guest_password = #{guestPassword}
     </select>
 
-    <insert id="insertUserComment" parameterType="commentVo">
+    <insert id="insertUserComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
         insert into comment(board_id, user_id, comment_content)
         values(#{boardId}, #{userId}, #{commentContent})
     </insert>
-    <insert id="insertGuestComment" parameterType="commentVo">
+    <insert id="insertGuestComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
         insert into comment(board_id, guest_nickname, guest_password, comment_content)
         values(#{boardId}, #{guestNickname}, #{guestPassword}, #{commentContent})
     </insert>

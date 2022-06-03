@@ -6,12 +6,12 @@
             outlined
             width="460"
         >
+          <v-form
+              ref="form"
+              @submit.prevent="submit"
+          >
           <v-card-text class="text-center px-12 py-16">
 
-            <v-form
-                ref="form"
-                @submit.prevent="submit"
-            >
 
               <div class="text-h4 font-weight-black mb-10">
                 회원가입
@@ -70,10 +70,8 @@
               >
                 가입하기
               </v-btn>
-
-            </v-form>
-
           </v-card-text>
+          </v-form>
         </v-card>
       </v-col>
     </v-row>
@@ -117,11 +115,10 @@ export default {
     submit () {
       this.resetForm()
     },
-    moveToLoginPage(username) {
-      console.log(username)
+    moveToLoginPage(location) {
       this.$router.push({
         path:`/login`,
-        query: {"username": username}
+        query: {"username": location.split("/")[2]}
       }).catch(()=>{});
     },
     async signUp() {
@@ -134,8 +131,7 @@ export default {
         };
         try {
           const response = await this.$_UserService.signUp(user);
-          alert(`${response.data.signUpResult.nickname}님, 회원가입 되셨습니다.`)
-          this.moveToLoginPage(response.data.signUpResult.username);
+          this.moveToLoginPage(response.headers.location);
         } catch (error) {
           alert(error.response.data.errorMessage)
         }

@@ -5,7 +5,6 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.cgkim.myboard.exception.BoardInsertFailedException;
 import com.cgkim.myboard.exception.BusinessException;
 import com.cgkim.myboard.exception.ErrorCode;
-import com.cgkim.myboard.exception.TokenInvalidException;
 import com.cgkim.myboard.response.ErrorResponse;
 import com.cgkim.myboard.util.FileHandler;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +55,6 @@ public class GlobalExceptionHandler {
 
     /**
      * 민료된 토큰 = 로그아웃
-     * @return TODO: redirect 상태코드 location 주면됨 참고
      */
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<ErrorResponse> TokenExpiredExceptionHandler(TokenExpiredException exception) {
@@ -68,7 +66,6 @@ public class GlobalExceptionHandler {
 
     /**
      * 유효하지 않은 토큰
-     * @return 401
      */
     @ExceptionHandler(JWTVerificationException.class)
     public ResponseEntity<ErrorResponse> JWTVerificationExceptionHandler(JWTVerificationException exception) {

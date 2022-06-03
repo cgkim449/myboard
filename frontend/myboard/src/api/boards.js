@@ -2,9 +2,6 @@ import {boardsInstance} from "@/api/index";
 
 /**
  * 게시글 목록 조회 API
- *
- * @param searchCondition
- * @returns {*}
  */
 const getBoardList = (searchCondition) => {
     return boardsInstance.get("/", { params: searchCondition});

@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CommentVo {
+    private Long commentId;
     private Long boardId;
     private String commentContent;
 
@@ -16,7 +17,8 @@ public class CommentVo {
     private Long userId;
 
     @Builder
-    public CommentVo(Long boardId, String commentContent, String guestNickname, String guestPassword, Long userId) {
+    public CommentVo(Long commentId, Long boardId, String commentContent, String guestNickname, String guestPassword, Long userId) {
+        this.commentId = commentId;
         this.boardId = boardId;
         this.commentContent = commentContent;
         this.guestNickname = guestNickname;

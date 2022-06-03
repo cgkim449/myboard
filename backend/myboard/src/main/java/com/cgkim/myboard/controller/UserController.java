@@ -1,6 +1,6 @@
 package com.cgkim.myboard.controller;
 
-import com.cgkim.myboard.config.jwt.JwtProvider;
+import com.cgkim.myboard.jwt.JwtProvider;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.UserService;
 import com.cgkim.myboard.validation.LoginRequestValidator;
@@ -19,9 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
@@ -51,12 +50,10 @@ public class UserController {
         if (webDataBinder.getTarget() == null) {
             return;
         }
-
         final List<Validator> validatorList = List.of(
                 signUpRequestValidator,
                 loginRequestValidator
         );
-
         for (Validator validator : validatorList) {
             if (validator.supports(webDataBinder.getTarget().getClass())) {
                 webDataBinder.addValidators(validator);
@@ -69,15 +66,12 @@ public class UserController {
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) throws NoSuchAlgorithmException {
-        return ResponseEntity
-                .ok()
-                .body(new SuccessResponse()
-                        .put("signUpResult", userService.signUp(signUpRequest)));
+        String username = userService.signUp(signUpRequest);
+        return ResponseEntity.created(URI.create("/users/" + username)).body(new SuccessResponse());
     }
 
     /**
      * 로그인
-     * TODO: 성공시 원래 request URI 인가 거기로 redirect?
      */
     @PostMapping("/login")
     public ResponseEntity<SuccessResponse> login(@RequestBody @Valid LoginRequest loginRequest) throws NoSuchAlgorithmException {
@@ -85,10 +79,8 @@ public class UserController {
         UserVo loginUser = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
         // 토큰 생성
         String token = jwtProvider.createToken(loginUser.getUsername());
-
-        return ResponseEntity
-                .ok()
-                .body(new SuccessResponse()
+        return ResponseEntity.ok(
+                new SuccessResponse()
                         .put("username", loginUser.getUsername())
                         .put("nickname", loginUser.getNickname())
                         .put("token", token));

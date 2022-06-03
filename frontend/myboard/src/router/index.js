@@ -81,18 +81,20 @@ const routes = [
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
+  routes,
 })
 
 router.beforeEach((to, from, next)=>{
-  console.log("from: ",from);
-  console.log("to: ",to);
-  if(to.meta.auth && !store.getters.isLogin) {
-    console.log("인증이 필요합니다.")
-    next('/login');
-    return;
-  }
-  next();
+  console.log("from: ",from.path);
+  console.log("to: ",to.path);
+  // if(to.meta.auth && !store.getters.isLogin) {
+  //   console.log("인증이 필요합니다.")
+  //   next('/login');
+  //   return;
+  // }
+  next(vm => {
+    vm.prevRoute = from
+  });
 })
 
 export default router

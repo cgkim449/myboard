@@ -1,4 +1,4 @@
-package com.cgkim.myboard.config.jwt;
+package com.cgkim.myboard.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -26,16 +26,12 @@ public class JwtProvider {
 
     /**
      * 토큰 생성
-     *
-     * @param subject username
-     * @return 생성한 jwt
      */
     public String createToken(String subject) {
         Date now = new Date();
         Date expires = new Date(now.getTime() + maxAge);
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
-
         return JWT.create()
                 .withSubject(subject)
                 .withIssuedAt(now)
@@ -45,14 +41,10 @@ public class JwtProvider {
 
     /**
      * 토큰 검증
-     *
-     * @param token 헤더에서 추출한 토큰
-     * @return DecodedJWT
      */
-    public DecodedJWT validateToken(String token) {
+    public DecodedJWT validate(String token) {
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         JWTVerifier verifier = JWT.require(algorithm).build();
-
         return verifier.verify(token);
     }
 }
