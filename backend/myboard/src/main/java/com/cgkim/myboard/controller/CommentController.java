@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -87,7 +88,7 @@ public class CommentController {
             @LoginUser Long userId,
             @Guest GuestSaveRequest guestSaveRequest,
             @Valid CommentSaveRequest commentSaveRequest
-    ) {
+    ) throws NoSuchAlgorithmException {
         if(isLogin(userId)) { //회원 댓글작성
             commentService.writeComment(userId, commentSaveRequest);
         } else { //익명 댓글작성

@@ -7,6 +7,7 @@ import com.cgkim.myboard.exception.BoardInsertFailedException;
 import com.cgkim.myboard.exception.GuestPasswordMismatchException;
 import com.cgkim.myboard.exception.ErrorCode;
 import com.cgkim.myboard.service.BoardService;
+import com.cgkim.myboard.util.SHA256PasswordEncoder;
 import com.cgkim.myboard.vo.attach.AttachVo;
 import com.cgkim.myboard.vo.board.BoardDetailResponse;
 import com.cgkim.myboard.vo.board.BoardListResponse;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -28,12 +30,10 @@ public class BoardServiceImpl implements BoardService {
     private final BoardDao boardDao;
     private final CommentDao commentDao;
     private final AttachDao attachDao;
+    private final SHA256PasswordEncoder sha256PasswordEncoder;
 
     /**
      * 검색조건에 해당하는 게시물 리스트
-     *
-     * @param boardSearchRequest
-     * @return
      */
     @Override
     public List<BoardListResponse> getBoardList(BoardSearchRequest boardSearchRequest) {
@@ -42,8 +42,6 @@ public class BoardServiceImpl implements BoardService {
 
     /**
      * 검색조건에 해당하는 게시물 총 갯수
-     * @param boardSearchRequest
-     * @return
      */
     @Override
     public int getTotalCounts(BoardSearchRequest boardSearchRequest) {
@@ -52,53 +50,21 @@ public class BoardServiceImpl implements BoardService {
 
     /**
      * 게시물 상세 보기
-     *
-     * @param boardId
-     * @return
      */
     @Override
     public BoardDetailResponse viewBoardDetail(Long boardId) {
-        boardDao.increaseViewCnt(boardId); // 조회수 1 증가
+        boardDao.increaseViewCnt(boardId); //조회수 1 증가
 
-        BoardDetailResponse boardDetailResponse = boardDao.selectOne(boardId); // 게시글
-        boardDetailResponse.setAttachList(attachDao.selectList(boardId)); // 첨부파일 리스트
-        boardDetailResponse.setCommentList(commentDao.selectList(boardId)); // 댓글 리스트
+        BoardDetailResponse boardDetailResponse = boardDao.selectOne(boardId); //게시글
+        boardDetailResponse.setAttachList(attachDao.selectList(boardId)); //첨부파일 리스트
+        boardDetailResponse.setCommentList(commentDao.selectList(boardId)); //댓글 리스트
         return boardDetailResponse;
     }
 
-//    /**
-//     * 게시물 등록
-//     *
-//     * @param boardSaveRequest
-//     * @param attachInsertList
-//     * @return
-//     */
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public long write(BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList) {
-//        try {
-//            boardDao.insert(boardSaveRequest); // 게시물 insert
-//            long boardId = boardSaveRequest.getBoardId();
-//
-//            if (attachInsertList != null && !attachInsertList.isEmpty()) {
-//                insertAttaches(attachInsertList, boardSaveRequest.getBoardId());  // 첨부파일 insert
-//                updateHasAttach(boardId);
-//            }
-//
-//            return boardId; // 등록한 게시물 번호 리턴
-//        } catch (Exception e) { // 게시물 등록 실패시 생성했던 파일 삭제하기 위해
-//            throw new BoardInsertFailedException(attachInsertList, ErrorCode.BOARD_INSERT_FAILED);
-//        }
-//    }
-
     /**
-     * 비로그인 사용자 게시물 등록
-     *
-     * @param guestSaveRequest
-     * @param boardSaveRequest
-     * @param attachInsertList
-     * @return
+     * 익명 게시물 등록
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public long write(GuestSaveRequest guestSaveRequest, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList) {
         try {
@@ -107,31 +73,27 @@ public class BoardServiceImpl implements BoardService {
                     .boardTitle(boardSaveRequest.getBoardTitle())
                     .boardContent(boardSaveRequest.getBoardContent())
                     .guestNickname(guestSaveRequest.getGuestNickname())
-                    .guestPassword(guestSaveRequest.getGuestPassword())
+                    .guestPassword(sha256PasswordEncoder.getHash(guestSaveRequest.getGuestPassword()))
                     .build();
 
-            boardDao.insertGuestBoard(boardVo); // 게시물 insert
+            boardDao.insertGuestBoard(boardVo); //게시물 insert
             long boardId = boardVo.getBoardId();
 
             if (attachInsertList != null && !attachInsertList.isEmpty()) {
-                insertAttaches(attachInsertList, boardId);  // 첨부파일 insert
+                insertAttaches(attachInsertList, boardId);  //첨부파일 insert
                 updateHasAttach(boardId);
             }
 
-            return boardId; // 등록한 게시물 번호 리턴
-        } catch (Exception e) { // 게시물 등록 실패시 생성했던 파일 삭제하기 위해
+            return boardId; //등록한 게시물 번호 리턴
+        } catch (Exception e) { //게시물 등록 실패시 생성했던 파일 삭제하기 위해
             throw new BoardInsertFailedException(attachInsertList, ErrorCode.BOARD_INSERT_FAILED);
         }
     }
 
     /**
      * 로그인 사용자 게시물 등록
-     *
-     * @param userId
-     * @param boardSaveRequest
-     * @param attachInsertList
-     * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public long write(Long userId, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList) {
         try {
@@ -142,28 +104,22 @@ public class BoardServiceImpl implements BoardService {
                     .userId(userId)
                     .build();
 
-            boardDao.insertLoginUserBoard(boardVo); // 게시물 insert
+            boardDao.insertLoginUserBoard(boardVo); //게시물 insert
             long boardId = boardVo.getBoardId();
 
             if (attachInsertList != null && !attachInsertList.isEmpty()) {
-                insertAttaches(attachInsertList, boardId);  // 첨부파일 insert
+                insertAttaches(attachInsertList, boardId);  //첨부파일 insert
                 updateHasAttach(boardId);
             }
 
-            return boardId; // 등록한 게시물 번호 리턴
-        } catch (Exception e) { // 게시물 등록 실패시 생성했던 파일 삭제하기 위해
+            return boardId; //등록한 게시물 번호 리턴
+        } catch (Exception e) { //게시물 등록 실패시 생성했던 파일 삭제하기 위해
             throw new BoardInsertFailedException(attachInsertList, ErrorCode.BOARD_INSERT_FAILED);
         }
     }
 
     /**
      * 게시물 수정
-     *
-     * @param boardId
-     * @param boardContent
-     * @param boardTitle
-     * @param attachInsertList
-     * @param attachDeleteList
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -182,20 +138,23 @@ public class BoardServiceImpl implements BoardService {
             insertAttaches(attachInsertList, boardId);
         }
 
-        boardDao.update(Map.of("boardId", boardId, "boardTitle", boardTitle, "boardContent", boardContent));  //게시물 update
+        boardDao.update(
+                Map.of(
+                        "boardId", boardId,
+                        "boardTitle", boardTitle,
+                        "boardContent", boardContent
+                )
+        );  //게시물 update
         updateHasAttach(boardId);  //첨부파일 유무 update
     }
 
     @Override
-    public boolean checkAnonymous(Long boardId) {
-        boolean isAnonymous = boardDao.selectUserId(boardId) == null;
-        return isAnonymous;
+    public boolean isAnonymous(Long boardId) {
+        return boardDao.selectUserId(boardId) == null;
     }
 
     /**
      * 게시물 삭제
-     *
-     * @param boardId
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -206,11 +165,17 @@ public class BoardServiceImpl implements BoardService {
     }
 
     /**
-     * 게시물 비밀번호 확인
+     * 익명 게시물 비밀번호 확인
      */
     @Override
-    public void checkGuestPassword(Long boardId, String guestPassword) {
-        Long result = boardDao.selectOneByGuestPassword(Map.of("boardId", boardId, "guestPassword", guestPassword));
+    public void checkGuestPassword(Long boardId, String guestPassword) throws NoSuchAlgorithmException {
+        Long result = boardDao.selectOneByGuestPassword(
+                Map.of(
+                        "boardId", boardId,
+                        "guestPassword", sha256PasswordEncoder.getHash(guestPassword)
+                )
+        );
+
         if(result == null) {
             throw new GuestPasswordMismatchException(ErrorCode.GUEST_PASSWORD_MISMATCH);
         }
@@ -218,9 +183,6 @@ public class BoardServiceImpl implements BoardService {
 
     /**
      * 첨부파일 insert
-     *
-     * @param attachInsertList
-     * @param boardId
      */
     private void insertAttaches(List<AttachVo> attachInsertList, Long boardId) {
         for (AttachVo attach : attachInsertList) {
@@ -231,8 +193,6 @@ public class BoardServiceImpl implements BoardService {
 
     /**
      * 첨부파일 delete
-     *
-     * @param attachDeleteList
      */
     private void deleteAttaches(List<AttachVo> attachDeleteList) {
         for (AttachVo attachVo : attachDeleteList) {
@@ -242,15 +202,16 @@ public class BoardServiceImpl implements BoardService {
 
     /**
      * 첨부파일 유무 여부 update
-     *
-     * @param boardId
      */
     private void updateHasAttach(long boardId) {
         int attachCount = attachDao.selectCountByBoardId(boardId);
 
         boardDao.updateHasAttach(
-                Map.of("boardId", boardId,
-                        "boardHasAttach", attachCount > 0));
+                Map.of(
+                        "boardId", boardId,
+                        "boardHasAttach", attachCount > 0
+                )
+        );
     }
 
 }

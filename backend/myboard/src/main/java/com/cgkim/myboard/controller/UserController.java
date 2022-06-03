@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @Slf4j
@@ -67,7 +68,7 @@ public class UserController {
      * 회원가입
      */
     @PostMapping
-    public ResponseEntity<SuccessResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
+    public ResponseEntity<SuccessResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) throws NoSuchAlgorithmException {
         return ResponseEntity
                 .ok()
                 .body(new SuccessResponse()
@@ -79,7 +80,7 @@ public class UserController {
      * TODO: 성공시 원래 request URI 인가 거기로 redirect?
      */
     @PostMapping("/login")
-    public ResponseEntity<SuccessResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<SuccessResponse> login(@RequestBody @Valid LoginRequest loginRequest) throws NoSuchAlgorithmException {
         // 로그인
         UserVo loginUser = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
         // 토큰 생성
