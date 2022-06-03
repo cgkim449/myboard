@@ -4,6 +4,7 @@ import com.cgkim.myboard.vo.comment.CommentListResponse;
 import com.cgkim.myboard.vo.comment.CommentSaveRequest;
 import com.cgkim.myboard.vo.user.GuestSaveRequest;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public interface CommentService {
@@ -12,11 +13,11 @@ public interface CommentService {
 
     void writeComment(Long userId, CommentSaveRequest commentSaveRequest);
 
-    void writeComment(GuestSaveRequest guestSaveRequest, CommentSaveRequest commentSaveRequest);
+    void writeComment(GuestSaveRequest guestSaveRequest, CommentSaveRequest commentSaveRequest) throws NoSuchAlgorithmException;
 
     void delete(Long commentId);
 
-    boolean checkAnonymous(Long commentId);
+    boolean isAnonymous(Long commentId);
 
-    void checkGuestPassword(Long commentId, String guestPassword);
+    void checkGuestPassword(Long commentId, String guestPassword) throws NoSuchAlgorithmException;
 }

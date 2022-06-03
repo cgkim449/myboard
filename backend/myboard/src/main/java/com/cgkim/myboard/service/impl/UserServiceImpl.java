@@ -6,21 +6,27 @@ import com.cgkim.myboard.exception.UsernameDuplicateException;
 import com.cgkim.myboard.exception.ErrorCode;
 import com.cgkim.myboard.exception.LoginFailedException;
 import com.cgkim.myboard.service.UserService;
+import com.cgkim.myboard.util.SHA256PasswordEncoder;
 import com.cgkim.myboard.vo.user.SignUpRequest;
 import com.cgkim.myboard.vo.user.SignUpResponse;
 import com.cgkim.myboard.vo.user.UserVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
+    private final SHA256PasswordEncoder sha256PasswordEncoder;
 
-    //TODO: 비밀번호 암호화
+    /**
+     * 회원가입
+     */
     @Override
-    public SignUpResponse signUp(SignUpRequest signUpRequest) {
+    public SignUpResponse signUp(SignUpRequest signUpRequest) throws NoSuchAlgorithmException {
         if(userDao.selectCountByUsername(signUpRequest.getUsername()) > 0) {
             throw new UsernameDuplicateException(ErrorCode.USERNAME_DUPLICATE);
         }
@@ -28,6 +34,9 @@ public class UserServiceImpl implements UserService {
         if(userDao.selectCountByNickname(signUpRequest.getNickname()) > 0) {
             throw new NicknameDuplicateException(ErrorCode.NICKNAME_DUPLICATE);
         }
+
+        String encodedPassword = sha256PasswordEncoder.getHash(signUpRequest.getPassword());
+        signUpRequest.setPassword(encodedPassword);
 
         userDao.insert(signUpRequest);
 
@@ -40,31 +49,35 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 로그인
-     *
-     * @param username
-     * @param password
      * @return null: 로그인 실패
      */
     @Override
-    public UserVo login(String username, String password) {
+    public UserVo login(String username, String password) throws NoSuchAlgorithmException {
         UserVo userVo = userDao.selectByUsername(username);
 
-        if(userVo == null) { // 일치하는 username 이 없을때
+        if(userVo == null) { //일치하는 아이디가 없을때
             throw new LoginFailedException(ErrorCode.LOGIN_FAILED);
         }
 
-        if(!userVo.getPassword().equals(password)) { // 비밀번호가 틀렸을 때
+        password = sha256PasswordEncoder.getHash(password);
+        if(!userVo.getPassword().equals(password)) { //비밀번호가 틀렸을 때
             throw new LoginFailedException(ErrorCode.LOGIN_FAILED);
         }
 
         return userVo;
     }
 
+    /**
+     * 회원 상세 정보
+     */
     @Override
     public UserVo getUserDetail(String username) {
         return userDao.selectByUsername(username);
     }
 
+    /**
+     * username 으로 userId 조회
+     */
     @Override
     public Long getUserId(String username) {
         return userDao.selectUserIdByUsername(username);

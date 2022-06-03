@@ -5,6 +5,7 @@ import com.cgkim.myboard.dao.CommentDao;
 import com.cgkim.myboard.exception.ErrorCode;
 import com.cgkim.myboard.exception.GuestPasswordMismatchException;
 import com.cgkim.myboard.service.CommentService;
+import com.cgkim.myboard.util.SHA256PasswordEncoder;
 import com.cgkim.myboard.vo.comment.CommentListResponse;
 import com.cgkim.myboard.vo.comment.CommentSaveRequest;
 import com.cgkim.myboard.vo.comment.CommentVo;
@@ -12,6 +13,7 @@ import com.cgkim.myboard.vo.user.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
     final CommentDao commentDao;
+    final SHA256PasswordEncoder sha256PasswordEncoder;
 
     /**
      * 댓글 리스트
@@ -47,31 +50,44 @@ public class CommentServiceImpl implements CommentService {
      * 익명 댓글 작성
      */
     @Override
-    public void writeComment(GuestSaveRequest guestSaveRequest, CommentSaveRequest commentSaveRequest) {
+    public void writeComment(GuestSaveRequest guestSaveRequest, CommentSaveRequest commentSaveRequest) throws NoSuchAlgorithmException {
         commentDao.insertGuestComment(
                 CommentVo.builder()
                         .boardId(commentSaveRequest.getBoardId())
                         .commentContent(commentSaveRequest.getCommentContent())
                         .guestNickname(guestSaveRequest.getGuestNickname())
-                        .guestPassword(guestSaveRequest.getGuestPassword())
+                        .guestPassword(sha256PasswordEncoder.getHash(guestSaveRequest.getGuestPassword()))
                         .build()
         );
     }
 
+    /**
+     * 댓글 삭제
+     */
     @Override
     public void delete(Long commentId) {
         commentDao.deleteByCommentId(commentId);
     }
 
+    /**
+     * 익명 댓글 여부 확인
+     */
     @Override
-    public boolean checkAnonymous(Long commentId) {
-        boolean isAnonymous = commentDao.selectUserId(commentId) == null;
-        return isAnonymous;
+    public boolean isAnonymous(Long commentId) {
+        return commentDao.selectUserId(commentId) == null;
     }
 
+    /**
+     * 익명 댓글 비밀번호 확인
+     */
     @Override
-    public void checkGuestPassword(Long commentId, String guestPassword) {
-        Long result = commentDao.selectOneByGuestPassword(Map.of("commentId", commentId, "guestPassword", guestPassword));
+    public void checkGuestPassword(Long commentId, String guestPassword) throws NoSuchAlgorithmException {
+        Long result = commentDao.selectOneByGuestPassword(
+                Map.of(
+                        "commentId", commentId,
+                        "guestPassword", sha256PasswordEncoder.getHash(guestPassword)
+                )
+        );
         if(result == null) {
             throw new GuestPasswordMismatchException(ErrorCode.GUEST_PASSWORD_MISMATCH);
         }

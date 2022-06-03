@@ -15,6 +15,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ public class CheckGuestPasswordArgumentResolver implements HandlerMethodArgument
             ModelAndViewContainer mavContainer,
             NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory
-    ) throws IOException {
+    ) throws IOException, NoSuchAlgorithmException {
         //TODO: HttpServletRequest 안쓰기
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String requestURI = request.getRequestURI(); //요청 uri
@@ -54,14 +55,14 @@ public class CheckGuestPasswordArgumentResolver implements HandlerMethodArgument
 
         String guestPassword = null;
         //TODO: 코드 중복
-        if(collection.equals("boards") && boardService.checkAnonymous(id)) { //익명 글인지 체크
+        if(collection.equals("boards") && boardService.isAnonymous(id)) { //익명 글인지 체크
             //요청 body 에서 guestPassword 값 추출
             Map<String, String> argumentMap = argumentExtractor.extractArgumentsFrom(request, List.of("guestPassword"));
             guestPassword = argumentMap.get("guestPassword");
 
             validateGuestPassword(guestPassword); //유효성 검증
             boardService.checkGuestPassword(id, guestPassword); //비밀번호 체크
-        } else if (collection.equals("comments") && commentService.checkAnonymous(id)) { // 익명 댓글인지 체크
+        } else if (collection.equals("comments") && commentService.isAnonymous(id)) { // 익명 댓글인지 체크
             Map<String, String> argumentMap = argumentExtractor.extractArgumentsFrom(request, List.of("guestPassword"));
             guestPassword = argumentMap.get("guestPassword");
 
