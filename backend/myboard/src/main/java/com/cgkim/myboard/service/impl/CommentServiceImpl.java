@@ -35,30 +35,29 @@ public class CommentServiceImpl implements CommentService {
      * 회원 댓글 작성
      */
     @Override
-    public void writeComment(Long userId, CommentSaveRequest commentSaveRequest) {
-
-        commentDao.insertUserComment(
-                CommentVo.builder()
-                        .boardId(commentSaveRequest.getBoardId())
-                        .commentContent(commentSaveRequest.getCommentContent())
-                        .userId(userId)
-                        .build()
-        );
+    public long writeComment(Long userId, CommentSaveRequest commentSaveRequest) {
+        CommentVo commentVo = CommentVo.builder()
+                                    .boardId(commentSaveRequest.getBoardId())
+                                    .commentContent(commentSaveRequest.getCommentContent())
+                                    .userId(userId)
+                                    .build();
+        commentDao.insertUserComment(commentVo);
+        return commentVo.getCommentId();
     }
 
     /**
      * 익명 댓글 작성
      */
     @Override
-    public void writeComment(GuestSaveRequest guestSaveRequest, CommentSaveRequest commentSaveRequest) throws NoSuchAlgorithmException {
-        commentDao.insertGuestComment(
-                CommentVo.builder()
-                        .boardId(commentSaveRequest.getBoardId())
-                        .commentContent(commentSaveRequest.getCommentContent())
-                        .guestNickname(guestSaveRequest.getGuestNickname())
-                        .guestPassword(sha256PasswordEncoder.getHash(guestSaveRequest.getGuestPassword()))
-                        .build()
-        );
+    public long writeComment(GuestSaveRequest guestSaveRequest, CommentSaveRequest commentSaveRequest) throws NoSuchAlgorithmException {
+        CommentVo commentVo = CommentVo.builder()
+                                    .boardId(commentSaveRequest.getBoardId())
+                                    .commentContent(commentSaveRequest.getCommentContent())
+                                    .guestNickname(guestSaveRequest.getGuestNickname())
+                                    .guestPassword(sha256PasswordEncoder.getHash(guestSaveRequest.getGuestPassword()))
+                                    .build();
+        commentDao.insertGuestComment(commentVo);
+        return commentVo.getCommentId();
     }
 
     /**

@@ -25,14 +25,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         HttpMethod.PATCH.name(),
                         HttpMethod.DELETE.name()
                 )
-                .exposedHeaders("Content-Disposition", "Authorization");
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LogInterceptor())
-                .order(1)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/css/**", "/*.ico", "/error");
+                .exposedHeaders("Content-Disposition", "Authorization", "Location");
     }
 }

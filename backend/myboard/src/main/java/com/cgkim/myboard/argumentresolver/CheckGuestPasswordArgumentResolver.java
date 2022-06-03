@@ -26,20 +26,20 @@ public class CheckGuestPasswordArgumentResolver implements HandlerMethodArgument
 
     private final BoardService boardService;
     private final CommentService commentService;
-    private final ArgumentExtractor argumentExtractor;
+    private final ParameterExtractor parameterExtractor;
 
-    /**
-     * @return true 면 resolveArgument()가 호출됨
-     */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-
         boolean hasCheckGuestPasswordAnnotation = parameter.hasParameterAnnotation(CheckGuestPassword.class);
         boolean hasStringType = String.class.isAssignableFrom(parameter.getParameterType());
-
         return hasCheckGuestPasswordAnnotation && hasStringType;
     }
 
+    /**
+     * 익명 글, 댓글일때만
+     *  1. 비밀번호 유효성 검증
+     *  2. 비밀번호 체크(DB 조회)
+     */
     @Override
     public Object resolveArgument(
             MethodParameter parameter,
@@ -47,34 +47,28 @@ public class CheckGuestPasswordArgumentResolver implements HandlerMethodArgument
             NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory
     ) throws IOException, NoSuchAlgorithmException {
-        //TODO: HttpServletRequest 안쓰기
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        String requestURI = request.getRequestURI(); //요청 uri
-        Long id = argumentExtractor.extractIdFrom(requestURI); //요청 uri 에서 id 값 추출
-        String collection = argumentExtractor.extractCollectionFrom(requestURI);
 
-        String guestPassword = null;
-        //TODO: 코드 중복
-        if(collection.equals("boards") && boardService.isAnonymous(id)) { //익명 글인지 체크
-            //요청 body 에서 guestPassword 값 추출
-            Map<String, String> argumentMap = argumentExtractor.extractArgumentsFrom(request, List.of("guestPassword"));
-            guestPassword = argumentMap.get("guestPassword");
+        Map<String, String> parameterMap = parameterExtractor.extractParameterMapFrom(request, List.of("guestPassword"));
+        String guestPassword = parameterMap.get("guestPassword");
 
+        String requestURI = request.getRequestURI();
+        Long id = parameterExtractor.extractIdFrom(requestURI);
+        String collection = parameterExtractor.extractCollectionFrom(requestURI);
+
+        //익명 글, 댓글일때만 유효성 검증 & 비밀번호 체크
+        if(collection.equals("boards") && boardService.isAnonymous(id)) { //익명 글이면
             validateGuestPassword(guestPassword); //유효성 검증
             boardService.checkGuestPassword(id, guestPassword); //비밀번호 체크
-        } else if (collection.equals("comments") && commentService.isAnonymous(id)) { // 익명 댓글인지 체크
-            Map<String, String> argumentMap = argumentExtractor.extractArgumentsFrom(request, List.of("guestPassword"));
-            guestPassword = argumentMap.get("guestPassword");
-
+        } else if (collection.equals("comments") && commentService.isAnonymous(id)) { //익명 댓글이면
             validateGuestPassword(guestPassword); //유효성 검증
             commentService.checkGuestPassword(id, guestPassword); //비밀번호 체크
         }
-
         return guestPassword;
     }
 
     /**
-     * guestPassword 유효성 검증
+     * 비밀번호 유효성 검증
      */
     private void validateGuestPassword(String guestPassword) {
         if(guestPassword == null || guestPassword.equals("")) {

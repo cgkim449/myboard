@@ -226,14 +226,13 @@ export default {
       if(this.validateForm()) {
         let formData = this.prepareFormData();
 
-        const {data} = await this.$_BoardService.writeBoard(formData);
-
-        this.moveToBoardDetail(data.boardId);
+        const response = await this.$_BoardService.writeBoard(formData);
+        this.moveToBoardDetail(response.headers.location);
       }
     },
-    moveToBoardDetail(boardId) {
+    moveToBoardDetail(location) {
       this.$router.push({
-        path:`/boards/${boardId}`,
+        path:location,
         query: this.searchCondition
       }).catch(()=>{});
     },

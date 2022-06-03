@@ -506,7 +506,7 @@ export default {
         guestPassword: "",
       },
       guestCommentPwCheckRequest: {
-        guestPassword: "",
+        guestPassword: "",//TODO: 없애기. 왜냐면 회원 댓글 삭제할때도 이거 날라감.
       },
     }
   },
@@ -611,6 +611,7 @@ export default {
           this.removeCommentDialog = false
           const response = await this.$_BoardService.fetchCommentList(this.boardDetail.boardId);
           this.boardDetail.commentList = response.data.commentList;
+          this.guestCommentPwCheckRequest = {};
       } catch (error) {
         alert(error.response.data.errorMessage);
       }
@@ -619,7 +620,6 @@ export default {
       this.guestBoardPwCheckRequest.boardId = this.boardDetail.boardId;
       try {
         if(action === 'delete') {
-          // TODO: 회원 게시글 삭제 해야됨..
           await this.$_BoardService.removeBoard(this.guestBoardPwCheckRequest);
           alert('삭제되었습니다.');
           this.goToBoardList();

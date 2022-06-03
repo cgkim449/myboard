@@ -54,7 +54,6 @@ export default {
       deleteCookie("token");
       deleteCookie("username");
       deleteCookie("nickname");
-      this.$router.push("/login");
     },
   },
 }

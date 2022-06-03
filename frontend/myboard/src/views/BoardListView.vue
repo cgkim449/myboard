@@ -311,12 +311,13 @@ export default {
     if(!isNaN(this.searchCondition.page)) {
       this.searchCondition.page = Number(this.searchCondition.page);
     }
-
-
-    const response = await this.$_BoardService.fetchBoardList(this.searchCondition);
-    console.log(response.data);
-    this.boardList = response.data.boardList;
-    this.boardTotalCounts= response.data.boardTotalCounts;
+    try {
+        const response = await this.$_BoardService.fetchBoardList(this.searchCondition);
+        this.boardList = response.data.boardList;
+        this.boardTotalCounts= response.data.boardTotalCounts;
+    } catch(error) {
+      console.log(error.response.data.errorMessages)
+    }
   },
   computed: {
 

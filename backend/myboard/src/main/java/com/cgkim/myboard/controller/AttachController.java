@@ -33,8 +33,6 @@ public class AttachController {
 
     /**
      * 파일 다운로드
-     * @param attachId
-     * @return
      */
     @GetMapping(value = "/{attachId}")
     public ResponseEntity<Resource> downloadAttach(@PathVariable Long attachId) {
@@ -46,8 +44,7 @@ public class AttachController {
             throw new AttachNotFoundException(ErrorCode.ATTACH_NOT_FOUND);
         }
 
-        return ResponseEntity
-                .ok()
+        return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         ContentDisposition.attachment()
                                 .filename(attachVo.getFullName(), StandardCharsets.UTF_8)
@@ -59,8 +56,6 @@ public class AttachController {
 
     /**
      * 파일 절대경로 리턴
-     * @param attachVo
-     * @return
      */
     private String getAbsolutePathOf(AttachVo attachVo) {
         return basePath + File.separator

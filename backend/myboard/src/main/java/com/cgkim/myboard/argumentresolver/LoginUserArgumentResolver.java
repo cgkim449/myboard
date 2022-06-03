@@ -12,6 +12,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
+
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -19,18 +21,18 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 
     private final UserService userService;
 
-    /**
-     * @return true 면 resolveArgument()가 호출됨
-     */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-
         boolean hasLoginUserAnnotation = parameter.hasParameterAnnotation(LoginUser.class);
         boolean hasLongType = Long.class.isAssignableFrom(parameter.getParameterType());
-
         return hasLoginUserAnnotation && hasLongType;
     }
 
+    /**
+     * 목적: 컨트톨러 공통 코드 분리
+     *  1. jwt 에서 username 추출
+     *  2. db 에서 userId 가져오기
+     */
     @Override
     public Object resolveArgument(
             MethodParameter parameter,
@@ -38,9 +40,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
             NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory
     ) {
-        //TODO: webRequest.get
-        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        String username = (String) request.getAttribute("username");
+        String username = (String) webRequest.getAttribute("username", SCOPE_REQUEST);
         return userService.getUserId(username);
     }
 }

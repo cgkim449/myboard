@@ -8,7 +8,6 @@ import com.cgkim.myboard.exception.LoginFailedException;
 import com.cgkim.myboard.service.UserService;
 import com.cgkim.myboard.util.SHA256PasswordEncoder;
 import com.cgkim.myboard.vo.user.SignUpRequest;
-import com.cgkim.myboard.vo.user.SignUpResponse;
 import com.cgkim.myboard.vo.user.UserVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,7 @@ public class UserServiceImpl implements UserService {
      * 회원가입
      */
     @Override
-    public SignUpResponse signUp(SignUpRequest signUpRequest) throws NoSuchAlgorithmException {
+    public String signUp(SignUpRequest signUpRequest) throws NoSuchAlgorithmException {
         if(userDao.selectCountByUsername(signUpRequest.getUsername()) > 0) {
             throw new UsernameDuplicateException(ErrorCode.USERNAME_DUPLICATE);
         }
@@ -40,11 +39,7 @@ public class UserServiceImpl implements UserService {
 
         userDao.insert(signUpRequest);
 
-        return SignUpResponse.builder()
-                .userId(signUpRequest.getUserId())
-                .username(signUpRequest.getUsername())
-                .nickname(signUpRequest.getNickname())
-                .build();
+        return signUpRequest.getUsername();
     }
 
     /**

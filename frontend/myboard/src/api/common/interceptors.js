@@ -1,4 +1,6 @@
 import store from "@/store";
+import router from "@/router";
+import {deleteCookie} from "@/utils/cookies";
 
 export function setInterceptors(axiosInstance) {
     axiosInstance.interceptors.request.use(
@@ -20,8 +22,16 @@ export function setInterceptors(axiosInstance) {
             return response;
         },
         function (error) {
-            //TODO: 로그아웃시 공통 코드. alert 띄운다음에 리프래시 해야할듯.
-            alert(error.response.data.errorMessage)
+            if(error.response.data.errorCode === "A002") { //토큰 만료
+                alert(error.response.data.errorMessage)
+                store.commit("clearToken");
+                store.commit("clearUsername");
+                store.commit("clearNickname");
+                deleteCookie("token");
+                deleteCookie("username");
+                deleteCookie("nickname");
+                router.go();
+            }
             return Promise.reject(error);
         },
     );

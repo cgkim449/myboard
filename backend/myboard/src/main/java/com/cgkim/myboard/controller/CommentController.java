@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -56,12 +57,10 @@ public class CommentController {
         if (webDataBinder.getTarget() == null) {
             return;
         }
-
         final List<Validator> validatorList = List.of(
                 commentSaveRequestValidator,
                 guestSaveRequestValidator
         );
-
         for (Validator validator : validatorList) {
             if (validator.supports(webDataBinder.getTarget().getClass())) {
                 webDataBinder.addValidators(validator);
@@ -70,13 +69,12 @@ public class CommentController {
     }
 
     /**
-     * 특정 게시물의 댓글 목록 API
+     * 댓글 리스트 API
      */
     @GetMapping
     public ResponseEntity<SuccessResponse> getCommentList(Long boardId) {
         return ResponseEntity
-                .ok()
-                .body(new SuccessResponse()
+                .ok(new SuccessResponse()
                         .put("commentList", commentService.getCommentList(boardId)));
     }
 
@@ -89,14 +87,13 @@ public class CommentController {
             @Guest GuestSaveRequest guestSaveRequest,
             @Valid CommentSaveRequest commentSaveRequest
     ) throws NoSuchAlgorithmException {
+        long commentId;
         if(isLogin(userId)) { //회원 댓글작성
-            commentService.writeComment(userId, commentSaveRequest);
+            commentId = commentService.writeComment(userId, commentSaveRequest);
         } else { //익명 댓글작성
-            commentService.writeComment(guestSaveRequest, commentSaveRequest);
+            commentId =  commentService.writeComment(guestSaveRequest, commentSaveRequest);
         }
-        return ResponseEntity
-                .ok()
-                .body(new SuccessResponse());
+        return ResponseEntity.created(URI.create("/comments/" + commentId)).body(new SuccessResponse());
     }
 
     private boolean isLogin(Long userId) {
@@ -111,9 +108,7 @@ public class CommentController {
             @PathVariable Long commentId,
             @CheckGuestPassword String guestPassword
     ) {
-        commentService.delete(commentId); //댓글
-        return ResponseEntity
-                .ok()
-                .body(new SuccessResponse());
+        commentService.delete(commentId);
+        return ResponseEntity.noContent().build();
     }
 }

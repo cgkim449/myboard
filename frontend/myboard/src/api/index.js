@@ -3,20 +3,13 @@ import {setInterceptors} from "@/api/common/interceptors";
 
 /**
  * 토큰을 전송하는 axios 인스턴스 생성
- *
- * @param url
- * @returns {*}
  */
 function createInstanceWithToken(url) {
-    return setInterceptors(
-        axios.create({baseURL: `${process.env.VUE_APP_API_URL}${url}`,})
-    );
+    return setInterceptors(axios.create({baseURL: `${process.env.VUE_APP_API_URL}${url}`,}));
 }
 
 /**
  * 토큰을 전송하지 않는 axios 인스턴스 생성
- *
- * @returns {AxiosInstance}
  */
 function createInstanceWithoutToken() {
     return axios.create({baseURL: process.env.VUE_APP_API_URL,});

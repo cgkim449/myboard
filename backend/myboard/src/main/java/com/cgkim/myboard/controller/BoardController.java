@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -76,14 +77,12 @@ public class BoardController {
         if (webDataBinder.getTarget() == null) {
             return;
         }
-
         final List<Validator> validatorList = List.of(
                 boardSaveRequestValidator,
                 boardUpdateRequestValidator,
                 fileSaveRequestValidator,
                 guestSaveRequestValidator
         );
-
         for (Validator validator : validatorList) {
             if (validator.supports(webDataBinder.getTarget().getClass())) {
                 webDataBinder.addValidators(validator);
@@ -97,8 +96,7 @@ public class BoardController {
     @GetMapping
     public ResponseEntity<SuccessResponse> getBoardList(BoardSearchRequest boardSearchRequest){
         return ResponseEntity
-                .ok()
-                .body(new SuccessResponse()
+                .ok(new SuccessResponse()
                         .put("boardList", boardService.getBoardList(boardSearchRequest))
                         .put("boardTotalCounts", boardService.getTotalCounts(boardSearchRequest)));
     }
@@ -109,8 +107,7 @@ public class BoardController {
     @GetMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> getBoardDetail(@PathVariable Long boardId) {
         return ResponseEntity
-                .ok()
-                .body(new SuccessResponse()
+                .ok(new SuccessResponse()
                         .put("boardDetail", boardService.viewBoardDetail(boardId)));
     }
 
@@ -131,10 +128,7 @@ public class BoardController {
         } else { //익명 글작성
             boardId = boardService.write(guestSaveRequest, boardSaveRequest, attachInsertList);
         }
-        return ResponseEntity
-                .ok()
-                .body(new SuccessResponse()
-                        .put("boardId", boardId));
+        return ResponseEntity.created(URI.create("/boards/" + boardId)).body(new SuccessResponse());
     }
 
     private boolean isLogin(Long userId) {
@@ -162,9 +156,7 @@ public class BoardController {
                 attachDeleteList
         );
         fileHandler.deleteFiles(attachDeleteList); //첨부파일 삭제 (C://upload)
-        return ResponseEntity
-                .ok()
-                .body(new SuccessResponse());
+        return ResponseEntity.ok(new SuccessResponse());
     }
 
     /**
@@ -178,9 +170,7 @@ public class BoardController {
         List<AttachVo> attachDeleteList = attachService.getList(boardId); //첨부파일 삭제 리스트
         boardService.delete(boardId); //게시물 삭제
         fileHandler.deleteFiles(attachDeleteList); //첨부파일 삭제 (C://upload)
-        return ResponseEntity
-                .ok()
-                .body(new SuccessResponse());
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -191,8 +181,6 @@ public class BoardController {
             @PathVariable Long boardId,
             @CheckGuestPassword String guestPassword
     ) {
-        return ResponseEntity
-                .ok()
-                .body(new SuccessResponse());
+        return ResponseEntity.ok(new SuccessResponse());
     }
 }

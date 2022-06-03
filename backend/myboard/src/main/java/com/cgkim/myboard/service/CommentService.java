@@ -11,9 +11,9 @@ public interface CommentService {
 
     List<CommentListResponse> getCommentList(Long boardId);
 
-    void writeComment(Long userId, CommentSaveRequest commentSaveRequest);
+    long writeComment(Long userId, CommentSaveRequest commentSaveRequest);
 
-    void writeComment(GuestSaveRequest guestSaveRequest, CommentSaveRequest commentSaveRequest) throws NoSuchAlgorithmException;
+    long writeComment(GuestSaveRequest guestSaveRequest, CommentSaveRequest commentSaveRequest) throws NoSuchAlgorithmException;
 
     void delete(Long commentId);
 
