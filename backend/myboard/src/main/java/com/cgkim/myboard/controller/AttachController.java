@@ -34,9 +34,8 @@ public class AttachController {
     /**
      * 파일 다운로드
      */
-    @GetMapping(value = "/{attachId}")
+    @GetMapping("/{attachId}")
     public ResponseEntity<Resource> downloadAttach(@PathVariable Long attachId) {
-
         AttachVo attachVo = attachService.get(attachId);
         Resource resource = new FileSystemResource(getAbsolutePathOf(attachVo));
 
@@ -55,11 +54,33 @@ public class AttachController {
     }
 
     /**
+     * 이미지 보여주기
+     */
+    @GetMapping("/{attachId}/display")
+    public ResponseEntity<Resource> displayAttach(@PathVariable Long attachId) {
+
+        AttachVo attachVo = attachService.get(attachId);
+        Resource resource = new FileSystemResource(getThumbnailAbsolutePathOf(attachVo));
+
+        if(!resource.exists()) {
+            throw new AttachNotFoundException(ErrorCode.ATTACH_NOT_FOUND);
+        }
+
+        return ResponseEntity.ok().body(resource);
+    }
+
+    /**
      * 파일 절대경로 리턴
      */
     private String getAbsolutePathOf(AttachVo attachVo) {
         return basePath + File.separator
                 + attachVo.getAttachUploadPath() + File.separator
                 + attachVo.getAttachUuid() + '_' + attachVo.getAttachName() + '.' + attachVo.getAttachExtension();
+    }
+
+    private String getThumbnailAbsolutePathOf(AttachVo attachVo) {
+        return basePath + File.separator
+                + attachVo.getAttachUploadPath() + File.separator
+                + attachVo.getAttachUuid() + '_' + attachVo.getAttachName() + "_200x200" + '.' + attachVo.getAttachExtension();
     }
 }
