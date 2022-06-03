@@ -1,5 +1,6 @@
 package com.cgkim.myboard.vo.board;
 
+import com.cgkim.myboard.vo.attach.AttachVo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,4 +25,7 @@ public class BoardListResponse {
     private String guestNickname;
 
     private String nickname; // 로그인 사용자 닉네임
+
+    private AttachVo thumbnail;
+    private boolean hasThumbnail;
 }

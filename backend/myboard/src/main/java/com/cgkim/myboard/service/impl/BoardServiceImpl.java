@@ -37,7 +37,24 @@ public class BoardServiceImpl implements BoardService {
      */
     @Override
     public List<BoardListResponse> getBoardList(BoardSearchRequest boardSearchRequest) {
-        return boardDao.selectList(boardSearchRequest);
+        List<BoardListResponse> boardList = boardDao.selectList(boardSearchRequest);
+        loop:
+        for (BoardListResponse board : boardList) {
+            List<AttachVo> attachList = attachDao.selectList(board.getBoardId());
+            if(attachList != null) {
+                for (AttachVo attach : attachList) {
+                    if(attach.attachIsImage()) {
+                        board.setThumbnail(attach);
+                        board.setHasThumbnail(true);
+                        continue loop;
+                    }
+                }
+                board.setHasThumbnail(false);
+            } else {
+                board.setHasThumbnail(false);
+            }
+        }
+        return boardList;
     }
 
     /**

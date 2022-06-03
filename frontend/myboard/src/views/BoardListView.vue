@@ -113,7 +113,7 @@
         </v-col>
     </v-row>
 
-    <v-row>
+    <v-row dense>
       <v-col
           cols="auto"
       >
@@ -122,42 +122,47 @@
 
       <v-spacer></v-spacer>
 
-<!--      TODO: 보기 형식-->
       <v-col
         cols="auto"
       >
-        <router-link v-bind:to="{
-                    path: `/boards`,
-                    query: this.searchCondition
-                  }">
-
-        </router-link>
+        <v-btn icon v-bind:color="listView ? 'secondary' : 'primary'" @click="listView = false">
+          <v-icon >mdi-view-grid-outline</v-icon>
+        </v-btn>
+      </v-col>
+        <v-col
+            cols="auto"
+        >
+        <v-btn icon v-bind:color="listView ? 'primary' : 'secondary'" @click="listView = true">
+          <v-icon>mdi-format-list-bulleted</v-icon>
+        </v-btn>
       </v-col>
     </v-row>
 
-    <v-row justify="center">
-      <v-col
-          cols="12"
+
+<template v-if="listView">
+  <v-row justify="center" >
+    <v-col
+        cols="12"
+    >
+      <v-data-table
+          dense
+          :headers="headers"
+          :items="boardList"
+          hide-default-footer
+          class="elevation-2"
       >
-          <v-data-table
-              dense
-              :headers="headers"
-              :items="boardList"
-              hide-default-footer
-              class="elevation-2"
+        <template v-slot:item.boardHasAttach="{item}">
+          <v-icon
+              v-if="item.boardHasAttach === 1"
           >
-            <template v-slot:item.boardHasAttach="{item}">
-              <v-icon
-                  v-if="item.boardHasAttach === 1"
-              >
-                mdi-attachment
-              </v-icon>
-              <v-icon
-                  v-else
-              >
-              </v-icon>
-            </template>
-            <template v-slot:item.boardTitle="{item}">
+            mdi-attachment
+          </v-icon>
+          <v-icon
+              v-else
+          >
+          </v-icon>
+        </template>
+        <template v-slot:item.boardTitle="{item}">
               <span
                   @click="moveToBoardDetail(item.boardId)"
                   v-bind:style="{cursor: 'pointer'}"
@@ -165,24 +170,68 @@
               >
                 {{item.boardTitle | formatBoardTitle}}
               </span>
-            </template>
-            <template v-slot:item.guestNickname="{item}">
+        </template>
+        <template v-slot:item.guestNickname="{item}">
               <span v-if="item.guestNickname === null">
                 {{ item.nickname }}
               </span>
-              <span v-if="item.guestNickname !== null">
+          <span v-if="item.guestNickname !== null">
                 {{ item.guestNickname }}
               </span>
-            </template>
-            <template v-slot:item.boardRegisterDate="{item}">
-              {{item.boardRegisterDate | formatDate}}
-            </template>
-            <template v-slot:item.boardUpdateDate="{item}">
-              {{formatUpdateDate(item)}}
-            </template>
-          </v-data-table>
-      </v-col>
-    </v-row>
+        </template>
+        <template v-slot:item.boardRegisterDate="{item}">
+          {{item.boardRegisterDate | formatDate}}
+        </template>
+        <template v-slot:item.boardUpdateDate="{item}">
+          {{formatUpdateDate(item)}}
+        </template>
+      </v-data-table>
+    </v-col>
+  </v-row>
+</template>
+<template v-else>
+  <v-card outlined>
+    <v-container fluid>
+      <v-row dense>
+        <v-col
+            v-for="board in boardList"
+            :key="board.boardId"
+            :cols="3"
+        >
+          <v-card outlined>
+            <v-img
+                @click="moveToBoardDetail(board.boardId)"
+                v-bind:style="{cursor: 'pointer'}"
+                :src="board.display"
+                class="white--text align-end"
+                gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+                height="200px"
+            >
+            </v-img>
+
+            <v-card-actions>
+              <v-col cols="auto">
+                <small class="font-weight-bold">[{{board.categoryName}}] {{ board.boardTitle }}</small><br>
+                <small class="font-weight-bold" v-if="board.nickname !== null">{{board.nickname}}</small>
+                <small class="font-weight-bold" v-if="board.nickname === null">{{board.guestNickname}}</small><br>
+                <small>조회수: {{board.boardViewCount}}</small><br>
+                <small>{{board.boardRegisterDate | formatDate}}</small>
+              </v-col>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-card>
+
+
+</template>
+
+
+
+
+
+
 
     <v-row justify="center">
       <v-col
@@ -197,6 +246,8 @@
         </div>
       </v-col>
     </v-row>
+
+
 
     <v-row>
       <v-spacer></v-spacer>
@@ -227,6 +278,12 @@ export default {
   components: {},
   data() {
     return {
+      cards: [
+        { title: 'Pre-fab homes', src: 'https://cdn.vuetifyjs.com/images/cards/house.jpg', flex: 4 },
+        { title: 'Favorite road trips', src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg', flex: 4 },
+        { title: 'Best airlines', src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg', flex: 4 },
+      ],
+      listView: true,
       date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       menu1: false,
       menu2: false,
@@ -314,6 +371,11 @@ export default {
     try {
         const response = await this.$_BoardService.fetchBoardList(this.searchCondition);
         this.boardList = response.data.boardList;
+        for (const board of this.boardList) {
+          if(board.hasThumbnail) {
+            board.display = `http://localhost:8080/attaches/${board.thumbnail.attachId}/display`
+          }
+        }
         this.boardTotalCounts= response.data.boardTotalCounts;
     } catch(error) {
       console.log(error.response.data.errorMessages)
@@ -330,6 +392,11 @@ export default {
       this.prepareSearchCondition();
       const response = await this.$_BoardService.fetchBoardList(this.searchCondition);
       this.boardList = response.data.boardList;
+      for (const board of this.boardList) {
+        if(board.hasThumbnail) {
+          board.display = `http://localhost:8080/attaches/${board.thumbnail.attachId}/display`
+        }
+      }
       this.boardTotalCounts= response.data.boardTotalCounts;
     },
   },
@@ -355,6 +422,7 @@ export default {
     isEmpty(obj) {
       return Object.keys(obj).length === 0 && obj.constructor === Object;
     },
+    //TODO: 게시글 리스트 보기 모드 유지해야
     moveToBoardDetail(boardId) {
       this.$router.push({
         path:`/boards/${boardId}`,
