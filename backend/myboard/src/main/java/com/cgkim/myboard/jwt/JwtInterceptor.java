@@ -25,12 +25,13 @@ public class JwtInterceptor implements HandlerInterceptor {
             HttpServletResponse response,
             Object handler
     ) {
-        //TODO: CORS 설정
+        //TODO: CORS 설정 WebMvcConfig 에서
         if (request.getMethod().equals("OPTIONS")) {
             return true;
         }
 
         String token = extractTokenFrom(request);
+
         String username = null;
         if(token != null) {
             DecodedJWT jwt = jwtProvider.validate(token);

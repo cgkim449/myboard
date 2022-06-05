@@ -24,7 +24,7 @@ import java.util.Map;
 @Component
 public class GuestArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final ParameterExtractor parameterExtractor;
+    private final ParameterMapExtractor extractor;
 
     /**
      * @return true 면 resolveArgument() 동작
@@ -60,13 +60,14 @@ public class GuestArgumentResolver implements HandlerMethodArgumentResolver {
     /**
      * 바인딩
      */
+    //TODO: 자동화
     private GuestSaveRequest bindObjectFrom(HttpServletRequest request) throws IOException {
-        Map<String, String> parameterMap = parameterExtractor.extractParameterMapFrom(request, List.of("guestNickname", "guestPassword", "guestPasswordConfirm"));
+        Map<String, String> parameterMap = extractor.extractParameterMapFrom(request, List.of("guestNickname", "guestPassword", "guestPasswordConfirm"));
         String guestNickname = parameterMap.get("guestNickname");
         String guestPassword = parameterMap.get("guestPassword");
         String guestPasswordConfirm = parameterMap.get("guestPasswordConfirm");
 
-        String collection = parameterExtractor.extractCollectionFrom(request.getRequestURI()); //요청 uri 에서 collection 추출 (boards 나 comments)
+        String collection = extractor.extractCollectionFrom(request.getRequestURI()); //요청 uri 에서 collection 추출 (boards 나 comments)
         if (collection.equals("comments")) {
             guestPasswordConfirm = guestPassword;
         }

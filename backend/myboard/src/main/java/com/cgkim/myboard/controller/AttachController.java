@@ -34,22 +34,22 @@ public class AttachController {
     /**
      * 파일 다운로드
      */
+    //TODO: url 수정
     @GetMapping("/{attachId}")
     public ResponseEntity<Resource> downloadAttach(@PathVariable Long attachId) {
         AttachVo attachVo = attachService.get(attachId);
         Resource resource = new FileSystemResource(getAbsolutePathOf(attachVo));
-
         if(!resource.exists()) {
             throw new AttachNotFoundException(ErrorCode.ATTACH_NOT_FOUND);
         }
-
-        return ResponseEntity.ok()
+        return ResponseEntity
+                .ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        ContentDisposition.attachment()
+                        ContentDisposition
+                                .attachment()
                                 .filename(attachVo.getFullName(), StandardCharsets.UTF_8)
                                 .build()
-                                .toString()
-                )
+                                .toString())
                 .body(resource);
     }
 
@@ -57,15 +57,12 @@ public class AttachController {
      * 이미지 보여주기
      */
     @GetMapping("/{attachId}/display")
-    public ResponseEntity<Resource> displayAttach(@PathVariable Long attachId) {
-
+    public ResponseEntity<Resource> displayImageAttach(@PathVariable Long attachId) {
         AttachVo attachVo = attachService.get(attachId);
         Resource resource = new FileSystemResource(getThumbnailAbsolutePathOf(attachVo));
-
         if(!resource.exists()) {
             throw new AttachNotFoundException(ErrorCode.ATTACH_NOT_FOUND);
         }
-
         return ResponseEntity.ok().body(resource);
     }
 
@@ -78,6 +75,10 @@ public class AttachController {
                 + attachVo.getAttachUuid() + '_' + attachVo.getAttachName() + '.' + attachVo.getAttachExtension();
     }
 
+    /**
+     * 첨부파일 절대경로 리턴
+     */
+    //TODO: 200x200 상수로
     private String getThumbnailAbsolutePathOf(AttachVo attachVo) {
         return basePath + File.separator
                 + attachVo.getAttachUploadPath() + File.separator

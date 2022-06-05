@@ -11,6 +11,7 @@ function createInstanceWithToken(url) {
 /**
  * 토큰을 전송하지 않는 axios 인스턴스 생성
  */
+//TODO: 할필요없음
 function createInstanceWithoutToken() {
     return axios.create({baseURL: process.env.VUE_APP_API_URL,});
 }
