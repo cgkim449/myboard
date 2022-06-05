@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 @Component
-public class ParameterExtractor {
+public class ParameterMapExtractor {
 
     private static StringTokenizer stringTokenizer;
 
@@ -62,7 +62,7 @@ public class ParameterExtractor {
         }
     }
 
-    //TODO: https://meetup.toast.com/posts/44
+    //TODO: https://meetup.toast.com/posts/44 공부
     private JSONObject getRequestBodyFrom(HttpServletRequest request, int CONTENT_LENGTH) throws IOException {
         byte[] content = new byte[CONTENT_LENGTH];
 
@@ -78,7 +78,6 @@ public class ParameterExtractor {
      * RequestBody 가 JSON 인지 확인
      */
     private boolean isRequestBodyJSON(HttpServletRequest request) {
-        Object object = request.getParameterMap().isEmpty();
         return request.getParameterMap().isEmpty();
     }
 }

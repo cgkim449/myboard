@@ -38,7 +38,6 @@ public class UserServiceImpl implements UserService {
         signUpRequest.setPassword(encodedPassword);
 
         userDao.insert(signUpRequest);
-
         return signUpRequest.getUsername();
     }
 

@@ -374,6 +374,7 @@ export default {
         for (const board of this.boardList) {
           if(board.hasThumbnail) {
             board.display = `http://localhost:8080/attaches/${board.thumbnail.attachId}/display`
+            //TODO: db 에 컬럼 만들기, 썸네일 라이브러리
           }
         }
         this.boardTotalCounts= response.data.boardTotalCounts;

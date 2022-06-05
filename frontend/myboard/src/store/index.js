@@ -48,6 +48,7 @@ export default new Vuex.Store({
       setValueToCookie("token", data.token);
       setValueToCookie("username", data.username);
       setValueToCookie("nickname", data.nickname);
+      //TODO: 플러그인
       return data;
     },
   },

@@ -26,7 +26,7 @@ public class CheckGuestPasswordArgumentResolver implements HandlerMethodArgument
 
     private final BoardService boardService;
     private final CommentService commentService;
-    private final ParameterExtractor parameterExtractor;
+    private final ParameterMapExtractor extractor;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -49,12 +49,12 @@ public class CheckGuestPasswordArgumentResolver implements HandlerMethodArgument
     ) throws IOException, NoSuchAlgorithmException {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
 
-        Map<String, String> parameterMap = parameterExtractor.extractParameterMapFrom(request, List.of("guestPassword"));
+        Map<String, String> parameterMap = extractor.extractParameterMapFrom(request, List.of("guestPassword"));
         String guestPassword = parameterMap.get("guestPassword");
 
         String requestURI = request.getRequestURI();
-        Long id = parameterExtractor.extractIdFrom(requestURI);
-        String collection = parameterExtractor.extractCollectionFrom(requestURI);
+        Long id = extractor.extractIdFrom(requestURI);
+        String collection = extractor.extractCollectionFrom(requestURI);
 
         //익명 글, 댓글일때만 유효성 검증 & 비밀번호 체크
         if(collection.equals("boards") && boardService.isAnonymous(id)) { //익명 글이면

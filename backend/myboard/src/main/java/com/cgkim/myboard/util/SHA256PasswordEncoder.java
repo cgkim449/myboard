@@ -1,5 +1,6 @@
 package com.cgkim.myboard.util;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.MessageDigest;
@@ -7,11 +8,20 @@ import java.security.NoSuchAlgorithmException;
 
 @Component
 public class SHA256PasswordEncoder {
+
+    private final String algorithm;
+
+    public SHA256PasswordEncoder(
+            @Value("${password.encoder-algorithm}") String algorithm
+    ) {
+        this.algorithm = algorithm;
+    }
+
     /**
      * 해싱
      */
     public String getHash(String message) throws NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+        MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
         messageDigest.update(message.getBytes());
         byte[] result = messageDigest.digest();
         return bytesToString(result);

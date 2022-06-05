@@ -29,7 +29,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
     }
 
     /**
-     * 목적: 컨트톨러 공통 코드 분리
+     * 컨트톨러 공통 코드 분리
      *  1. jwt 에서 username 추출
      *  2. db 에서 userId 가져오기
      */

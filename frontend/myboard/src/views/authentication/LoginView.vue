@@ -90,11 +90,17 @@ export default {
         try {
 
           const data = await this.$store.dispatch("LOGIN", user);
-          await this.$router.go(-1);
+          this.goToBoardList()
         } catch (error) {
           alert(error.response.data.errorMessage)
         }
       }
+    },
+    goToBoardList() {
+      this.$router.push({
+        path: '/boards'
+        , query: this.searchCondition
+      });
     },
   }
 }
