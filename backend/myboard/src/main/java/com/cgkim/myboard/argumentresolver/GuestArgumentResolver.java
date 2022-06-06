@@ -1,7 +1,7 @@
 package com.cgkim.myboard.argumentresolver;
 
 import com.cgkim.myboard.validation.GuestSaveRequestValidator;
-import com.cgkim.myboard.vo.user.GuestSaveRequest;
+import com.cgkim.myboard.vo.member.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -93,9 +93,5 @@ public class GuestArgumentResolver implements HandlerMethodArgumentResolver {
         if (binder.getBindingResult().hasErrors()) {
             throw new BindException(binder.getBindingResult());
         }
-    }
-
-    private boolean isGuest(String username) {
-        return username == null;
     }
 }

@@ -22,6 +22,6 @@ public interface BoardDao {
     void delete(Long boardId);
     int update(Map<String, Object> map);
     void insertGuestBoard(BoardVo boardVo);
-    void insertLoginUserBoard(BoardVo boardVo);
-    Long selectUserId(Long boardId);
+    void insertLoginMemberBoard(BoardVo boardVo);
+    Long selectMemberId(Long boardId);
 }

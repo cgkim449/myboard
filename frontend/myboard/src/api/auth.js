@@ -3,18 +3,18 @@ import {instanceWithoutToken} from "@/api/index";
 /**
  * 회원가입 API
  */
-const createUser = (user) => {
-    return instanceWithoutToken.post("users", user);
+const createMember = (member) => {
+    return instanceWithoutToken.post("members", member);
 }
 
 /**
  * 로그인 API
  */
-const loginUser = (user) => {
-    return instanceWithoutToken.post("users/login", user);
+const loginMember = (member) => {
+    return instanceWithoutToken.post("members/login", member);
 }
 
 export {
-    createUser,
-    loginUser
+    createMember,
+    loginMember
 }

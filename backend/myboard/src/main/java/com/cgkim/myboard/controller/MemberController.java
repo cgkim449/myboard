@@ -2,12 +2,12 @@ package com.cgkim.myboard.controller;
 
 import com.cgkim.myboard.jwt.JwtProvider;
 import com.cgkim.myboard.response.SuccessResponse;
-import com.cgkim.myboard.service.UserService;
+import com.cgkim.myboard.service.MemberService;
 import com.cgkim.myboard.validation.LoginRequestValidator;
 import com.cgkim.myboard.validation.SignUpRequestValidator;
-import com.cgkim.myboard.vo.user.LoginRequest;
-import com.cgkim.myboard.vo.user.SignUpRequest;
-import com.cgkim.myboard.vo.user.UserVo;
+import com.cgkim.myboard.vo.member.LoginRequest;
+import com.cgkim.myboard.vo.member.MemberVo;
+import com.cgkim.myboard.vo.member.SignUpRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +27,9 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/users")
-public class UserController {
-    private final UserService userService;
+@RequestMapping("/members")
+public class MemberController {
+    private final MemberService memberService;
     private final SignUpRequestValidator signUpRequestValidator;
     private final LoginRequestValidator loginRequestValidator;
 
@@ -66,8 +66,8 @@ public class UserController {
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) throws NoSuchAlgorithmException {
-        String username = userService.signUp(signUpRequest);
-        return ResponseEntity.created(URI.create("/users/" + username)).body(new SuccessResponse());
+        String username = memberService.signUp(signUpRequest);
+        return ResponseEntity.created(URI.create("/members/" + username)).body(new SuccessResponse());
     }
 
     /**
@@ -76,13 +76,13 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<SuccessResponse> login(@RequestBody @Valid LoginRequest loginRequest) throws NoSuchAlgorithmException {
         // 로그인
-        UserVo loginUser = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+        MemberVo loginMember = memberService.login(loginRequest.getUsername(), loginRequest.getPassword());
         // 토큰 생성
-        String token = jwtProvider.createToken(loginUser.getUsername());
+        String token = jwtProvider.createToken(loginMember.getUsername());
         return ResponseEntity.ok(
                 new SuccessResponse()
-                        .put("username", loginUser.getUsername())
-                        .put("nickname", loginUser.getNickname())
+                        .put("username", loginMember.getUsername())
+                        .put("nickname", loginMember.getNickname())
                         .put("token", token));
     }
 }

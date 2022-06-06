@@ -14,15 +14,15 @@ public class CommentVo {
     private String guestNickname;
     private String guestPassword;
 
-    private Long userId;
+    private Long memberId;
 
     @Builder
-    public CommentVo(Long commentId, Long boardId, String commentContent, String guestNickname, String guestPassword, Long userId) {
+    public CommentVo(Long commentId, Long boardId, String commentContent, String guestNickname, String guestPassword, Long memberId) {
         this.commentId = commentId;
         this.boardId = boardId;
         this.commentContent = commentContent;
         this.guestNickname = guestNickname;
         this.guestPassword = guestPassword;
-        this.userId = userId;
+        this.memberId = memberId;
     }
 }

@@ -9,14 +9,14 @@
              , c.guest_nickname
              , c.comment_content
              , c.comment_register_date
-             , u.nickname
+             , m.nickname
           from comment c
-     left join user u
-            on u.user_id = c.user_id
+     left join member m
+            on m.member_id = c.member_id
          where board_id=#{boardId};
     </select>
-    <select id="selectUserId" resultType="java.lang.Long" parameterType="long">
-        select user_id
+    <select id="selectMemberId" resultType="java.lang.Long" parameterType="long">
+        select member_id
           from comment
          where comment_id = #{commentId}
     </select>
@@ -26,9 +26,9 @@
          where comment_id = #{commentId} and guest_password = #{guestPassword}
     </select>
 
-    <insert id="insertUserComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
-        insert into comment(board_id, user_id, comment_content)
-        values(#{boardId}, #{userId}, #{commentContent})
+    <insert id="insertMemberComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
+        insert into comment(board_id, member_id, comment_content)
+        values(#{boardId}, #{memberId}, #{commentContent})
     </insert>
     <insert id="insertGuestComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
         insert into comment(board_id, guest_nickname, guest_password, comment_content)

@@ -23,9 +23,9 @@ public enum ErrorCode { //TODO: properties 로 분리
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "A002", "로그아웃 되셨습니다."), // 401 인증실패
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "A003", "아이디 또는 비밀번호가 맞지 않습니다."),
 
-    //User
-    USERNAME_DUPLICATE(HttpStatus.BAD_REQUEST, "U001", "이미 가입된 이메일입니다."),
-    NICKNAME_DUPLICATE(HttpStatus.BAD_REQUEST, "U002", "이미 사용된 사용자 이름입니다."),
+    //Member
+    USERNAME_DUPLICATE(HttpStatus.BAD_REQUEST, "M001", "이미 가입된 이메일입니다."),
+    NICKNAME_DUPLICATE(HttpStatus.BAD_REQUEST, "M002", "이미 사용된 사용자 이름입니다."),
 
     //Board
     BOARD_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "B002", "게시물 작성에 실패했습니다."),

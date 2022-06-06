@@ -1,14 +1,14 @@
 package com.cgkim.myboard.service.impl;
 
-import com.cgkim.myboard.dao.UserDao;
+import com.cgkim.myboard.dao.MemberDao;
 import com.cgkim.myboard.exception.NicknameDuplicateException;
 import com.cgkim.myboard.exception.UsernameDuplicateException;
 import com.cgkim.myboard.exception.ErrorCode;
 import com.cgkim.myboard.exception.LoginFailedException;
-import com.cgkim.myboard.service.UserService;
+import com.cgkim.myboard.service.MemberService;
 import com.cgkim.myboard.util.SHA256PasswordEncoder;
-import com.cgkim.myboard.vo.user.SignUpRequest;
-import com.cgkim.myboard.vo.user.UserVo;
+import com.cgkim.myboard.vo.member.MemberVo;
+import com.cgkim.myboard.vo.member.SignUpRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +16,9 @@ import java.security.NoSuchAlgorithmException;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class MemberServiceImpl implements MemberService {
 
-    private final UserDao userDao;
+    private final MemberDao memberDao;
     private final SHA256PasswordEncoder sha256PasswordEncoder;
 
     /**
@@ -26,54 +26,55 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String signUp(SignUpRequest signUpRequest) throws NoSuchAlgorithmException {
-        if(userDao.selectCountByUsername(signUpRequest.getUsername()) > 0) {
+        if(memberDao.selectCountByUsername(signUpRequest.getUsername()) > 0) {
             throw new UsernameDuplicateException(ErrorCode.USERNAME_DUPLICATE);
         }
 
-        if(userDao.selectCountByNickname(signUpRequest.getNickname()) > 0) {
+        if(memberDao.selectCountByNickname(signUpRequest.getNickname()) > 0) {
             throw new NicknameDuplicateException(ErrorCode.NICKNAME_DUPLICATE);
         }
 
         String encodedPassword = sha256PasswordEncoder.getHash(signUpRequest.getPassword());
         signUpRequest.setPassword(encodedPassword);
 
-        userDao.insert(signUpRequest);
+        memberDao.insert(signUpRequest);
         return signUpRequest.getUsername();
     }
 
     /**
      * 로그인
+     *
      * @return null: 로그인 실패
      */
     @Override
-    public UserVo login(String username, String password) throws NoSuchAlgorithmException {
-        UserVo userVo = userDao.selectByUsername(username);
+    public MemberVo login(String username, String password) throws NoSuchAlgorithmException {
+        MemberVo memberVo = memberDao.selectByUsername(username);
 
-        if(userVo == null) { //일치하는 아이디가 없을때
+        if(memberVo == null) { //일치하는 아이디가 없을때
             throw new LoginFailedException(ErrorCode.LOGIN_FAILED);
         }
 
         password = sha256PasswordEncoder.getHash(password);
-        if(!userVo.getPassword().equals(password)) { //비밀번호가 틀렸을 때
+        if(!memberVo.getPassword().equals(password)) { //비밀번호가 틀렸을 때
             throw new LoginFailedException(ErrorCode.LOGIN_FAILED);
         }
 
-        return userVo;
+        return memberVo;
     }
 
     /**
      * 회원 상세 정보
      */
     @Override
-    public UserVo getUserDetail(String username) {
-        return userDao.selectByUsername(username);
+    public MemberVo getMemberDetail(String username) {
+        return memberDao.selectByUsername(username);
     }
 
     /**
-     * username 으로 userId 조회
+     * username 으로 memberId 조회
      */
     @Override
-    public Long getUserId(String username) {
-        return userDao.selectUserIdByUsername(username);
+    public Long getMemberId(String username) {
+        return memberDao.selectMemberIdByUsername(username);
     }
 }
