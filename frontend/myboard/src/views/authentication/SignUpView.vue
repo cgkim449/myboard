@@ -123,14 +123,14 @@ export default {
     },
     async signUp() {
       if(this.validateForm()) {
-        const user = {
+        const member = {
           username: this.username,
           nickname: this.nickname,
           password: this.password,
           passwordConfirm: this.passwordConfirm,
         };
         try {
-          const response = await this.$_UserService.signUp(user);
+          const response = await this.$_MemberService.signUp(member);
           this.moveToLoginPage(response.headers.location);
         } catch (error) {
           alert(error.response.data.errorMessage)

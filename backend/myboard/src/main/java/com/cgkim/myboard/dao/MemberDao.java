@@ -1,19 +1,19 @@
 package com.cgkim.myboard.dao;
 
-import com.cgkim.myboard.vo.user.SignUpRequest;
-import com.cgkim.myboard.vo.user.UserVo;
+import com.cgkim.myboard.vo.member.MemberVo;
+import com.cgkim.myboard.vo.member.SignUpRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @Mapper
-public interface UserDao {
+public interface MemberDao {
 
     void insert(SignUpRequest signUpRequest);
-    UserVo selectByUserId(Long userId);
-    UserVo selectByUsername(String username);
+    MemberVo selectByMemberId(Long memberId);
+    MemberVo selectByUsername(String username);
     int selectCountByUsername(String username);
     int selectCountByNickname(String nickname);
 
-    Long selectUserIdByUsername(String username);
+    Long selectMemberIdByUsername(String username);
 }

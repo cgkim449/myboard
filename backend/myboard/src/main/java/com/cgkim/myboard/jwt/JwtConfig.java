@@ -15,7 +15,7 @@ import java.util.List;
 public class JwtConfig implements WebMvcConfigurer {
 
     private final JwtInterceptor jwtInterceptor;
-    private final LoginUserArgumentResolver loginUserArgumentResolver;
+    private final LoginMemberArgumentResolver loginMemberArgumentResolver;
     private final GuestArgumentResolver guestArgumentResolver;
 
     /**
@@ -25,7 +25,7 @@ public class JwtConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/users/login", "/users/signUp");
+                .excludePathPatterns("/members/login", "/members/signUp");
     }
 
     /**
@@ -33,7 +33,7 @@ public class JwtConfig implements WebMvcConfigurer {
      */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(loginUserArgumentResolver);
+        resolvers.add(loginMemberArgumentResolver);
         resolvers.add(guestArgumentResolver);
     }
 }

@@ -14,6 +14,8 @@ import com.cgkim.myboard.validation.FileSaveRequestValidator;
 import com.cgkim.myboard.validation.GuestSaveRequestValidator;
 import com.cgkim.myboard.vo.attach.AttachVo;
 import com.cgkim.myboard.vo.attach.FileSaveRequest;
+import com.cgkim.myboard.vo.board.BoardDetailResponse;
+import com.cgkim.myboard.vo.board.BoardListResponse;
 import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSearchRequest;
 import com.cgkim.myboard.vo.board.BoardUpdateRequest;
@@ -99,10 +101,12 @@ public class BoardController {
      */
     @GetMapping
     public ResponseEntity<SuccessResponse> getBoardList(BoardSearchRequest boardSearchRequest){
+        List<BoardListResponse> boardList = boardService.getBoardList(boardSearchRequest);
+        int boardTotalCounts = boardService.getTotalCounts(boardSearchRequest);
         return ResponseEntity
                 .ok(new SuccessResponse()
-                        .put("boardList", boardService.getBoardList(boardSearchRequest))
-                        .put("boardTotalCounts", boardService.getTotalCounts(boardSearchRequest)));
+                        .put("boardList", boardList)
+                        .put("boardTotalCounts", boardTotalCounts));
     }
 
     /**
@@ -110,9 +114,10 @@ public class BoardController {
      */
     @GetMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> getBoardDetail(@PathVariable Long boardId) {
+        BoardDetailResponse boardDetail = boardService.viewBoardDetail(boardId);
         return ResponseEntity
                 .ok(new SuccessResponse()
-                        .put("boardDetail", boardService.viewBoardDetail(boardId)));
+                        .put("boardDetail", boardDetail));
     }
 
     /**
@@ -120,23 +125,23 @@ public class BoardController {
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> writeBoard(
-            @LoginUser Long userId,
+            @LoginMember Long memberId,
             @Guest GuestSaveRequest guestSaveRequest,
             @Valid BoardSaveRequest boardSaveRequest,
             @Valid FileSaveRequest fileSaveRequest
     ) throws IOException {
         List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles()); //첨부파일 생성 (C://upload)
         long boardId;
-        if(isLogin(userId)) { //회원 글작성
-            boardId = boardService.write(userId, boardSaveRequest, attachInsertList);
+        if(isLogin(memberId)) { //회원 글작성
+            boardId = boardService.write(memberId, boardSaveRequest, attachInsertList);
         } else { //익명 글작성
             boardId = boardService.write(guestSaveRequest, boardSaveRequest, attachInsertList);
         }
         return ResponseEntity.created(URI.create("/boards/" + boardId)).body(new SuccessResponse());
     }
 
-    private boolean isLogin(Long userId) {
-        return userId != null;
+    private boolean isLogin(Long memberId) {
+        return memberId != null;
     }
 
     /**

@@ -8,14 +8,10 @@ import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.CommentService;
 import com.cgkim.myboard.validation.CommentSaveRequestValidator;
 import com.cgkim.myboard.validation.GuestSaveRequestValidator;
-import com.cgkim.myboard.vo.attach.AttachVo;
-import com.cgkim.myboard.vo.attach.FileSaveRequest;
-import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.comment.CommentSaveRequest;
 import com.cgkim.myboard.vo.member.GuestPasswordVo;
 import com.cgkim.myboard.vo.member.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
@@ -29,11 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -85,21 +78,21 @@ public class CommentController {
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> write(
-            @LoginUser Long userId,
+            @LoginMember Long memberId,
             @Guest GuestSaveRequest guestSaveRequest,
             @Valid CommentSaveRequest commentSaveRequest
     ) throws NoSuchAlgorithmException {
         long commentId;
-        if(isLogin(userId)) { //회원 댓글작성
-            commentId = commentService.writeComment(userId, commentSaveRequest);
+        if(isLogin(memberId)) { //회원 댓글작성
+            commentId = commentService.writeComment(memberId, commentSaveRequest);
         } else { //익명 댓글작성
             commentId =  commentService.writeComment(guestSaveRequest, commentSaveRequest);
         }
         return ResponseEntity.created(URI.create("/comments/" + commentId)).body(new SuccessResponse());
     }
 
-    private boolean isLogin(Long userId) {
-        return userId != null;
+    private boolean isLogin(Long memberId) {
+        return memberId != null;
     }
 
     /**

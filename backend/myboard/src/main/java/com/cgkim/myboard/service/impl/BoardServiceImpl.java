@@ -14,7 +14,7 @@ import com.cgkim.myboard.vo.board.BoardListResponse;
 import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSearchRequest;
 import com.cgkim.myboard.vo.board.BoardVo;
-import com.cgkim.myboard.vo.user.GuestSaveRequest;
+import com.cgkim.myboard.vo.member.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,16 +112,16 @@ public class BoardServiceImpl implements BoardService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public long write(Long userId, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList) {
+    public long write(Long memberId, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList) {
         try {
             BoardVo boardVo = BoardVo.builder()
                     .categoryId(boardSaveRequest.getCategoryId())
                     .boardTitle(boardSaveRequest.getBoardTitle())
                     .boardContent(boardSaveRequest.getBoardContent())
-                    .userId(userId)
+                    .memberId(memberId)
                     .build();
 
-            boardDao.insertLoginUserBoard(boardVo); //게시물 insert
+            boardDao.insertLoginMemberBoard(boardVo); //게시물 insert
             long boardId = boardVo.getBoardId();
 
             if (attachInsertList != null && !attachInsertList.isEmpty()) {
@@ -167,7 +167,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public boolean isAnonymous(Long boardId) {
-        return boardDao.selectUserId(boardId) == null;
+        return boardDao.selectMemberId(boardId) == null;
     }
 
     /**

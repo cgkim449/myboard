@@ -9,7 +9,7 @@ import com.cgkim.myboard.util.SHA256PasswordEncoder;
 import com.cgkim.myboard.vo.comment.CommentListResponse;
 import com.cgkim.myboard.vo.comment.CommentSaveRequest;
 import com.cgkim.myboard.vo.comment.CommentVo;
-import com.cgkim.myboard.vo.user.GuestSaveRequest;
+import com.cgkim.myboard.vo.member.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,13 +35,13 @@ public class CommentServiceImpl implements CommentService {
      * 회원 댓글 작성
      */
     @Override
-    public long writeComment(Long userId, CommentSaveRequest commentSaveRequest) {
+    public long writeComment(Long memberId, CommentSaveRequest commentSaveRequest) {
         CommentVo commentVo = CommentVo.builder()
                                     .boardId(commentSaveRequest.getBoardId())
                                     .commentContent(commentSaveRequest.getCommentContent())
-                                    .userId(userId)
+                                    .memberId(memberId)
                                     .build();
-        commentDao.insertUserComment(commentVo);
+        commentDao.insertMemberComment(commentVo);
         return commentVo.getCommentId();
     }
 
@@ -73,7 +73,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public boolean isAnonymous(Long commentId) {
-        return commentDao.selectUserId(commentId) == null;
+        return commentDao.selectMemberId(commentId) == null;
     }
 
     /**

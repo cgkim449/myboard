@@ -4,7 +4,7 @@ import {
   getValueFromCookie,
   setValueToCookie,
 } from "@/utils/cookies";
-import {loginUser} from "@/api/auth";
+import {loginMember} from "@/api/auth";
 
 Vue.use(Vuex)
 
@@ -40,8 +40,8 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async LOGIN({ commit }, user) {
-      const { data } = await loginUser(user);
+    async LOGIN({ commit }, member) {
+      const { data } = await loginMember(member);
       commit("setToken", data.token);
       commit("setUsername", data.username);
       commit("setNickname", data.nickname);
