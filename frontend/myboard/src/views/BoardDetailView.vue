@@ -127,7 +127,7 @@
                 </v-col>
               </template>
 <!--              로그인사용자: 내댓글 삭제-->
-              <template v-else-if="$store.state.nickname === comment.nickname">
+              <template v-else-if="$_Cookie.getValueFromCookie('nickname') === comment.nickname">
                 <v-col
                   cols="auto"
                 >
@@ -177,8 +177,8 @@
               <v-col
                   cols="2"
               >
-                <template v-if="$store.getters.isLogin">
-                  <v-text-field  disabled dense style="height: 48px !important; " outlined  v-model="$store.state.nickname">
+                <template v-if="$_Cookie.getValueFromCookie('token') !== ''">
+                  <v-text-field  disabled dense style="height: 48px !important; " outlined  v-model="$_Cookie.getValueFromCookie('nickname')">
                   </v-text-field>
                 </template>
 
@@ -255,7 +255,7 @@
               </v-col>
 
 <!--              1.(로그인 사용자)본인 글이면 수정 삭제 버튼 보임.-->
-                <template v-if="$store.getters.isLogin && $store.state.username === boardDetail.username">
+                <template v-if="$_Cookie.getValueFromCookie('token') !== '' && $_Cookie.getValueFromCookie('username') === boardDetail.username">
                   <v-col
                     cols="auto"
                   >

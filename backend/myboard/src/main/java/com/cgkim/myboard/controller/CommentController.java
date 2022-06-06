@@ -1,6 +1,5 @@
 package com.cgkim.myboard.controller;
 
-import com.cgkim.myboard.argumentresolver.Guest;
 import com.cgkim.myboard.argumentresolver.LoginMember;
 import com.cgkim.myboard.exception.ErrorCode;
 import com.cgkim.myboard.exception.GuestPasswordInvalidException;
@@ -9,7 +8,7 @@ import com.cgkim.myboard.service.CommentService;
 import com.cgkim.myboard.validation.CommentSaveRequestValidator;
 import com.cgkim.myboard.validation.GuestSaveRequestValidator;
 import com.cgkim.myboard.vo.comment.CommentSaveRequest;
-import com.cgkim.myboard.vo.member.GuestPasswordVo;
+import com.cgkim.myboard.vo.member.GuestPasswordCheckRequest;
 import com.cgkim.myboard.vo.member.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -76,24 +75,27 @@ public class CommentController {
     /**
      * 댓글 작성 API
      */
-    @PostMapping
-    public ResponseEntity<SuccessResponse> write(
+    @PostMapping("/member")
+    public ResponseEntity<SuccessResponse> writeMemberComment(
             @LoginMember Long memberId,
-            @Guest GuestSaveRequest guestSaveRequest,
             @Valid CommentSaveRequest commentSaveRequest
-    ) throws NoSuchAlgorithmException {
-        long commentId;
-        if(isLogin(memberId)) { //회원 댓글작성
-            commentId = commentService.writeComment(memberId, commentSaveRequest);
-        } else { //익명 댓글작성
-            commentId =  commentService.writeComment(guestSaveRequest, commentSaveRequest);
-        }
+    ) {
+        long commentId = commentService.writeComment(memberId, commentSaveRequest);
         return ResponseEntity.created(URI.create("/comments/" + commentId)).body(new SuccessResponse());
     }
 
-    private boolean isLogin(Long memberId) {
-        return memberId != null;
+    /**
+     * 댓글 작성 API
+     */
+    @PostMapping("/guest")
+    public ResponseEntity<SuccessResponse> writeGuestComment(
+            @Valid GuestSaveRequest guestSaveRequest,
+            @Valid CommentSaveRequest commentSaveRequest
+    ) throws NoSuchAlgorithmException {
+        long commentId =  commentService.writeComment(guestSaveRequest, commentSaveRequest);
+        return ResponseEntity.created(URI.create("/comments/" + commentId)).body(new SuccessResponse());
     }
+
 
     /**
      * 댓글 삭제 API
@@ -101,11 +103,11 @@ public class CommentController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<SuccessResponse> deleteComment(
             @PathVariable Long commentId,
-            @RequestBody GuestPasswordVo guestPasswordVo
+            @RequestBody GuestPasswordCheckRequest guestPasswordCheckRequest
     ) throws NoSuchAlgorithmException {
         if(commentService.isAnonymous(commentId)) { //익명 댓글일때만
-            validateGuestPassword(guestPasswordVo.getGuestPassword()); //비밀번호 유효성 검증
-            commentService.checkGuestPassword(commentId, guestPasswordVo.getGuestPassword()); //비밀번호 체크
+            validateGuestPassword(guestPasswordCheckRequest.getGuestPassword()); //비밀번호 유효성 검증
+            commentService.checkGuestPassword(commentId, guestPasswordCheckRequest.getGuestPassword()); //비밀번호 체크
         }
         commentService.delete(commentId);
         return ResponseEntity.noContent().build();

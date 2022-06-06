@@ -9,7 +9,7 @@
         <v-container fluid>
 
           <!--              본인 글이면 맨위 row 안보임-->
-          <template v-if="$store.getters.isLogin && $store.state.username === boardDetail.username">
+          <template v-if="$_Cookie.getValueFromCookie('token') !== '' && $_Cookie.getValueFromCookie('username') === boardDetail.username">
           </template>
           <template v-else>
             <v-row>

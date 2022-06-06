@@ -17,11 +17,22 @@ const getBoardDetail = (boardId) => {
 };
 
 /**
- * 게시글 작성 API
+ * 회원 게시글 작성 API
  */
-const createBoard = (formData) => {
+const createMemberBoard = (formData) => {
     return boardsInstance.post(
-        "/",
+        "/member",
+        formData,
+        {headers:{"Content-Type" : "multipart/form-data"}}
+    )
+}
+
+/**
+ * 익명 게시글 작성 API
+ */
+const createGuestBoard = (formData) => {
+    return boardsInstance.post(
+        "/guest",
         formData,
         {headers:{"Content-Type" : "multipart/form-data"}}
     )
@@ -67,6 +78,7 @@ export {
     checkBoardPw,
     deleteBoard,
     getBoardDetail,
-    createBoard,
+    createMemberBoard,
+    createGuestBoard,
     patchBoard,
 }

@@ -6,11 +6,13 @@ import vuetify from './plugins/vuetify'
 import BoardServicePlugin from "@/plugins/BoardServicePlugin";
 import {formatBoardTitle, formatDate, hasAttachIcon} from "@/utils/filters";
 import MemberServicePlugin from "@/plugins/MemberServicePlugin";
+import CookiePlugin from "@/plugins/CookiePlugin";
 
 Vue.config.productionTip = false
 
 Vue.use(BoardServicePlugin);
 Vue.use(MemberServicePlugin);
+Vue.use(CookiePlugin);
 
 Vue.filter("formatDate", formatDate);
 Vue.filter("formatBoardTitle", formatBoardTitle);
