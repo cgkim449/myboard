@@ -7,9 +7,9 @@
     <v-app-bar-nav-icon @click="$emit('drawer')"></v-app-bar-nav-icon>
     <v-spacer></v-spacer>
 
-      <template v-if="$store.getters.isLogin">
+      <template v-if="$_Cookie.getValueFromCookie('token') !== ''">
         <span>
-          {{ $store.state.username }}
+          {{ $_Cookie.getValueFromCookie('username') }}
         </span>
 
         <v-btn text @click="logoutMember">
@@ -42,18 +42,15 @@
 </template>
 
 <script>
-import {deleteCookie} from "@/utils/cookies";
-
 export default {
   name: "DefaultBar",
   methods: {
     logoutMember() {
-      this.$store.commit("clearToken");
-      this.$store.commit("clearUsername");
-      this.$store.commit("clearNickname");
-      deleteCookie("token");
-      deleteCookie("username");
-      deleteCookie("nickname");
+      this.$_Cookie.deleteCookie("token");
+      this.$_Cookie.deleteCookie("username");
+      this.$_Cookie.deleteCookie("nickname");
+      alert("로그아웃 되셨습니다.");
+      this.$router.go();
     },
   },
 }

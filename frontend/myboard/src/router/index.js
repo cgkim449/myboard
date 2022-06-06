@@ -11,7 +11,6 @@ import BoardWriteView from "@/views/BoardWriteView";
 import BoardPwCheck from "@/views/BoardPwCheck";
 import BoardModifyView from "@/views/BoardModifyView";
 import RouterTestView from "@/views/RouterTestView";
-import store from "@/store";
 
 Vue.use(VueRouter)
 

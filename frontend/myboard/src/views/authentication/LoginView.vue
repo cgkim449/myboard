@@ -48,6 +48,8 @@
 </template>
 
 <script>
+import {loginMember} from "@/api/auth";
+
 export default {
   name: "LoginPage",
   data() {
@@ -83,13 +85,16 @@ export default {
     },
     async login() {
       if (this.validateForm()) {
-        const user = {
+        const member = {
           username: this.username,
           password: this.password,
         };
         try {
-
-          const data = await this.$store.dispatch("LOGIN", user);
+          const { data } = await loginMember(member);
+          //TODO: 이거도 없앨수잇을듯. 서버에서 걍 쿠키 내려주면 돼잖슴
+          this.$_Cookie.setValueToCookie("token", data.token);
+          this.$_Cookie.setValueToCookie("username", data.username);
+          this.$_Cookie.setValueToCookie("nickname", data.nickname);
           this.goToBoardList()
         } catch (error) {
           alert(error.response.data.errorMessage)

@@ -1,4 +1,11 @@
-import {checkBoardPw, deleteBoard, getBoardDetail, getBoardList, patchBoard, createBoard} from "@/api/boards";
+import {
+    checkBoardPw,
+    deleteBoard,
+    getBoardDetail,
+    getBoardList,
+    patchBoard,
+    createGuestBoard, createMemberBoard
+} from "@/api/boards";
 import {getCommentList, createComment, deleteComment} from "@/api/comments";
 import {downloadAttach} from "@/api/attaches";
 
@@ -9,10 +16,12 @@ export const boardServicePlugin = {
     fetchBoard: (boardId) => {
         return getBoardDetail(boardId);
     },
-    writeBoard(formData) {
-        return createBoard(formData);
+    writeMemberBoard(formData) {
+        return createMemberBoard(formData);
     },
-
+    writeGuestBoard(formData) {
+        return createGuestBoard(formData);
+    },
     removeBoard(board) {
         return deleteBoard(board);
     },

@@ -1,15 +1,13 @@
-import store from "@/store";
 import router from "@/router";
-import {deleteCookie} from "@/utils/cookies";
+import {cookiePlugin} from "@/plugins/CookiePlugin";
 
 export function setInterceptors(axiosInstance) {
     axiosInstance.interceptors.request.use(
         function (config) {
-            if(store.state.token !== "") { //로그인시에만 헤더에 토큰 넣어 요청
-                config.headers.Authorization = "Bearer " + store.state.token;
+            const token = cookiePlugin.getValueFromCookie("token");
+            if(token !== "") { //로그인시에만 헤더에 토큰 넣어 요청
+                config.headers.Authorization = "Bearer " + token;
             }
-            console.log(config.headers.Authorization);
-
             return config;
         },
         function (error) {
@@ -24,12 +22,9 @@ export function setInterceptors(axiosInstance) {
         function (error) {
             if(error.response.data.errorCode === "A002") { //토큰 만료
                 alert(error.response.data.errorMessage)
-                store.commit("clearToken");
-                store.commit("clearUsername");
-                store.commit("clearNickname");
-                deleteCookie("token");
-                deleteCookie("username");
-                deleteCookie("nickname");
+                cookiePlugin.deleteCookie("token");
+                cookiePlugin.deleteCookie("username");
+                cookiePlugin.deleteCookie("nickname");
                 router.go();
             }
             return Promise.reject(error);

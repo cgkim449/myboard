@@ -1,57 +1,16 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {
-  getValueFromCookie,
-  setValueToCookie,
-} from "@/utils/cookies";
-import {loginMember} from "@/api/auth";
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state: {
-    token: getValueFromCookie("token") || "",
-    username: getValueFromCookie("username") || "",
-    nickname: getValueFromCookie("nickname") || "",
-  },
+  state: {},
   getters: {
     isLogin(state) {
       return state.username !== "";
     },
   },
-  mutations: {
-    setToken(state, token) {
-      state.token = token;
-    },
-    clearToken(state) {
-      state.token = "";
-    },
-    setUsername(state, username) {
-      state.username = username;
-    },
-    clearUsername(state) {
-      state.username = "";
-    },
-    setNickname(state, nickname) {
-      state.nickname = nickname;
-    },
-    clearNickname(state) {
-      state.nickname = "";
-    },
-  },
-  actions: {
-    async LOGIN({ commit }, member) {
-      const { data } = await loginMember(member);
-      commit("setToken", data.token);
-      commit("setUsername", data.username);
-      commit("setNickname", data.nickname);
-      setValueToCookie("token", data.token);
-      setValueToCookie("username", data.username);
-      setValueToCookie("nickname", data.nickname);
-      //TODO: 플러그인
-      return data;
-    },
-  },
-  modules: {
-  }
+  mutations: {},
+  actions: {},
+  modules: {}
 })

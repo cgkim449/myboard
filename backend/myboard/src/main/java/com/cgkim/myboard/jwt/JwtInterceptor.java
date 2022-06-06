@@ -31,7 +31,6 @@ public class JwtInterceptor implements HandlerInterceptor {
         }
 
         String token = extractTokenFrom(request);
-
         String username = null;
         if(token != null) {
             DecodedJWT jwt = jwtProvider.validate(token);

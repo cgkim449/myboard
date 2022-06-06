@@ -1,7 +1,6 @@
 package com.cgkim.myboard.controller;
 
 import com.cgkim.myboard.argumentresolver.LoginMember;
-import com.cgkim.myboard.argumentresolver.Guest;
 import com.cgkim.myboard.exception.ErrorCode;
 import com.cgkim.myboard.exception.GuestPasswordInvalidException;
 import com.cgkim.myboard.response.SuccessResponse;
@@ -19,7 +18,7 @@ import com.cgkim.myboard.vo.board.BoardListResponse;
 import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSearchRequest;
 import com.cgkim.myboard.vo.board.BoardUpdateRequest;
-import com.cgkim.myboard.vo.member.GuestPasswordVo;
+import com.cgkim.myboard.vo.member.GuestPasswordCheckRequest;
 import com.cgkim.myboard.vo.member.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -121,27 +120,31 @@ public class BoardController {
     }
 
     /**
-     * 게시물 등록 API
+     * 회원 게시물 등록 API
      */
-    @PostMapping
-    public ResponseEntity<SuccessResponse> writeBoard(
+    @PostMapping("/member")
+    public ResponseEntity<SuccessResponse> writeMemberBoard(
             @LoginMember Long memberId,
-            @Guest GuestSaveRequest guestSaveRequest,
             @Valid BoardSaveRequest boardSaveRequest,
             @Valid FileSaveRequest fileSaveRequest
     ) throws IOException {
         List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles()); //첨부파일 생성 (C://upload)
-        long boardId;
-        if(isLogin(memberId)) { //회원 글작성
-            boardId = boardService.write(memberId, boardSaveRequest, attachInsertList);
-        } else { //익명 글작성
-            boardId = boardService.write(guestSaveRequest, boardSaveRequest, attachInsertList);
-        }
+        long boardId = boardService.write(memberId, boardSaveRequest, attachInsertList); //회원 글 작성
         return ResponseEntity.created(URI.create("/boards/" + boardId)).body(new SuccessResponse());
     }
 
-    private boolean isLogin(Long memberId) {
-        return memberId != null;
+    /**
+     * 익명 게시물 등록 API
+     */
+    @PostMapping("/guest")
+    public ResponseEntity<SuccessResponse> writeGuestBoard(
+            @Valid GuestSaveRequest guestSaveRequest,
+            @Valid BoardSaveRequest boardSaveRequest,
+            @Valid FileSaveRequest fileSaveRequest
+    ) throws IOException {
+        List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles()); //첨부파일 생성 (C://upload)
+        long boardId = boardService.write(guestSaveRequest, boardSaveRequest, attachInsertList); //익명 글 작성
+        return ResponseEntity.created(URI.create("/boards/" + boardId)).body(new SuccessResponse());
     }
 
     /**
@@ -150,14 +153,14 @@ public class BoardController {
     @PatchMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> updateBoard(
             @PathVariable Long boardId,
-            GuestPasswordVo guestPasswordVo,
+            GuestPasswordCheckRequest guestPasswordCheckRequest,
             @Valid BoardUpdateRequest boardUpdateRequest,
             @Valid FileSaveRequest fileSaveRequest,
             Long[] attachDeleteRequest
     ) throws IOException, NoSuchAlgorithmException {
         if(boardService.isAnonymous(boardId)) { //익명 글일때만
-            validateGuestPassword(guestPasswordVo.getGuestPassword()); //비밀번호 유효성 검증
-            boardService.checkGuestPassword(boardId, guestPasswordVo.getGuestPassword()); //비밀번호 체크
+            validateGuestPassword(guestPasswordCheckRequest.getGuestPassword()); //비밀번호 유효성 검증
+            boardService.checkGuestPassword(boardId, guestPasswordCheckRequest.getGuestPassword()); //비밀번호 체크
         }
 
         List<AttachVo> attachDeleteList = attachService.getList(attachDeleteRequest); //첨부파일 삭제 리스트
@@ -179,11 +182,11 @@ public class BoardController {
     @DeleteMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> deleteBoard(
             @PathVariable Long boardId,
-            @RequestBody GuestPasswordVo guestPasswordVo
+            @RequestBody GuestPasswordCheckRequest guestPasswordCheckRequest
     ) throws NoSuchAlgorithmException {
         if(boardService.isAnonymous(boardId)) { //익명 글일때만
-            validateGuestPassword(guestPasswordVo.getGuestPassword()); //비밀번호 유효성 검증
-            boardService.checkGuestPassword(boardId, guestPasswordVo.getGuestPassword()); //비밀번호 체크
+            validateGuestPassword(guestPasswordCheckRequest.getGuestPassword()); //비밀번호 유효성 검증
+            boardService.checkGuestPassword(boardId, guestPasswordCheckRequest.getGuestPassword()); //비밀번호 체크
         }
 
         List<AttachVo> attachDeleteList = attachService.getList(boardId); //첨부파일 삭제 리스트
@@ -198,11 +201,11 @@ public class BoardController {
     @PostMapping("/{boardId}/pwCheck")
     public ResponseEntity<SuccessResponse> checkGuestPassword(
             @PathVariable Long boardId,
-            @RequestBody GuestPasswordVo guestPasswordVo
+            @RequestBody GuestPasswordCheckRequest guestPasswordCheckRequest
     ) throws NoSuchAlgorithmException {
         if(boardService.isAnonymous(boardId)) { //익명 글일때만
-            validateGuestPassword(guestPasswordVo.getGuestPassword()); //비밀번호 유효성 검증
-            boardService.checkGuestPassword(boardId, guestPasswordVo.getGuestPassword()); //비밀번호 체크
+            validateGuestPassword(guestPasswordCheckRequest.getGuestPassword()); //비밀번호 유효성 검증
+            boardService.checkGuestPassword(boardId, guestPasswordCheckRequest.getGuestPassword()); //비밀번호 체크
         }
 
         return ResponseEntity.ok(new SuccessResponse());

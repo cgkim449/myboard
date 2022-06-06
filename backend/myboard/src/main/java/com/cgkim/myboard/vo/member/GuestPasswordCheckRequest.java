@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class GuestPasswordVo {
+public class GuestPasswordCheckRequest {
     private String guestPassword;
 }
