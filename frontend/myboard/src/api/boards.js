@@ -53,11 +53,12 @@ const patchBoard = (formData) => {
  */
 const checkBoardPw = (board) => {
     console.log(board.guestPassword)
-    let form = new FormData()
-    form.append('guestPassword', board.guestPassword)
+    //TODO: json stringify 로 바꾸기?
     return boardsInstance.post(
             `/${board.boardId}/pwCheck`,
-        form
+        {
+            'guestPassword': board.guestPassword
+        },
     );
 }
 

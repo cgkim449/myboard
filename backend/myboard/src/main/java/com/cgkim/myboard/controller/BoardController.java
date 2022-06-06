@@ -1,8 +1,9 @@
 package com.cgkim.myboard.controller;
 
-import com.cgkim.myboard.argumentresolver.CheckGuestPassword;
-import com.cgkim.myboard.argumentresolver.LoginUser;
+import com.cgkim.myboard.argumentresolver.LoginMember;
 import com.cgkim.myboard.argumentresolver.Guest;
+import com.cgkim.myboard.exception.ErrorCode;
+import com.cgkim.myboard.exception.GuestPasswordInvalidException;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.AttachService;
 import com.cgkim.myboard.service.BoardService;
@@ -16,7 +17,8 @@ import com.cgkim.myboard.vo.attach.FileSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSearchRequest;
 import com.cgkim.myboard.vo.board.BoardUpdateRequest;
-import com.cgkim.myboard.vo.user.GuestSaveRequest;
+import com.cgkim.myboard.vo.member.GuestPasswordVo;
+import com.cgkim.myboard.vo.member.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -29,12 +31,14 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -141,11 +145,16 @@ public class BoardController {
     @PatchMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> updateBoard(
             @PathVariable Long boardId,
-            @CheckGuestPassword String guestPassword,
+            GuestPasswordVo guestPasswordVo,
             @Valid BoardUpdateRequest boardUpdateRequest,
             @Valid FileSaveRequest fileSaveRequest,
             Long[] attachDeleteRequest
-    ) throws IOException {
+    ) throws IOException, NoSuchAlgorithmException {
+        if(boardService.isAnonymous(boardId)) { //익명 글일때만
+            validateGuestPassword(guestPasswordVo.getGuestPassword()); //비밀번호 유효성 검증
+            boardService.checkGuestPassword(boardId, guestPasswordVo.getGuestPassword()); //비밀번호 체크
+        }
+
         List<AttachVo> attachDeleteList = attachService.getList(attachDeleteRequest); //첨부파일 삭제 리스트
         List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles());//첨부파일 삽입 리스트
         boardService.modify( //게시글 수정, 첨부파일 수정
@@ -165,8 +174,13 @@ public class BoardController {
     @DeleteMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> deleteBoard(
             @PathVariable Long boardId,
-            @CheckGuestPassword String guestPassword
-    ) {
+            @RequestBody GuestPasswordVo guestPasswordVo
+    ) throws NoSuchAlgorithmException {
+        if(boardService.isAnonymous(boardId)) { //익명 글일때만
+            validateGuestPassword(guestPasswordVo.getGuestPassword()); //비밀번호 유효성 검증
+            boardService.checkGuestPassword(boardId, guestPasswordVo.getGuestPassword()); //비밀번호 체크
+        }
+
         List<AttachVo> attachDeleteList = attachService.getList(boardId); //첨부파일 삭제 리스트
         boardService.delete(boardId); //게시물 삭제
         fileHandler.deleteFiles(attachDeleteList); //첨부파일 삭제 (C://upload)
@@ -179,8 +193,19 @@ public class BoardController {
     @PostMapping("/{boardId}/pwCheck")
     public ResponseEntity<SuccessResponse> checkGuestPassword(
             @PathVariable Long boardId,
-            @CheckGuestPassword String guestPassword
-    ) {
+            @RequestBody GuestPasswordVo guestPasswordVo
+    ) throws NoSuchAlgorithmException {
+        if(boardService.isAnonymous(boardId)) { //익명 글일때만
+            validateGuestPassword(guestPasswordVo.getGuestPassword()); //비밀번호 유효성 검증
+            boardService.checkGuestPassword(boardId, guestPasswordVo.getGuestPassword()); //비밀번호 체크
+        }
+
         return ResponseEntity.ok(new SuccessResponse());
+    }
+
+    private void validateGuestPassword(String guestPassword) {
+        if(guestPassword == null || guestPassword.equals("")) {
+            throw new GuestPasswordInvalidException(ErrorCode.GUEST_PASSWORD_INVALID);
+        }
     }
 }

@@ -1,8 +1,9 @@
 package com.cgkim.myboard.controller;
 
-import com.cgkim.myboard.argumentresolver.CheckGuestPassword;
 import com.cgkim.myboard.argumentresolver.Guest;
-import com.cgkim.myboard.argumentresolver.LoginUser;
+import com.cgkim.myboard.argumentresolver.LoginMember;
+import com.cgkim.myboard.exception.ErrorCode;
+import com.cgkim.myboard.exception.GuestPasswordInvalidException;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.CommentService;
 import com.cgkim.myboard.validation.CommentSaveRequestValidator;
@@ -11,7 +12,8 @@ import com.cgkim.myboard.vo.attach.AttachVo;
 import com.cgkim.myboard.vo.attach.FileSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.comment.CommentSaveRequest;
-import com.cgkim.myboard.vo.user.GuestSaveRequest;
+import com.cgkim.myboard.vo.member.GuestPasswordVo;
+import com.cgkim.myboard.vo.member.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.ResponseEntity;
@@ -106,9 +108,19 @@ public class CommentController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<SuccessResponse> deleteComment(
             @PathVariable Long commentId,
-            @CheckGuestPassword String guestPassword
-    ) {
+            @RequestBody GuestPasswordVo guestPasswordVo
+    ) throws NoSuchAlgorithmException {
+        if(commentService.isAnonymous(commentId)) { //익명 댓글일때만
+            validateGuestPassword(guestPasswordVo.getGuestPassword()); //비밀번호 유효성 검증
+            commentService.checkGuestPassword(commentId, guestPasswordVo.getGuestPassword()); //비밀번호 체크
+        }
         commentService.delete(commentId);
         return ResponseEntity.noContent().build();
+    }
+
+    private void validateGuestPassword(String guestPassword) {
+        if(guestPassword == null || guestPassword.equals("")) {
+            throw new GuestPasswordInvalidException(ErrorCode.GUEST_PASSWORD_INVALID);
+        }
     }
 }
