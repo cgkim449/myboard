@@ -5,12 +5,12 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import BoardServicePlugin from "@/plugins/BoardServicePlugin";
 import {formatBoardTitle, formatDate, hasAttachIcon} from "@/utils/filters";
-import UserServicePlugin from "@/plugins/UserServicePlugin";
+import MemberServicePlugin from "@/plugins/MemberServicePlugin";
 
 Vue.config.productionTip = false
 
 Vue.use(BoardServicePlugin);
-Vue.use(UserServicePlugin);
+Vue.use(MemberServicePlugin);
 
 Vue.filter("formatDate", formatDate);
 Vue.filter("formatBoardTitle", formatBoardTitle);

@@ -15,12 +15,12 @@
              , b.guest_nickname
              , b.guest_password
              , ct.category_name
-             , u.nickname
+             , m.nickname
           from board as b
           join category ct
             on b.category_id = ct.category_id
-     left join user u
-            on b.user_id = u.user_id
+     left join member m
+            on b.member_id = m.member_id
         <include refid="boardSearchCondition"/>
       order by b.board_register_date desc, b.board_id desc
          limit #{offset}, #{limit}
@@ -65,13 +65,13 @@
              , b.guest_nickname
              , b.guest_password
              , ct.category_name
-             , u.username
-             , u.nickname
+             , m.username
+             , m.nickname
           from board as b
           join category ct
             on b.category_id = ct.category_id
-     left join user u
-            on b.user_id = u.user_id
+     left join member m
+            on b.member_id = m.member_id
          where b.board_id = #{boardId}
     </select>
     <select id="selectOneByGuestPassword" resultType="long" parameterType="map">
@@ -80,8 +80,8 @@
          where board_id = #{boardId} and guest_password = #{guestPassword}
     </select>
 
-    <select id="selectUserId" resultType="java.lang.Long" parameterType="long">
-        select user_id
+    <select id="selectMemberId" resultType="java.lang.Long" parameterType="long">
+        select member_id
         from board
         where board_id = #{boardId}
     </select>
@@ -111,10 +111,10 @@
         values(#{categoryId}, #{boardTitle}, #{boardContent}, #{guestNickname}, #{guestPassword});
     </insert>
 
-    <insert id="insertLoginUserBoard" useGeneratedKeys="true" keyProperty="boardId">
+    <insert id="insertLoginMemberBoard" useGeneratedKeys="true" keyProperty="boardId">
         insert
-        into board (user_id, category_id, board_title, board_content)
-        values(#{userId}, #{categoryId}, #{boardTitle}, #{boardContent});
+        into board (member_id, category_id, board_title, board_content)
+        values(#{memberId}, #{categoryId}, #{boardTitle}, #{boardContent});
     </insert>
 
     <delete id="delete" parameterType="long">

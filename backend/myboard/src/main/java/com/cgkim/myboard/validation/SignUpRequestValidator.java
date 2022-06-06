@@ -1,7 +1,6 @@
 package com.cgkim.myboard.validation;
 
-import com.cgkim.myboard.vo.board.BoardUpdateRequest;
-import com.cgkim.myboard.vo.user.SignUpRequest;
+import com.cgkim.myboard.vo.member.SignUpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

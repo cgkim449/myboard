@@ -14,7 +14,7 @@ public class BoardVo {
 
     private Long boardId;
 
-    private Long userId;
+    private Long memberId;
 
     private String guestNickname;
     private String guestPassword;
@@ -26,7 +26,7 @@ public class BoardVo {
             String boardTitle,
             String boardContent,
             Long boardId,
-            Long userId,
+            Long memberId,
             String guestNickname,
             String guestPassword
     ) {
@@ -34,7 +34,7 @@ public class BoardVo {
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;
         this.boardId = boardId;
-        this.userId = userId;
+        this.memberId = memberId;
         this.guestNickname = guestNickname;
         this.guestPassword = guestPassword;
     }

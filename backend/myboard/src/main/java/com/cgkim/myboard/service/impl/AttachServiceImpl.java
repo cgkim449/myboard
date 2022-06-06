@@ -16,9 +16,6 @@ public class AttachServiceImpl implements AttachService {
 
     /**
      * 특정 게시물의 첨부파일 리스트
-     *
-     * @param boardId
-     * @return
      */
     @Override
     public List<AttachVo> getList(Long boardId) {
@@ -27,9 +24,6 @@ public class AttachServiceImpl implements AttachService {
 
     /**
      * 첨부파일 한개 select
-     *
-     * @param attachId
-     * @return
      */
     @Override
     public AttachVo get(Long attachId) {
@@ -38,9 +32,6 @@ public class AttachServiceImpl implements AttachService {
 
     /**
      * 첨부파일 id로 첨부파일 select
-     *
-     * @param attachIdArray
-     * @return
      */
     @Override
     public List<AttachVo> getList(Long[] attachIdArray) {

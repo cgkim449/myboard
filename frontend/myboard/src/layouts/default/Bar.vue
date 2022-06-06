@@ -12,7 +12,7 @@
           {{ $store.state.username }}
         </span>
 
-        <v-btn text @click="logoutUser">
+        <v-btn text @click="logoutMember">
           로그아웃
         </v-btn>
       </template>
@@ -47,7 +47,7 @@ import {deleteCookie} from "@/utils/cookies";
 export default {
   name: "DefaultBar",
   methods: {
-    logoutUser() {
+    logoutMember() {
       this.$store.commit("clearToken");
       this.$store.commit("clearUsername");
       this.$store.commit("clearNickname");

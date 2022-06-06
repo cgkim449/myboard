@@ -2,7 +2,7 @@ package com.cgkim.myboard.jwt;
 
 import com.cgkim.myboard.argumentresolver.GuestArgumentResolver;
 import com.cgkim.myboard.argumentresolver.CheckGuestPasswordArgumentResolver;
-import com.cgkim.myboard.argumentresolver.LoginUserArgumentResolver;
+import com.cgkim.myboard.argumentresolver.LoginMemberArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -16,7 +16,7 @@ import java.util.List;
 public class JwtConfig implements WebMvcConfigurer {
 
     private final JwtInterceptor jwtInterceptor;
-    private final LoginUserArgumentResolver loginUserArgumentResolver;
+    private final LoginMemberArgumentResolver loginMemberArgumentResolver;
     private final GuestArgumentResolver guestArgumentResolver;
     private final CheckGuestPasswordArgumentResolver checkGuestPasswordArgumentResolver;
 
@@ -27,7 +27,7 @@ public class JwtConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/users/login", "/users/signUp");
+                .excludePathPatterns("/members/login", "/members/signUp");
     }
 
     /**
@@ -35,7 +35,7 @@ public class JwtConfig implements WebMvcConfigurer {
      */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(loginUserArgumentResolver);
+        resolvers.add(loginMemberArgumentResolver);
         resolvers.add(guestArgumentResolver);
         resolvers.add(checkGuestPasswordArgumentResolver);
     }

@@ -5,7 +5,7 @@ import com.cgkim.myboard.vo.board.BoardDetailResponse;
 import com.cgkim.myboard.vo.board.BoardListResponse;
 import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSearchRequest;
-import com.cgkim.myboard.vo.user.GuestSaveRequest;
+import com.cgkim.myboard.vo.member.GuestSaveRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
@@ -22,7 +22,7 @@ public interface BoardService {
     long write(GuestSaveRequest guestSaveRequest, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
 
     @Transactional(rollbackFor = Exception.class)
-    long write(Long userId, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
+    long write(Long memberId, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
 
     void checkGuestPassword(Long boardId, String guestPassword) throws NoSuchAlgorithmException;
 
