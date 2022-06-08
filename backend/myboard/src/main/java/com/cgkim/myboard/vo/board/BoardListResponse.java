@@ -26,6 +26,5 @@ public class BoardListResponse {
 
     private String nickname; // 로그인 사용자 닉네임
 
-    private AttachVo thumbnail;
-    private boolean hasThumbnail;
+    private String boardThumbnailUri;
 }

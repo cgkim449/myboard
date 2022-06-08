@@ -7,7 +7,7 @@
         select member_id
              , username
              , nickname
-          from member
+          from tbl_member
          where member_id = #{memberId}
     </select>
 
@@ -18,29 +18,29 @@
              , nickname
              , member_register_date
              , member_update_date
-          from member
+          from tbl_member
          where username = #{username}
     </select>
 
     <select id="selectCountByUsername" resultType="java.lang.Integer">
         select count(*)
-          from member
+          from tbl_member
          where username = #{username}
     </select>
 
     <select id="selectCountByNickname" resultType="java.lang.Integer">
         select count(*)
-          from member
+          from tbl_member
          where nickname = #{nickname}
     </select>
     <select id="selectMemberIdByUsername" resultType="java.lang.Long">
         select member_id
-          from member
+          from tbl_member
          where username = #{username}
     </select>
 
     <insert id="insert" parameterType="signUpRequest" useGeneratedKeys="true" keyProperty="memberId">
-        insert into member
+        insert into tbl_member
             (username, password, nickname)
         values
             (#{username}, #{password}, #{nickname})

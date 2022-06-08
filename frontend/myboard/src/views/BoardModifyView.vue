@@ -79,7 +79,7 @@
                   <p v-for="attach in boardDetail.attachList">
                     <span v-on:click="$_BoardService.downloadAttach(attach.attachId)" style="cursor:pointer;">
                       <v-icon>mdi-attachment</v-icon>
-                      {{attach.attachName}}.{{attach.attachExtension}} - {{attach.attachSize}} byte
+                      {{attach.name}}.{{attach.extension}} - {{attach.size}} byte
 
                     </span>
                     <v-btn x-small text color="red" v-on:click="removeAttach(attach)">x</v-btn>

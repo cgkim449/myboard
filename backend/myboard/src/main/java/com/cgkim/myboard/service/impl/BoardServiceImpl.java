@@ -1,6 +1,6 @@
 package com.cgkim.myboard.service.impl;
 
-import com.cgkim.myboard.dao.AttachDao;
+import com.cgkim.myboard.dao.BoardAttachDao;
 import com.cgkim.myboard.dao.BoardDao;
 import com.cgkim.myboard.dao.CommentDao;
 import com.cgkim.myboard.exception.BoardInsertFailedException;
@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardDao boardDao;
     private final CommentDao commentDao;
-    private final AttachDao attachDao;
+    private final BoardAttachDao boardAttachDao;
     private final SHA256PasswordEncoder sha256PasswordEncoder;
 
     /**
@@ -38,22 +39,6 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public List<BoardListResponse> getBoardList(BoardSearchRequest boardSearchRequest) {
         List<BoardListResponse> boardList = boardDao.selectList(boardSearchRequest);
-        loop:
-        for (BoardListResponse board : boardList) {
-            List<AttachVo> attachList = attachDao.selectList(board.getBoardId());
-            if(attachList != null) {
-                for (AttachVo attach : attachList) {
-                    if(attach.attachIsImage()) {
-                        board.setThumbnail(attach);
-                        board.setHasThumbnail(true);
-                        continue loop;
-                    }
-                }
-                board.setHasThumbnail(false);
-            } else {
-                board.setHasThumbnail(false);
-            }
-        }
         return boardList;
     }
 
@@ -73,7 +58,7 @@ public class BoardServiceImpl implements BoardService {
         boardDao.increaseViewCnt(boardId); //조회수 1 증가
 
         BoardDetailResponse boardDetailResponse = boardDao.selectOne(boardId); //게시글
-        boardDetailResponse.setAttachList(attachDao.selectList(boardId)); //첨부파일 리스트
+        boardDetailResponse.setAttachList(boardAttachDao.selectList(boardId)); //첨부파일 리스트
         boardDetailResponse.setCommentList(commentDao.selectList(boardId)); //댓글 리스트
         return boardDetailResponse;
     }
@@ -99,6 +84,7 @@ public class BoardServiceImpl implements BoardService {
             if (attachInsertList != null && !attachInsertList.isEmpty()) {
                 insertAttaches(attachInsertList, boardId);  //첨부파일 insert
                 updateHasAttach(boardId);
+                updateThumbnailUri(attachInsertList, boardId);
             }
 
             return boardId; //등록한 게시물 번호 리턴
@@ -106,6 +92,8 @@ public class BoardServiceImpl implements BoardService {
             throw new BoardInsertFailedException(attachInsertList, ErrorCode.BOARD_INSERT_FAILED);
         }
     }
+
+
 
     /**
      * 로그인 사용자 게시물 등록
@@ -125,14 +113,30 @@ public class BoardServiceImpl implements BoardService {
             long boardId = boardVo.getBoardId();
 
             if (attachInsertList != null && !attachInsertList.isEmpty()) {
-                insertAttaches(attachInsertList, boardId);  //첨부파일 insert
-                updateHasAttach(boardId);
+                insertAttaches(attachInsertList, boardId); //첨부파일 insert
+                updateHasAttach(boardId); //첨부파일 유무 update
+                updateThumbnailUri(attachInsertList, boardId);
             }
 
             return boardId; //등록한 게시물 번호 리턴
         } catch (Exception e) { //게시물 등록 실패시 생성했던 파일 삭제하기 위해
             throw new BoardInsertFailedException(attachInsertList, ErrorCode.BOARD_INSERT_FAILED);
         }
+    }
+
+    /**
+     * 게시물 썸네일 uri 업데이트
+     */
+    private boolean updateThumbnailUri(List<AttachVo> attachVoList, Long boardId) {
+        for (AttachVo attach : attachVoList) {
+            if(attach.isImage()) {
+                String thumbnailUri = attach.getUploadPath() + File.separator + attach.getUuid() + "_200x200" + "." + attach.getExtension();
+                boardDao.updateThumbnailUri(Map.of("boardId", boardId, "thumbnailUri", thumbnailUri));
+                return true;
+            }
+        }
+        boardDao.updateThumbnailUri(Map.of("boardId", boardId, "thumbnailUri", ""));
+        return false;
     }
 
     /**
@@ -163,6 +167,7 @@ public class BoardServiceImpl implements BoardService {
                 )
         );  //게시물 update
         updateHasAttach(boardId);  //첨부파일 유무 update
+        updateThumbnailUri(boardAttachDao.selectList(boardId), boardId);
     }
 
     @Override
@@ -177,7 +182,7 @@ public class BoardServiceImpl implements BoardService {
     @Transactional(rollbackFor = Exception.class)
     public void delete(Long boardId) {
         commentDao.deleteByBoardId(boardId);
-        attachDao.deleteByBoardId(boardId);
+        boardAttachDao.deleteByBoardId(boardId);
         boardDao.delete(boardId);
     }
 
@@ -204,7 +209,7 @@ public class BoardServiceImpl implements BoardService {
     private void insertAttaches(List<AttachVo> attachInsertList, Long boardId) {
         for (AttachVo attach : attachInsertList) {
             attach.setBoardId(boardId);
-            attachDao.insert(attach);
+            boardAttachDao.insert(attach);
         }
     }
 
@@ -213,7 +218,7 @@ public class BoardServiceImpl implements BoardService {
      */
     private void deleteAttaches(List<AttachVo> attachDeleteList) {
         for (AttachVo attachVo : attachDeleteList) {
-            attachDao.delete(attachVo.getAttachId());
+            boardAttachDao.delete(attachVo.getAttachId());
         }
     }
 
@@ -221,7 +226,7 @@ public class BoardServiceImpl implements BoardService {
      * 첨부파일 유무 여부 update
      */
     private void updateHasAttach(long boardId) {
-        int attachCount = attachDao.selectCountByBoardId(boardId);
+        int attachCount = boardAttachDao.selectCountByBoardId(boardId);
 
         boardDao.updateHasAttach(
                 Map.of(

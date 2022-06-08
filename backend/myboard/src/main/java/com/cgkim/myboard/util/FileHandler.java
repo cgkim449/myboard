@@ -63,11 +63,11 @@ public class FileHandler {
     }
 
     private void saveFile(String uploadPath, MultipartFile multipartFile, AttachVo attach) throws IOException {
-        String saveFileName = attach.getAttachUuid() + "_" + attach.getAttachName() + "." + attach.getAttachExtension();
+        String saveFileName = attach.getUuid() + "." + attach.getExtension();
         File saveFile = new File(uploadPath, saveFileName);
 
-        multipartFile.transferTo(saveFile); // 파일 생성
-        if(attach.attachIsImage()) { // 이미지 파일이면 썸네일 생성
+        multipartFile.transferTo(saveFile); //파일 생성
+        if(attach.isImage()) { //이미지 파일이면 썸네일 생성
             saveThumbnail(saveFile);
         }
     }
@@ -85,12 +85,12 @@ public class FileHandler {
         boolean isImage = multipartFile.getContentType().startsWith("image");
 
         return AttachVo.builder()
-                .attachUploadPath(uploadPath)
-                .attachUuid(uuid.toString())
-                .attachName(fileName)
-                .attachExtension(fileExtension)
-                .attachSize(fileSize)
-                .attachIsImage(isImage)
+                .uploadPath(uploadPath)
+                .uuid(uuid.toString())
+                .name(fileName)
+                .extension(fileExtension)
+                .size(fileSize)
+                .isImage(isImage)
                 .build();
     }
 
@@ -124,7 +124,7 @@ public class FileHandler {
             String saveFilePath = getSaveFilePath(attach);
             new File(saveFilePath).delete();
 
-            if(attach.getAttachIsImage()) { // 이미지인 경우 썸네일 삭제
+            if(attach.isImage()) { // 이미지인 경우 썸네일 삭제
 
                 String thumbnailFilePath = getThumbnailFilePath(saveFilePath);
                 new File(thumbnailFilePath).delete();
@@ -139,10 +139,10 @@ public class FileHandler {
     }
 
     private String getSaveFilePath(AttachVo attach) {
-        String uploadPath = attach.getAttachUploadPath();
-        String uuid = attach.getAttachUuid();
-        String attachName = attach.getAttachName();
-        String attachExtension = attach.getAttachExtension();
+        String uploadPath = attach.getUploadPath();
+        String uuid = attach.getUuid();
+        String attachName = attach.getName();
+        String attachExtension = attach.getExtension();
 
         return basePath + File.separator
                 + uploadPath + File.separator

@@ -1,6 +1,6 @@
 package com.cgkim.myboard.service.impl;
 
-import com.cgkim.myboard.dao.AttachDao;
+import com.cgkim.myboard.dao.BoardAttachDao;
 import com.cgkim.myboard.service.AttachService;
 import com.cgkim.myboard.vo.attach.AttachVo;
 import lombok.RequiredArgsConstructor;
@@ -11,15 +11,15 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class AttachServiceImpl implements AttachService {
-    private final AttachDao attachDao;
+public class BoardAttachServiceImpl implements AttachService {
+    private final BoardAttachDao boardAttachDao;
 
     /**
      * 특정 게시물의 첨부파일 리스트
      */
     @Override
     public List<AttachVo> getList(Long boardId) {
-        return attachDao.selectList(boardId);
+        return boardAttachDao.selectList(boardId);
     }
 
     /**
@@ -27,7 +27,7 @@ public class AttachServiceImpl implements AttachService {
      */
     @Override
     public AttachVo get(Long attachId) {
-        return attachDao.selectOne(attachId);
+        return boardAttachDao.selectOne(attachId);
     }
 
     /**
@@ -42,7 +42,7 @@ public class AttachServiceImpl implements AttachService {
         List<AttachVo> attachVoList = new ArrayList<>();
 
         for (long attachId : attachIdArray) {
-            attachVoList.add(attachDao.selectOne(attachId));
+            attachVoList.add(boardAttachDao.selectOne(attachId));
         }
 
         return attachVoList;

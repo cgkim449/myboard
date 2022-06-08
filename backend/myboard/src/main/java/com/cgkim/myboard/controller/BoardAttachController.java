@@ -2,7 +2,7 @@ package com.cgkim.myboard.controller;
 
 import com.cgkim.myboard.exception.AttachNotFoundException;
 import com.cgkim.myboard.exception.ErrorCode;
-import com.cgkim.myboard.service.AttachService;
+import com.cgkim.myboard.service.impl.BoardAttachServiceImpl;
 import com.cgkim.myboard.vo.attach.AttachVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +24,9 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/attaches")
-public class AttachController {
+public class BoardAttachController {
 
-    private final AttachService attachService;
+    private final BoardAttachServiceImpl attachService;
 
     @Value("${spring.servlet.multipart.location}")
     String basePath;
@@ -71,8 +71,8 @@ public class AttachController {
      */
     private String getAbsolutePathOf(AttachVo attachVo) {
         return basePath + File.separator
-                + attachVo.getAttachUploadPath() + File.separator
-                + attachVo.getAttachUuid() + '_' + attachVo.getAttachName() + '.' + attachVo.getAttachExtension();
+                + attachVo.getUploadPath() + File.separator
+                + attachVo.getUuid() + '.' + attachVo.getExtension();
     }
 
     /**
@@ -81,7 +81,7 @@ public class AttachController {
     //TODO: 200x200 상수로
     private String getThumbnailAbsolutePathOf(AttachVo attachVo) {
         return basePath + File.separator
-                + attachVo.getAttachUploadPath() + File.separator
-                + attachVo.getAttachUuid() + '_' + attachVo.getAttachName() + "_200x200" + '.' + attachVo.getAttachExtension();
+                + attachVo.getUploadPath() + File.separator
+                + attachVo.getUuid() + "_200x200" + '.' + attachVo.getExtension();
     }
 }
