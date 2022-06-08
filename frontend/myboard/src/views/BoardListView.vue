@@ -372,9 +372,8 @@ export default {
         const response = await this.$_BoardService.fetchBoardList(this.searchCondition);
         this.boardList = response.data.boardList;
         for (const board of this.boardList) {
-          if(board.hasThumbnail) {
-            board.display = `http://localhost:8080/attaches/${board.thumbnail.attachId}/display`
-            //TODO: db 에 컬럼 만들기, 썸네일 라이브러리
+          if(board.thumbnailUri !== "") {
+            board.display = `http://localhost:8080/upload/${board.boardThumbnailUri}`
           }
         }
         this.boardTotalCounts= response.data.boardTotalCounts;

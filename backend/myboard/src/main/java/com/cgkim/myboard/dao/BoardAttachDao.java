@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 @Mapper
-public interface AttachDao {
+public interface BoardAttachDao {
     List<AttachVo> selectList(Long boardId);
     AttachVo selectOne(Long attachId);
     int selectCountByBoardId(long boardId);

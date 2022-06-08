@@ -74,7 +74,7 @@
               <p v-for="attach in boardDetail.attachList">
                 <span v-on:click="$_BoardService.downloadAttach(attach.attachId)" v-bind:style="{cursor: 'pointer'}">
                   <v-icon>mdi-attachment</v-icon>
-                  {{attach.attachName}}.{{attach.attachExtension}}
+                  {{attach.name}}.{{attach.extension}}
                 </span>
               </p>
             </v-card-text>

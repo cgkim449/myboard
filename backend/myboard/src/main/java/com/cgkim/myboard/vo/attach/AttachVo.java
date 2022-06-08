@@ -9,35 +9,35 @@ import lombok.NoArgsConstructor;
 public class AttachVo {
     private Long attachId;
     private Long boardId;
-    private String attachUploadPath;
-    private String attachUuid;
-    private String attachName;
-    private String attachExtension; // 확장자
+    private String uploadPath;
+    private String uuid;
+    private String name;
+    private String extension; // 확장자
 
-    private boolean attachIsImage; // 이미지 여부
+    private boolean isImage; // 이미지 여부
 
-    private long attachSize;
+    private long size;
 
-    public boolean getAttachIsImage() {
-        return attachIsImage;
+    public boolean getIsImage() {
+        return isImage;
     }
 
-    public boolean attachIsImage() {
-        return attachIsImage;
+    public boolean isImage() {
+        return isImage;
     }
     @Builder
-    public AttachVo(String attachUploadPath, String attachUuid, String attachName, String attachExtension, boolean attachIsImage, long attachSize) {
-        this.attachUploadPath = attachUploadPath;
-        this.attachUuid = attachUuid;
-        this.attachName = attachName;
-        this.attachExtension = attachExtension;
-        this.attachIsImage = attachIsImage;
-        this.attachSize = attachSize;
+    public AttachVo(String uploadPath, String uuid, String name, String extension, boolean isImage, long size) {
+        this.uploadPath = uploadPath;
+        this.uuid = uuid;
+        this.name = name;
+        this.extension = extension;
+        this.isImage = isImage;
+        this.size = size;
     }
 
 
     public String getFullName() {
-        return getAttachName() + '.' + getAttachExtension();
+        return getName() + '.' + getExtension();
     }
 
 }

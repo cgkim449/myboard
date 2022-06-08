@@ -10,16 +10,17 @@
              , b.board_content
              , b.board_view_count
              , b.board_has_attach
+             , b.board_thumbnail_uri
              , b.board_register_date
              , b.board_update_date
              , b.guest_nickname
              , b.guest_password
              , ct.category_name
              , m.nickname
-          from board as b
-          join category ct
+          from tbl_board as b
+          join tbl_category ct
             on b.category_id = ct.category_id
-     left join member m
+     left join tbl_member m
             on b.member_id = m.member_id
         <include refid="boardSearchCondition"/>
       order by b.board_register_date desc, b.board_id desc
@@ -28,7 +29,7 @@
 
     <select id="selectCount" resultType="java.lang.Integer" parameterType="boardSearchRequest">
         select count(*)
-          from board as b
+          from tbl_board as b
         <include refid="boardSearchCondition"/>
     </select>
 
@@ -67,59 +68,64 @@
              , ct.category_name
              , m.username
              , m.nickname
-          from board as b
-          join category ct
+          from tbl_board as b
+          join tbl_category ct
             on b.category_id = ct.category_id
-     left join member m
+     left join tbl_member m
             on b.member_id = m.member_id
          where b.board_id = #{boardId}
     </select>
     <select id="selectOneByGuestPassword" resultType="long" parameterType="map">
         select board_id
-          from board
+          from tbl_board
          where board_id = #{boardId} and guest_password = #{guestPassword}
     </select>
 
     <select id="selectMemberId" resultType="java.lang.Long" parameterType="long">
         select member_id
-        from board
+        from tbl_board
         where board_id = #{boardId}
     </select>
 
     <update id="increaseViewCnt" parameterType="long">
-        update board
+        update tbl_board
            set board_view_count = board_view_count + 1
          where board_id = #{boardId}
     </update>
     <update id="updateHasAttach" parameterType="map">
-        update board
+        update tbl_board
            set board_has_attach = #{boardHasAttach}
          where board_id = #{boardId}
     </update>
 
     <update id="update" parameterType="BoardUpdateRequest">
-        update board
+        update tbl_board
            set board_title = #{boardTitle}
              , board_content = #{boardContent}
              , board_update_date = now()
          where board_id = #{boardId}
     </update>
+    <update id="updateThumbnailUri" parameterType="map">
+        update tbl_board
+           set board_thumbnail_uri = #{thumbnailUri}
+         where board_id = #{boardId}
+    </update>
 
     <insert id="insertGuestBoard" useGeneratedKeys="true" keyProperty="boardId">
         insert
-        into board (category_id, board_title, board_content, guest_nickname, guest_password)
+        into tbl_board (category_id, board_title, board_content, guest_nickname, guest_password)
         values(#{categoryId}, #{boardTitle}, #{boardContent}, #{guestNickname}, #{guestPassword});
     </insert>
 
     <insert id="insertLoginMemberBoard" useGeneratedKeys="true" keyProperty="boardId">
         insert
-        into board (member_id, category_id, board_title, board_content)
+        into tbl_board (member_id, category_id, board_title, board_content)
         values(#{memberId}, #{categoryId}, #{boardTitle}, #{boardContent});
     </insert>
 
     <delete id="delete" parameterType="long">
         delete
-          from board
+          from tbl_board
          where board_id = #{boardId}
     </delete>
 </mapper>

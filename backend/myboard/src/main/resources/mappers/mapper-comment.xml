@@ -10,39 +10,39 @@
              , c.comment_content
              , c.comment_register_date
              , m.nickname
-          from comment c
-     left join member m
+          from tbl_comment c
+     left join tbl_member m
             on m.member_id = c.member_id
          where board_id=#{boardId};
     </select>
     <select id="selectMemberId" resultType="java.lang.Long" parameterType="long">
         select member_id
-          from comment
+          from tbl_comment
          where comment_id = #{commentId}
     </select>
     <select id="selectOneByGuestPassword" resultType="java.lang.Long" parameterType="map">
         select comment_id
-          from comment
+          from tbl_comment
          where comment_id = #{commentId} and guest_password = #{guestPassword}
     </select>
 
     <insert id="insertMemberComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
-        insert into comment(board_id, member_id, comment_content)
+        insert into tbl_comment(board_id, member_id, comment_content)
         values(#{boardId}, #{memberId}, #{commentContent})
     </insert>
     <insert id="insertGuestComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
-        insert into comment(board_id, guest_nickname, guest_password, comment_content)
+        insert into tbl_comment(board_id, guest_nickname, guest_password, comment_content)
         values(#{boardId}, #{guestNickname}, #{guestPassword}, #{commentContent})
     </insert>
 
     <delete id="deleteByBoardId" parameterType="long" >
         delete
-          from comment
+          from tbl_comment
          where board_id = #{boardId}
     </delete>
     <delete id="deleteByCommentId" parameterType="long" >
         delete
-          from comment
+          from tbl_comment
          where comment_id = #{commentId}
     </delete>
 </mapper>

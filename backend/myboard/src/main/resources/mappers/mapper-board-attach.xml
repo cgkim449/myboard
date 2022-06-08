@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.cgkim.myboard.dao.AttachDao">
+<mapper namespace="com.cgkim.myboard.dao.BoardAttachDao">
     <select id="selectList" resultType="attachVo" parameterType="long">
         select attach_id
              , board_id
-             , attach_upload_path
-             , attach_uuid
-             , attach_name
-             , attach_extension
-             , attach_is_image
-             , attach_size
-          from attach
+             , upload_path
+             , uuid
+             , name
+             , extension
+             , is_image
+             , size
+          from tbl_board_attach
          where board_id = #{boardId};
     </select>
 
     <select id="selectOne" resultType="attachVo" parameterType="long">
         select attach_id
              , board_id
-             , attach_upload_path
-             , attach_uuid
-             , attach_name
-             , attach_extension
-             , attach_is_image
-             , attach_size
-             , attach_register_date
-             , attach_update_date
-          from attach
+             , upload_path
+             , uuid
+             , name
+             , extension
+             , is_image
+             , size
+             , register_date
+             , update_date
+          from tbl_board_attach
          where attach_id = #{attachId};
     </select>
 
@@ -34,25 +34,25 @@
 
     <select id="selectCountByBoardId" resultType="int" parameterType="long">
         select count(*)
-          from attach
+          from tbl_board_attach
          where board_id = #{boardId};
     </select>
 
     <insert id="insert" parameterType="attachVo">
         insert
-          into attach (board_id, attach_upload_path, attach_uuid, attach_name, attach_extension, attach_is_image, attach_size)
-        values (#{boardId}, #{attachUploadPath}, #{attachUuid}, #{attachName}, #{attachExtension}, #{attachIsImage}, #{attachSize});
+          into tbl_board_attach (board_id, upload_path, uuid, name, extension, is_image, size)
+        values (#{boardId}, #{uploadPath}, #{uuid}, #{name}, #{extension}, #{isImage}, #{size});
     </insert>
 
     <delete id="deleteByBoardId" parameterType="long" >
         delete
-          from attach
+          from tbl_board_attach
          where board_id = #{boardId}
     </delete>
 
     <delete id="delete" parameterType="long">
         delete
-          from attach
+          from tbl_board_attach
          where attach_id = #{attachId}
     </delete>
 </mapper>
