@@ -6,6 +6,7 @@ import com.cgkim.myboard.exception.GuestPasswordInvalidException;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.AttachService;
 import com.cgkim.myboard.service.BoardService;
+import com.cgkim.myboard.service.impl.BoardAttachServiceImpl;
 import com.cgkim.myboard.util.FileHandler;
 import com.cgkim.myboard.validation.BoardSaveRequestValidator;
 import com.cgkim.myboard.validation.BoardUpdateRequestValidator;
@@ -51,7 +52,7 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final AttachService attachService;
+    private final BoardAttachServiceImpl attachService;
     private final FileHandler fileHandler;
     private final BoardSaveRequestValidator boardSaveRequestValidator;
     private final FileSaveRequestValidator fileSaveRequestValidator;

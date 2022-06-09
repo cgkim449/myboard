@@ -6,7 +6,11 @@ function formatBoardTitle(value) {
     if(value === undefined) {
         return;
     }
-    return value.length > 80 ? value.substring(0, 40).concat("..."): value;
+    return value.length > 40 ? value.substring(0, 40).concat("..."): value;
 }
 
-export {formatDate, formatBoardTitle}
+function formatQuestionNickname(value) {
+    return value.substring(0, 1).concat("*").concat(value.substring(value.length - 1));
+}
+
+export {formatDate, formatBoardTitle, formatQuestionNickname}

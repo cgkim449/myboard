@@ -6,7 +6,8 @@
 
 <script>
 export default {
-  name: "RouterTestView"
+  name: "RouterTestView",
+
 }
 </script>
 

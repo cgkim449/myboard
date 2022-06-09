@@ -58,6 +58,7 @@ export default {
       password: "",
     })
     return {
+      toPath: "",
       prevRoute: null,
       showPasswordText: false,
       username: "",
@@ -71,6 +72,7 @@ export default {
   },
   created() {
     this.username = this.$route.query.username;
+    this.toPath = this.$route.query.toPath
   },
   methods: {
     validateForm() {
@@ -92,10 +94,13 @@ export default {
         try {
           const { data } = await loginMember(member);
           //TODO: 이거도 없앨수잇을듯. 서버에서 걍 쿠키 내려주면 돼잖슴
-          this.$_Cookie.setValueToCookie("token", data.token);
-          this.$_Cookie.setValueToCookie("username", data.username);
-          this.$_Cookie.setValueToCookie("nickname", data.nickname);
-          this.goToBoardList()
+          this.$cookies.set("token", data.token);
+          this.$cookies.set("username", data.username);
+          this.$cookies.set("nickname", data.nickname);
+          this.$router.push({
+            path: this.toPath
+            , query: this.searchCondition
+          });
         } catch (error) {
           alert(error.response.data.errorMessage)
         }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cgkim.myboard.dao.FAQDao">
+    <select id="selectList" resultType="faqListResponse" parameterType="java.lang.Integer">
+        select f.faq_id
+             , f.title
+             , f.content
+             , f.register_date
+             , f.update_date
+             , f.category_id
+             , ct.category_name
+          from tbl_faq as f
+          join tbl_category ct
+            on f.category_id = ct.category_id
+          <if test = "categoryId != 0 and categoryId != null">
+              where f.category_id = #{categoryId}
+          </if>
+    </select>
+</mapper>

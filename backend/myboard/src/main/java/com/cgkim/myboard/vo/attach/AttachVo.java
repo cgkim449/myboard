@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 public class AttachVo {
     private Long attachId;
     private Long boardId;
+    private Long questionId;
     private String uploadPath;
     private String uuid;
     private String name;
