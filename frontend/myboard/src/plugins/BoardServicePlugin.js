@@ -6,7 +6,7 @@ import {
     patchBoard,
     createGuestBoard, createMemberBoard
 } from "@/api/boards";
-import {getCommentList, createComment, deleteComment} from "@/api/comments";
+import {getCommentList, deleteComment, createMemberComment, createGuestComment} from "@/api/comments";
 import {downloadAttach} from "@/api/attaches";
 
 export const boardServicePlugin = {
@@ -31,8 +31,11 @@ export const boardServicePlugin = {
     checkBoardPw(board) {
         return checkBoardPw(board);
     },
-    writeComment(comment) {
-        return createComment(comment);
+    writeMemberComment(formData) {
+        return createMemberComment(formData);
+    },
+    writeGuestComment(formData) {
+        return createGuestComment(formData);
     },
     fetchCommentList(boardNo) {
         try {

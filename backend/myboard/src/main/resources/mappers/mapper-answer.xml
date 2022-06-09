@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cgkim.myboard.dao.AnswerDao">
+    <insert id="insert" parameterType="answerVo" useGeneratedKeys="true" keyProperty="answerId">
+        insert
+        into tbl_answer (question_id, admin_id, title, content)
+        values(#{questionId}, #{adminId}, #{title}, #{content});
+    </insert>
+    <select id="selectOne" resultType="answerDetailResponse" parameterType="long">
+        select an.answer_id
+             , an.question_id
+             , an.title
+             , an.content
+             , an.register_date
+             , an.update_date
+             , ad.username
+             , ad.nickname
+          from tbl_answer as an
+          join tbl_admin ad
+            on an.admin_id = ad.admin_id
+         where an.answer_id = #{answerId};
+    </select>
+    <select id="selectByQuestionId" resultType="answerVo" parameterType="long">
+        select an.answer_id
+             , an.title
+             , an.content
+             , an.register_date
+             , an.update_date
+             , ad.admin_id
+             , ad.username
+             , ad.nickname
+        from tbl_answer as an
+        join tbl_admin ad
+          on an.admin_id = ad.admin_id
+       where an.question_id = #{questionId}
+    </select>
+
+</mapper>

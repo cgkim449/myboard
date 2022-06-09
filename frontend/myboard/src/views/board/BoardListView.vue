@@ -1,5 +1,17 @@
 <template>
   <v-container >
+    <v-row>
+      <v-col
+          cols="auto"
+
+      >
+        <h2>
+          자유게시판
+        </h2>
+      </v-col>
+    </v-row>
+
+
       <v-row dense>
         <v-col
             cols="auto"

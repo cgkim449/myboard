@@ -6,7 +6,7 @@
             @submit.prevent="submit"
         >
           <v-container fluid>
-            <template v-if="$_Cookie.getValueFromCookie('token') !== ''">
+            <template v-if="$cookies.get('token') !== null">
 
             </template>
 
@@ -226,7 +226,7 @@ export default {
       if(this.validateForm()) {
         let formData = this.prepareFormData();
         let response;
-        if(this.$_Cookie.getValueFromCookie("token") !== "") {
+        if(this.$cookies.get("token") !== null) {
           response = await this.$_BoardService.writeMemberBoard(formData);
         } else {
           response = await this.$_BoardService.writeGuestBoard(formData);

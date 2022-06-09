@@ -45,7 +45,9 @@ export default {
   data() {
     return {
       items: [
-        { title: '자유게시판', icon: 'mdi-image', to: '/boards'},
+        { title: '자유게시판', icon: 'mdi-format-list-bulleted', to: '/boards'},
+        { title: 'Q&A', icon: 'mdi-alpha-q-box', to: '/questions'},
+        { title: 'FAQ', icon: 'mdi-alpha-f-box', to: '/faqs'},
       ],
       right: null,
     }
