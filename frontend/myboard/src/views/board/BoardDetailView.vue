@@ -161,7 +161,7 @@
               <v-col
                   cols="auto"
               >
-                {{comment.commentRegisterDate}}
+                {{comment.registerDate}}
               </v-col>
             </v-row>
             <v-divider></v-divider>

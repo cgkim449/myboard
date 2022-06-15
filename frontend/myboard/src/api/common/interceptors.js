@@ -1,11 +1,12 @@
 import router from "@/router";
 import Vue from "vue";
+import store from "@/store";
 
 export function setInterceptors(axiosInstance) {
     axiosInstance.interceptors.request.use(
         function (config) {
             //TODO: 다시
-            const token = Vue.$cookies.get("token");
+            const token = store.state.token;
             if(token !== null) { //로그인시에만 헤더에 토큰 넣어 요청
                 config.headers.Authorization = "Bearer " + token;
             }
@@ -20,12 +21,10 @@ export function setInterceptors(axiosInstance) {
         function (response) {
             return response;
         },
-        function (error) {
+        async function (error) {
             if(error.response.data.errorCode === "A002") { //토큰 만료
                 alert(error.response.data.errorMessage)
-                Vue.$cookies.remove("token");
-                Vue.$cookies.remove("username");
-                Vue.$cookies.remove("nickname");
+                await store.dispatch("MEMBER_LOGOUT");
                 router.go();
             }
             return Promise.reject(error);

@@ -16,6 +16,7 @@ import QuestionWriteView from "@/views/question/QuestionWriteView";
 import QuestionDetailView from "@/views/question/QuestionDetailView";
 import AdminLoginView from "@/views/admin/AdminLoginView";
 import FAQListView from "@/views/faq/FAQListView";
+import store from "@/store";
 
 Vue.use(VueRouter)
 
@@ -120,7 +121,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next)=>{
   console.log("from: ",from.path);
   console.log("to: ",to.path);
-  if(to.meta.auth && !Vue.$cookies.get("token")) {
+  if(to.meta.auth && !store.getters.loggedIn) {
     alert("로그인 후 이용이 가능합니다")
     next({path: '/login', query: {toPath: to.path}});
     return;
