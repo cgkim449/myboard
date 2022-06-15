@@ -5,7 +5,7 @@ import com.cgkim.myboard.vo.answer.AnswerSaveRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface AnswerService {
-    long write(Long answerId, AnswerSaveRequest answerSaveRequest);
+    Long write(Long answerId, AnswerSaveRequest answerSaveRequest);
 
     AnswerDetailResponse viewDetail(Long id);
 }

@@ -7,8 +7,8 @@ import lombok.Setter;
 @Setter
 public class BoardSaveRequest {
     private Integer categoryId;
-    private String boardTitle;
-    private String boardContent;
+    private String title;
+    private String content;
 
     private Long boardId;
 }

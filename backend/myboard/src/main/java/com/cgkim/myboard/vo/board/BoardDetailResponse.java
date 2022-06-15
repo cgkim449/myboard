@@ -13,14 +13,14 @@ import java.util.List;
 @Setter
 public class BoardDetailResponse {
     private Long boardId;
-    private String boardTitle;
-    private String boardContent;
-    private int boardViewCount;
-    private boolean boardHasAttach;
+    private String title;
+    private String content;
+    private int viewCount;
+    private boolean hasAttach;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
-    private Date boardRegisterDate;
+    private Date registerDate;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
-    private Date boardUpdateDate;
+    private Date updateDate;
 
     private Integer categoryId;
     private String categoryName;

@@ -171,7 +171,7 @@
                 {{item.title | formatBoardTitle}}
               </span>
           </template>
-          <template v-else-if="(item.isSecret === 1 && item.nickname === $cookies.get('nickname')) || $cookies.get('role') === 'admin'">
+          <template v-else-if="(item.isSecret === 1 && item.nickname === $store.state.nickname) || $cookies.get('role') === 'admin'">
               <span
                   @click="moveToDetail(item.questionId)"
                   v-bind:style="{cursor: 'pointer'}"

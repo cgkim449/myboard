@@ -9,8 +9,8 @@ import lombok.Setter;
 public class BoardVo {
     //TODO: boardId만 setter
     private Integer categoryId;
-    private String boardTitle;
-    private String boardContent;
+    private String title;
+    private String content;
 
     private Long boardId;
 
@@ -23,16 +23,16 @@ public class BoardVo {
     @Builder
     public BoardVo(
             Integer categoryId,
-            String boardTitle,
-            String boardContent,
+            String title,
+            String content,
             Long boardId,
             Long memberId,
             String guestNickname,
             String guestPassword
     ) {
         this.categoryId = categoryId;
-        this.boardTitle = boardTitle;
-        this.boardContent = boardContent;
+        this.title = title;
+        this.content = content;
         this.boardId = boardId;
         this.memberId = memberId;
         this.guestNickname = guestNickname;

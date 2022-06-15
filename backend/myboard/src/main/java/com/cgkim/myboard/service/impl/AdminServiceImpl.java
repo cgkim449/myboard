@@ -41,7 +41,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Object getAdminId(String username) {
+    public Long getAdminId(String username) {
         return adminDao.selectAdminIdByUsername(username);
     }
 }

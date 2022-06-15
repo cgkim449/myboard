@@ -7,8 +7,8 @@
         select c.comment_Id
              , c.board_Id
              , c.guest_nickname
-             , c.comment_content
-             , c.comment_register_date
+             , c.content
+             , c.register_date
              , m.nickname
           from tbl_comment c
      left join tbl_member m
@@ -27,12 +27,12 @@
     </select>
 
     <insert id="insertMemberComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
-        insert into tbl_comment(board_id, member_id, comment_content)
-        values(#{boardId}, #{memberId}, #{commentContent})
+        insert into tbl_comment(board_id, member_id, content)
+        values(#{boardId}, #{memberId}, #{content})
     </insert>
     <insert id="insertGuestComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
-        insert into tbl_comment(board_id, guest_nickname, guest_password, comment_content)
-        values(#{boardId}, #{guestNickname}, #{guestPassword}, #{commentContent})
+        insert into tbl_comment(board_id, guest_nickname, guest_password, content)
+        values(#{boardId}, #{guestNickname}, #{guestPassword}, #{content})
     </insert>
 
     <delete id="deleteByBoardId" parameterType="long" >

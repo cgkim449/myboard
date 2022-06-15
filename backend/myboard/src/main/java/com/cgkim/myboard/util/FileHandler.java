@@ -101,7 +101,7 @@ public class FileHandler {
         InputStream originalFileInputStream = new FileInputStream(originalFile);
 
         Thumbnailator.createThumbnail(originalFileInputStream, thumbnailOutputStream, 200, 200);
-
+//TODO: 가로 기준으로만 자르기
         originalFileInputStream.close();
         thumbnailOutputStream.close();
     }

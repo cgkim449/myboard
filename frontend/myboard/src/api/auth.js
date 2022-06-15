@@ -10,19 +10,19 @@ const createMember = (member) => {
 /**
  * 회원 로그인 API
  */
-const loginMember = (member) => {
+const memberLogin = (member) => {
     return instanceWithoutToken.post("members/login", member);
 }
 
 /**
  * 관리자 로그인 API
  */
-const loginAdmin = (user) => {
+const adminLogin = (user) => {
     return instanceWithoutToken.post("admin/login", user);
 }
 
 export {
     createMember,
-    loginMember,
-    loginAdmin
+    memberLogin,
+    adminLogin
 }

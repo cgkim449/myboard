@@ -8,5 +8,5 @@ import java.security.NoSuchAlgorithmException;
 public interface AdminService {
     AdminVo login(String username, String password) throws NoSuchAlgorithmException;
 
-    Object getAdminId(String username);
+    Long getAdminId(String username);
 }
