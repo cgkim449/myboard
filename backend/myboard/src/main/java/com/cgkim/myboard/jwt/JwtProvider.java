@@ -1,4 +1,4 @@
-package com.cgkim.myboard.util.jwt;
+package com.cgkim.myboard.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

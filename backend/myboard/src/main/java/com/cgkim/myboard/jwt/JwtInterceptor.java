@@ -1,4 +1,4 @@
-package com.cgkim.myboard.util.jwt;
+package com.cgkim.myboard.jwt;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @Slf4j
@@ -28,13 +27,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             HttpServletResponse response,
             Object handler
     ) {
-        //TODO: CORS 설정 WebConfig 에서
-        if (request.getMethod().equals("OPTIONS")) {
-            return true;
-        }
-
         String token = extractTokenFrom(request);
-
         if(token != null) {
             DecodedJWT jwt = jwtProvider.validate(token);
 

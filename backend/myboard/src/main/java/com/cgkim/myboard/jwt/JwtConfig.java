@@ -1,4 +1,4 @@
-package com.cgkim.myboard.util.jwt;
+package com.cgkim.myboard.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
