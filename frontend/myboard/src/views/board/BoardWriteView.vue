@@ -6,7 +6,7 @@
             @submit.prevent="submit"
         >
           <v-container fluid>
-            <template v-if="$cookies.get('token') !== null">
+            <template v-if="$store.getters.loggedIn">
 
             </template>
 
@@ -66,15 +66,15 @@
               >
                 <v-text-field
                     label="제목"
-                    v-model="form.boardTitle"
-                    :rules="rules.boardTitle"
+                    v-model="form.title"
+                    :rules="rules.title"
                 ></v-text-field>
               </v-col>
 
               <v-col cols="12">
                 <v-textarea
-                    v-model="form.boardContent"
-                    :rules="rules.boardContent"
+                    v-model="form.content"
+                    :rules="rules.content"
                     color="teal"
                     label="내용"
                 >
@@ -179,8 +179,8 @@ export default {
       guestPassword: '',
       guestPasswordConfirm: '',
       categoryId: '',
-      boardTitle: '',
-      boardContent: '',
+      title: '',
+      content: '',
       multipartFiles: [],
     })
 
@@ -191,8 +191,8 @@ export default {
         guestPassword: [val => (this.validateBoardPw(val || '') || '영문/숫자/특수문자 포함 4글자 이상, 16글자 미만입니다.'),],
         guestPasswordConfirm: [val => this.form.guestPassword === val || `비밀번호가 일치하지 않습니다.`,],
         categoryId: [val => (val || '').length > 0 || '카테고리를 선택해주세요.'],
-        boardTitle: [val => (4 <= (val || '').length && (val || '').length < 20) || '제목은 4글자 이상, 20글자 미만입니다.'],
-        boardContent: [val => (4 <= (val || '').length && (val || '').length < 2000) || '내용은 4글자 이상, 2000글자 미만입니다.'],
+        title: [val => (4 <= (val || '').length && (val || '').length < 20) || '제목은 4글자 이상, 20글자 미만입니다.'],
+        content: [val => (4 <= (val || '').length && (val || '').length < 2000) || '내용은 4글자 이상, 2000글자 미만입니다.'],
         multipartFiles: [value => {
           return this.validateMultipartFiles(value);
         },],
@@ -226,7 +226,7 @@ export default {
       if(this.validateForm()) {
         let formData = this.prepareFormData();
         let response;
-        if(this.$cookies.get("token") !== null) {
+        if(this.$store.getters.loggedIn) {
           response = await this.$_BoardService.writeMemberBoard(formData);
         } else {
           response = await this.$_BoardService.writeGuestBoard(formData);
@@ -247,8 +247,8 @@ export default {
       formData.append("guestPassword", this.form.guestPassword);
       formData.append("guestPasswordConfirm", this.form.guestPasswordConfirm);
       formData.append("categoryId", this.form.categoryId);
-      formData.append("boardTitle", this.form.boardTitle);
-      formData.append("boardContent", this.form.boardContent);
+      formData.append("title", this.form.title);
+      formData.append("content", this.form.content);
 
       if(this.form.multipartFiles.length > 0) {
         for (const multipartFile of this.form.multipartFiles) {

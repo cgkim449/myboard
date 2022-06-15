@@ -9,7 +9,7 @@
              , f.register_date
              , f.update_date
              , f.category_id
-             , ct.category_name
+             , ct.name category_name
           from tbl_faq as f
           join tbl_category ct
             on f.category_id = ct.category_id

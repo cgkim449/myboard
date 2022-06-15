@@ -9,5 +9,5 @@ public interface MemberService {
     String signUp(SignUpRequest signUpRequest) throws NoSuchAlgorithmException;
     MemberVo login(String username, String password) throws NoSuchAlgorithmException;
     MemberVo getMemberDetail(String username);
-    Object getMemberId(String username);
+    Long getMemberId(String username);
 }

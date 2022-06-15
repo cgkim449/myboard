@@ -7,12 +7,12 @@
     <v-app-bar-nav-icon @click="$emit('drawer')"></v-app-bar-nav-icon>
     <v-spacer></v-spacer>
 
-      <template v-if="$cookies.get('token') !== null">
+      <template v-if="$store.getters.loggedIn">
         <span>
-          {{ $cookies.get('username') }}
+          {{ $store.state.username }}
         </span>
 
-        <v-btn text @click="logoutMember">
+        <v-btn text @click="memberLogout">
           로그아웃
         </v-btn>
       </template>
@@ -20,7 +20,7 @@
       <template v-else>
         <v-divider vertical></v-divider>
 
-        <v-btn text @click="loginMember">
+        <v-btn text @click="moveToMemberLoginPage">
           로그인
         </v-btn>
 
@@ -43,15 +43,12 @@
 export default {
   name: "DefaultBar",
   methods: {
-    logoutMember() {
-      this.$cookies.remove("token");
-      this.$cookies.remove("username");
-      this.$cookies.remove("nickname");
-      this.$cookies.remove("role");
+    memberLogout() {
+      this.$store.dispatch('MEMBER_LOGOUT');
       this.$router.go();
       alert("로그아웃 되셨습니다.");
     },
-    loginMember() {
+    moveToMemberLoginPage() {
       this.$router.push({
         path: '/login'
         , query: {toPath:this.$route.path}

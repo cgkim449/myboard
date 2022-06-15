@@ -16,8 +16,8 @@
              , username
              , password
              , nickname
-             , member_register_date
-             , member_update_date
+             , register_date
+             , update_date
           from tbl_member
          where username = #{username}
     </select>

@@ -6,7 +6,7 @@ import java.util.HashMap;
  * 응답 메시지
  */
 
-//TODO: 상속말고 포함으로 바꾸기
+//TODO: 상속말고 포함관계로 바꾸기
 public class SuccessResponse extends HashMap<String, Object> {
 
     @Override

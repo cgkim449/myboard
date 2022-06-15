@@ -38,7 +38,7 @@ public class CommentServiceImpl implements CommentService {
     public long writeComment(Long memberId, CommentSaveRequest commentSaveRequest) {
         CommentVo commentVo = CommentVo.builder()
                                     .boardId(commentSaveRequest.getBoardId())
-                                    .commentContent(commentSaveRequest.getCommentContent())
+                                    .content(commentSaveRequest.getContent())
                                     .memberId(memberId)
                                     .build();
         commentDao.insertMemberComment(commentVo);
@@ -52,7 +52,7 @@ public class CommentServiceImpl implements CommentService {
     public long writeComment(GuestSaveRequest guestSaveRequest, CommentSaveRequest commentSaveRequest) throws NoSuchAlgorithmException {
         CommentVo commentVo = CommentVo.builder()
                                     .boardId(commentSaveRequest.getBoardId())
-                                    .commentContent(commentSaveRequest.getCommentContent())
+                                    .content(commentSaveRequest.getContent())
                                     .guestNickname(guestSaveRequest.getGuestNickname())
                                     .guestPassword(sha256PasswordEncoder.getHash(guestSaveRequest.getGuestPassword()))
                                     .build();

@@ -1,6 +1,6 @@
 package com.cgkim.myboard.controller;
 
-import com.cgkim.myboard.jwt.JwtProvider;
+import com.cgkim.myboard.util.jwt.JwtProvider;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.MemberService;
 import com.cgkim.myboard.validation.LoginRequestValidator;

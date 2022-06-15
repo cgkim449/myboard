@@ -1,6 +1,5 @@
 package com.cgkim.myboard.controller;
 
-import com.cgkim.myboard.argumentresolver.LoginMember;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.QuestionService;
 import com.cgkim.myboard.util.FileHandler;
@@ -8,12 +7,12 @@ import com.cgkim.myboard.validation.FileSaveRequestValidator;
 import com.cgkim.myboard.validation.GuestSaveRequestValidator;
 import com.cgkim.myboard.vo.attach.AttachVo;
 import com.cgkim.myboard.vo.attach.FileSaveRequest;
-import com.cgkim.myboard.vo.board.BoardDetailResponse;
 import com.cgkim.myboard.vo.question.QuestionDetailResponse;
 import com.cgkim.myboard.vo.question.QuestionListResponse;
 import com.cgkim.myboard.vo.question.QuestionSaveRequest;
 import com.cgkim.myboard.vo.question.QuestionSearchRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +37,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/questions")
 public class QuestionController {
-
     private final QuestionService questionService;
     private final FileHandler fileHandler;
     private final FileSaveRequestValidator fileSaveRequestValidator;
@@ -97,7 +95,7 @@ public class QuestionController {
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> write(
-            @LoginMember Long memberId,
+            Long memberId,
             @Valid QuestionSaveRequest questionSaveRequest,
             @Valid FileSaveRequest fileSaveRequest
     ) throws IOException {

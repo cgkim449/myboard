@@ -163,9 +163,9 @@
           hide-default-footer
           class="elevation-2"
       >
-        <template v-slot:item.boardHasAttach="{item}">
+        <template v-slot:item.hasAttach="{item}">
           <v-icon
-              v-if="item.boardHasAttach === 1"
+              v-if="item.hasAttach === 1"
           >
             mdi-attachment
           </v-icon>
@@ -174,13 +174,13 @@
           >
           </v-icon>
         </template>
-        <template v-slot:item.boardTitle="{item}">
+        <template v-slot:item.title="{item}">
               <span
                   @click="moveToBoardDetail(item.boardId)"
                   v-bind:style="{cursor: 'pointer'}"
                   class="d-flex start"
               >
-                {{item.boardTitle | formatBoardTitle}}
+                {{item.title | formatBoardTitle}}
               </span>
         </template>
         <template v-slot:item.guestNickname="{item}">
@@ -191,10 +191,10 @@
                 {{ item.guestNickname }}
               </span>
         </template>
-        <template v-slot:item.boardRegisterDate="{item}">
-          {{item.boardRegisterDate | formatDate}}
+        <template v-slot:item.registerDate="{item}">
+          {{item.registerDate | formatDate}}
         </template>
-        <template v-slot:item.boardUpdateDate="{item}">
+        <template v-slot:item.updateDate="{item}">
           {{formatUpdateDate(item)}}
         </template>
       </v-data-table>
@@ -223,11 +223,11 @@
 
             <v-card-actions>
               <v-col cols="auto">
-                <small class="font-weight-bold">[{{board.categoryName}}] {{ board.boardTitle }}</small><br>
+                <small class="font-weight-bold">[{{board.categoryName}}] {{ board.title }}</small><br>
                 <small class="font-weight-bold" v-if="board.nickname !== null">{{board.nickname}}</small>
                 <small class="font-weight-bold" v-if="board.nickname === null">{{board.guestNickname}}</small><br>
-                <small>조회수: {{board.boardViewCount}}</small><br>
-                <small>{{board.boardRegisterDate | formatDate}}</small>
+                <small>조회수: {{board.viewCount}}</small><br>
+                <small>{{board.registerDate | formatDate}}</small>
               </v-col>
             </v-card-actions>
           </v-card>
@@ -317,14 +317,14 @@ export default {
           text: '',
           align: 'center',
           sortable: false,
-          value: 'boardHasAttach',
+          value: 'hasAttach',
           width: '1%',
         },
         {
           text: '제목',
           align: 'center',
           sortable: false,
-          value: 'boardTitle',
+          value: 'title',
         },
         {
           text: '작성자',
@@ -337,21 +337,21 @@ export default {
           text: '조회수',
           align: 'center',
           sortable: false,
-          value: 'boardViewCount',
+          value: 'viewCount',
           width: '7%',
         },
         {
           text: '등록 일시',
           align: 'center',
           sortable: false,
-          value: 'boardRegisterDate',
+          value: 'registerDate',
           width: '13%',
         },
         {
           text: '수정 일시',
           align: 'center',
           sortable: false,
-          value: 'boardUpdateDate',
+          value: 'updateDate',
           width: '13%',
         },
       ],
@@ -456,7 +456,7 @@ export default {
       }).catch(()=>{});
     },
     formatUpdateDate(board) {
-      return board.boardRegisterDate === board.boardUpdateDate ? '-' : formatDate(board.boardUpdateDate);
+      return board.registerDate === board.updateDate ? '-' : formatDate(board.updateDate);
     }
   },
 };

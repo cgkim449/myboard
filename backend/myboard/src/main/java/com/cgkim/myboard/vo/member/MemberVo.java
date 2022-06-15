@@ -13,7 +13,7 @@ public class MemberVo {
     private String password;
     private String nickname;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
-    private Date memberRegisterDate;
+    private Date registerDate;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
-    private Date memberUpdateDate;
+    private Date updateDate;
 }

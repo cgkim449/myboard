@@ -8,8 +8,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class BoardUpdateRequest {
 
-    private String boardTitle;
-    private String boardContent;
+    private String title;
+    private String content;
 
     private Long boardId;
 }

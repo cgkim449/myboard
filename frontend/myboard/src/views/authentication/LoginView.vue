@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import {loginMember} from "@/api/auth";
+import {memberLogin} from "@/api/auth";
 
 export default {
   name: "LoginPage",
@@ -92,12 +92,8 @@ export default {
           password: this.password,
         };
         try {
-          const { data } = await loginMember(member);
-          //TODO: 이거도 없앨수잇을듯. 서버에서 걍 쿠키 내려주면 돼잖슴
-          this.$cookies.set("token", data.token);
-          this.$cookies.set("username", data.username);
-          this.$cookies.set("nickname", data.nickname);
-          this.$router.push({
+          const data = await this.$store.dispatch("MEMBER_LOGIN", member);
+          await this.$router.push({
             path: this.toPath
             , query: this.searchCondition
           });

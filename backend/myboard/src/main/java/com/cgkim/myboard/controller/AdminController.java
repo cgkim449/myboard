@@ -1,12 +1,11 @@
 package com.cgkim.myboard.controller;
 
-import com.cgkim.myboard.jwt.JwtProvider;
+import com.cgkim.myboard.util.jwt.JwtProvider;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.AdminService;
 import com.cgkim.myboard.validation.LoginRequestValidator;
 import com.cgkim.myboard.vo.admin.AdminVo;
 import com.cgkim.myboard.vo.member.LoginRequest;
-import com.cgkim.myboard.vo.member.MemberVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

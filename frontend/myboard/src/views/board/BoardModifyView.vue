@@ -9,7 +9,7 @@
         <v-container fluid>
 
           <!--              본인 글이면 맨위 row 안보임-->
-          <template v-if="$cookies.get('token') !== null && $cookies.get('username') === boardDetail.username">
+          <template v-if="$store.getters.loggedIn && $store.state.username === boardDetail.username">
           </template>
           <template v-else>
             <v-row>
@@ -57,15 +57,15 @@
             >
               <v-text-field
                   label="제목"
-                  v-model="form.boardTitle"
-                  :rules="rules.boardTitle"
+                  v-model="form.title"
+                  :rules="rules.title"
               ></v-text-field>
             </v-col>
 
             <v-col cols="12">
               <v-textarea
-                  v-model="form.boardContent"
-                  :rules="rules.boardContent"
+                  v-model="form.content"
+                  :rules="rules.content"
                   color="teal"
                   label="내용"
               >
@@ -153,8 +153,8 @@ export default {
       },
       rules: {
         guestPassword: [val => (val || '').length > 0 || '비밀번호를 입력해주세요.'],
-        boardTitle: [val => (4 <= (val || '').length && (val || '').length < 20) || '4글자 이상, 20글자 미만입니다.'],
-        boardContent: [val => (4 <= (val || '').length && (val || '').length < 2000) || '4글자 이상, 2000글자 미만입니다.'],
+        title: [val => (4 <= (val || '').length && (val || '').length < 20) || '4글자 이상, 20글자 미만입니다.'],
+        content: [val => (4 <= (val || '').length && (val || '').length < 2000) || '4글자 이상, 2000글자 미만입니다.'],
       },
       items: [
         {categoryName: 'Java', categoryId: 1},
@@ -172,8 +172,8 @@ export default {
     let boardId = this.$route.params.id;
     const response = await this.$_BoardService.fetchBoard(boardId);
     this.boardDetail = response.data.boardDetail;
-    this.form.boardTitle = response.data.boardDetail.boardTitle;
-    this.form.boardContent = response.data.boardDetail.boardContent;
+    this.form.title = response.data.boardDetail.title;
+    this.form.content = response.data.boardDetail.content;
   },
   methods: {
     removeFile(item) {
@@ -229,8 +229,8 @@ export default {
       formData.append("guestPassword", this.form.guestPassword);
       formData.append("boardId", this.boardDetail.boardId);
       formData.append("categoryId", this.boardDetail.categoryId);
-      formData.append("boardTitle", this.form.boardTitle);
-      formData.append("boardContent", this.form.boardContent);
+      formData.append("title", this.form.title);
+      formData.append("content", this.form.content);
       formData.append("attachDeleteRequest", this.form.deleteAttaches);
 
       if(this.form.multipartFiles.length > 0) {

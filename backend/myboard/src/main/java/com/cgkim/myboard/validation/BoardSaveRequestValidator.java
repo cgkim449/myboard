@@ -21,8 +21,8 @@ public class BoardSaveRequestValidator implements Validator {
         BoardSaveRequest boardSaveRequest = (BoardSaveRequest) target;
 
         Integer categoryId = boardSaveRequest.getCategoryId();
-        String boardTitle = boardSaveRequest.getBoardTitle();
-        String boardContent = boardSaveRequest.getBoardContent();
+        String boardTitle = boardSaveRequest.getTitle();
+        String boardContent = boardSaveRequest.getContent();
 
         if (categoryId == null || categoryId == 0) {
             errors.rejectValue("categoryId", "required");

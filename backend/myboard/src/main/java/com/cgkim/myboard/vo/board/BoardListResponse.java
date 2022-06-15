@@ -11,13 +11,13 @@ import java.util.Date;
 @Setter
 public class BoardListResponse {
     private Long boardId;
-    private String boardTitle;
-    private int boardViewCount;
-    private int boardHasAttach;
+    private String title;
+    private int viewCount;
+    private int hasAttach;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
-    private Date boardRegisterDate;
+    private Date registerDate;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
-    private Date boardUpdateDate;
+    private Date updateDate;
 
     private Integer categoryId;
     private String categoryName;
@@ -26,5 +26,5 @@ public class BoardListResponse {
 
     private String nickname; // 로그인 사용자 닉네임
 
-    private String boardThumbnailUri;
+    private String thumbnailUri;
 }

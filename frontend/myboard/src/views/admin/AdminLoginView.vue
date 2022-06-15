@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import {loginAdmin} from "@/api/auth";
+import {adminLogin} from "@/api/auth";
 
 export default {
   name: "AdminLoginView",
@@ -90,7 +90,7 @@ export default {
           password: this.password,
         };
         try {
-          const { data } = await loginAdmin(user);
+          const { data } = await adminLogin(user);
           this.$cookies.set("token", data.token);
           this.$cookies.set("username", data.username);
           this.$cookies.set("nickname", data.nickname);

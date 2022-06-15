@@ -6,16 +6,16 @@
     <select id="selectList" resultType="boardListResponse" parameterType="boardSearchRequest">
         select b.board_id
              , b.category_id
-             , b.board_title
-             , b.board_content
-             , b.board_view_count
-             , b.board_has_attach
-             , b.board_thumbnail_uri
-             , b.board_register_date
-             , b.board_update_date
+             , b.title
+             , b.content
+             , b.view_count
+             , b.has_attach
+             , b.thumbnail_uri
+             , b.register_date
+             , b.update_date
              , b.guest_nickname
              , b.guest_password
-             , ct.category_name
+             , ct.name category_name
              , m.nickname
           from tbl_board as b
           join tbl_category ct
@@ -23,7 +23,7 @@
      left join tbl_member m
             on b.member_id = m.member_id
         <include refid="boardSearchCondition"/>
-      order by b.board_register_date desc, b.board_id desc
+      order by b.register_date desc, b.board_id desc
          limit #{offset}, #{limit}
     </select>
 
@@ -36,18 +36,18 @@
     <sql id="boardSearchCondition">
         <where>
             <if test="fromDate != null">
-                b.board_register_date <![CDATA[>=]]> #{fromDate}
+                b.register_date <![CDATA[>=]]> #{fromDate}
             </if>
             <if test="toDate != null">
-                and b.board_register_date <![CDATA[<=]]> #{toDate}
+                and b.register_date <![CDATA[<=]]> #{toDate}
             </if>
             <if test = "categoryId != 0 and categoryId != null">
                 and b.category_id = #{categoryId}
             </if>
             <if test = "keyword != null">
                 and (
-                     b.board_title like concat('%',#{keyword},'%')
-                     or b.board_content like concat('%',#{keyword},'%')
+                     b.title like concat('%',#{keyword},'%')
+                     or b.content like concat('%',#{keyword},'%')
                      or b.guest_nickname like concat('%',#{keyword},'%')
                     )
             </if>
@@ -57,15 +57,15 @@
     <select id="selectOne" resultType="boardDetailResponse" parameterType="long">
         select b.board_id
              , b.category_id
-             , b.board_title
-             , b.board_content
-             , b.board_view_count
-             , b.board_has_attach
-             , b.board_register_date
-             , b.board_update_date
+             , b.title
+             , b.content
+             , b.view_count
+             , b.has_attach
+             , b.register_date
+             , b.update_date
              , b.guest_nickname
              , b.guest_password
-             , ct.category_name
+             , ct.name category_name
              , m.username
              , m.nickname
           from tbl_board as b
@@ -89,38 +89,38 @@
 
     <update id="increaseViewCnt" parameterType="long">
         update tbl_board
-           set board_view_count = board_view_count + 1
+           set view_count = view_count + 1
          where board_id = #{boardId}
     </update>
     <update id="updateHasAttach" parameterType="map">
         update tbl_board
-           set board_has_attach = #{boardHasAttach}
+           set has_attach = #{hasAttach}
          where board_id = #{boardId}
     </update>
 
     <update id="update" parameterType="BoardUpdateRequest">
         update tbl_board
-           set board_title = #{boardTitle}
-             , board_content = #{boardContent}
-             , board_update_date = now()
+           set title = #{title}
+             , content = #{content}
+             , update_date = now()
          where board_id = #{boardId}
     </update>
     <update id="updateThumbnailUri" parameterType="map">
         update tbl_board
-           set board_thumbnail_uri = #{thumbnailUri}
+           set thumbnail_uri = #{thumbnailUri}
          where board_id = #{boardId}
     </update>
 
     <insert id="insertGuestBoard" useGeneratedKeys="true" keyProperty="boardId">
         insert
-        into tbl_board (category_id, board_title, board_content, guest_nickname, guest_password)
-        values(#{categoryId}, #{boardTitle}, #{boardContent}, #{guestNickname}, #{guestPassword});
+        into tbl_board (category_id, title, content, guest_nickname, guest_password)
+        values(#{categoryId}, #{title}, #{content}, #{guestNickname}, #{guestPassword});
     </insert>
 
     <insert id="insertLoginMemberBoard" useGeneratedKeys="true" keyProperty="boardId">
         insert
-        into tbl_board (member_id, category_id, board_title, board_content)
-        values(#{memberId}, #{categoryId}, #{boardTitle}, #{boardContent});
+        into tbl_board (member_id, category_id, title, content)
+        values(#{memberId}, #{categoryId}, #{title}, #{content});
     </insert>
 
     <delete id="delete" parameterType="long">

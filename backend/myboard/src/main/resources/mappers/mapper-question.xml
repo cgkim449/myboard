@@ -13,7 +13,7 @@
              , q.thumbnail_uri
              , q.register_date
              , q.update_date
-             , ct.category_name
+             , ct.name category_name
              , m.nickname
              , a.answer_id
           from tbl_question as q
@@ -84,7 +84,7 @@
              , q.has_attach
              , q.register_date
              , q.update_date
-             , ct.category_name
+             , ct.name category_name
              , m.username
              , m.nickname
           from tbl_question as q
@@ -100,41 +100,4 @@
            set view_count = view_count + 1
          where question_id = #{questionId}
     </update>
-<!--    <select id="selectOneByGuestPassword" resultType="long" parameterType="map">-->
-<!--        select board_id-->
-<!--          from tbl_board-->
-<!--         where board_id = #{boardId} and guest_password = #{guestPassword}-->
-<!--    </select>-->
-
-<!--    <select id="selectMemberId" resultType="java.lang.Long" parameterType="long">-->
-<!--        select member_id-->
-<!--        from tbl_board-->
-<!--        where board_id = #{boardId}-->
-<!--    </select>-->
-
-
-
-
-<!--    <update id="update" parameterType="BoardUpdateRequest">-->
-<!--        update tbl_board-->
-<!--           set board_title = #{boardTitle}-->
-<!--             , board_content = #{boardContent}-->
-<!--             , board_update_date = now()-->
-<!--         where board_id = #{boardId}-->
-<!--    </update>-->
-
-
-<!--    <insert id="insertGuestBoard" useGeneratedKeys="true" keyProperty="boardId">-->
-<!--        insert-->
-<!--        into tbl_board (category_id, board_title, board_content, guest_nickname, guest_password)-->
-<!--        values(#{categoryId}, #{boardTitle}, #{boardContent}, #{guestNickname}, #{guestPassword});-->
-<!--    </insert>-->
-
-
-
-<!--    <delete id="delete" parameterType="long">-->
-<!--        delete-->
-<!--          from tbl_board-->
-<!--         where board_id = #{boardId}-->
-<!--    </delete>-->
 </mapper>

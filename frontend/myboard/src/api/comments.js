@@ -6,7 +6,7 @@ import {commentsInstance} from "@/api/index";
 const createMemberComment = (comment) => {
     let form = new FormData();
     form.append('boardId', comment.boardId);
-    form.append('commentContent', comment.commentContent);
+    form.append('content', comment.content);
 
     return commentsInstance.post(
         "/member",
@@ -21,7 +21,7 @@ const createMemberComment = (comment) => {
 const createGuestComment = (comment) => {
     let form = new FormData();
     form.append('boardId', comment.boardId);
-    form.append('commentContent', comment.commentContent);
+    form.append('content', comment.content);
     form.append('guestPassword', comment.guestPassword);
     form.append('guestPasswordConfirm', comment.guestPassword);
     form.append('guestNickname', comment.guestNickname);

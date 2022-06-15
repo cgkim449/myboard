@@ -11,9 +11,9 @@ import java.util.Date;
 public class CommentListResponse {
     private Long commentId;
     private Long boardId;
-    private String commentContent;
+    private String content;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm", timezone = "Asia/Seoul")
-    private Date commentRegisterDate;
+    private Date registerDate;
 
     private String guestNickname;
 

@@ -72,8 +72,8 @@ public class BoardServiceImpl implements BoardService {
         try {
             BoardVo boardVo = BoardVo.builder()
                     .categoryId(boardSaveRequest.getCategoryId())
-                    .boardTitle(boardSaveRequest.getBoardTitle())
-                    .boardContent(boardSaveRequest.getBoardContent())
+                    .title(boardSaveRequest.getTitle())
+                    .content(boardSaveRequest.getContent())
                     .guestNickname(guestSaveRequest.getGuestNickname())
                     .guestPassword(sha256PasswordEncoder.getHash(guestSaveRequest.getGuestPassword()))
                     .build();
@@ -104,8 +104,8 @@ public class BoardServiceImpl implements BoardService {
         try {
             BoardVo boardVo = BoardVo.builder()
                     .categoryId(boardSaveRequest.getCategoryId())
-                    .boardTitle(boardSaveRequest.getBoardTitle())
-                    .boardContent(boardSaveRequest.getBoardContent())
+                    .title(boardSaveRequest.getTitle())
+                    .content(boardSaveRequest.getContent())
                     .memberId(memberId)
                     .build();
 
@@ -146,8 +146,8 @@ public class BoardServiceImpl implements BoardService {
     @Transactional(rollbackFor = Exception.class)
     public void modify(
             Long boardId,
-            String boardContent,
-            String boardTitle,
+            String content,
+            String title,
             List<AttachVo> attachInsertList,
             List<AttachVo> attachDeleteList
     ) {
@@ -162,8 +162,8 @@ public class BoardServiceImpl implements BoardService {
         boardDao.update(
                 Map.of(
                         "boardId", boardId,
-                        "boardTitle", boardTitle,
-                        "boardContent", boardContent
+                        "title", title,
+                        "content", content
                 )
         );  //게시물 update
         updateHasAttach(boardId);  //첨부파일 유무 update
@@ -231,7 +231,7 @@ public class BoardServiceImpl implements BoardService {
         boardDao.updateHasAttach(
                 Map.of(
                         "boardId", boardId,
-                        "boardHasAttach", attachCount > 0
+                        "hasAttach", attachCount > 0
                 )
         );
     }

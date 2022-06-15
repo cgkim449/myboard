@@ -23,12 +23,12 @@
               <v-col
                   cols="auto"
               >
-                <span>등록일시 {{boardDetail.boardRegisterDate | formatDate}}</span>
+                <span>등록일시 {{boardDetail.registerDate | formatDate}}</span>
                 <v-divider
                     class="mx-4"
                     vertical
                 ></v-divider>
-                <span>수정일시 {{boardDetail.boardUpdateDate | formatDate}}</span>
+                <span>수정일시 {{boardDetail.updateDate | formatDate}}</span>
               </v-col>
             </v-row>
 
@@ -41,7 +41,7 @@
                     class="mx-4"
                     vertical
                 ></v-divider>
-                <strong>{{boardDetail.boardTitle}}</strong>
+                <strong>{{boardDetail.title}}</strong>
               </v-col>
 
               <v-spacer></v-spacer>
@@ -49,7 +49,7 @@
               <v-col
                   cols="auto"
               >
-                <span>조회수: {{boardDetail.boardViewCount}}</span>
+                <span>조회수: {{boardDetail.viewCount}}</span>
               </v-col>
             </v-row>
           </v-card-text>
@@ -59,13 +59,13 @@
           <v-card-text class="fill-height">
             <v-row>
               <v-col>
-                <p>{{boardDetail.boardContent}}</p>
+                <p>{{boardDetail.content}}</p>
               </v-col>
             </v-row>
           </v-card-text>
         </v-card>
 
-        <template v-if="boardDetail.boardHasAttach">
+        <template v-if="boardDetail.hasAttach">
           <v-card outlined class="px-1 pt-1 mt-3">
             <v-card-title class="text-subtitle-1 grey--text">
               첨부파일 {{ boardDetail.attachList.length }}개
@@ -102,7 +102,7 @@
                 </v-col>
               </template>
               <v-col>
-                {{comment.commentContent}}
+                {{comment.content}}
               </v-col>
 
 
@@ -127,7 +127,7 @@
                 </v-col>
               </template>
 <!--              로그인사용자: 내댓글 삭제-->
-              <template v-else-if="$cookies.get('nickname') === comment.nickname">
+              <template v-else-if="$store.state.nickname === comment.nickname">
                 <v-col
                   cols="auto"
                 >
@@ -177,8 +177,9 @@
               <v-col
                   cols="2"
               >
-                <template v-if="$cookies.get('token') !== null">
-                  <v-text-field  disabled dense style="height: 48px !important; " outlined  v-model="$cookies.get('nickname')">
+                <template v-if="$store.getters.loggedIn">
+<!--                  TODO: state 에 직접 v-model 걸지 말아야 -->
+                  <v-text-field  disabled dense style="height: 48px !important; " outlined  v-model="$store.state.nickname">
                   </v-text-field>
                 </template>
 
@@ -205,7 +206,7 @@
               <v-col>
                 <v-textarea
                     dense
-                    v-model="comment.commentContent"
+                    v-model="comment.content"
                     outlined
                     rows="3"
                     label="
@@ -255,7 +256,7 @@
               </v-col>
 
 <!--              1.(로그인 사용자)본인 글이면 수정 삭제 버튼 보임.-->
-                <template v-if="$cookies.get('token') !== null && $cookies.get('username') === boardDetail.username">
+                <template v-if="$store.getters.loggedIn && $store.state.username === boardDetail.username">
                   <v-col
                     cols="auto"
                   >
@@ -486,7 +487,7 @@ export default {
     const defaultForm = Object.freeze({
       guestNickname: '',
       guestPassword: '',
-      commentContent: '',
+      content: '',
     })
 
     return {
@@ -497,7 +498,7 @@ export default {
       boardDetail: {},
       comment: {
         boardId: 0,
-        commentContent: "",
+        content: "",
         guestPassword: "",
         guestNickname: "",
       },
@@ -579,7 +580,7 @@ export default {
         try {
           this.comment.boardId = this.boardDetail.boardId;
 
-          if(this.$cookies.get("token") !== null) {
+          if(this.$store.getters.loggedIn) {
             await this.$_BoardService.writeMemberComment(this.comment);
           } else {
             await this.$_BoardService.writeGuestComment(this.comment);
@@ -599,7 +600,7 @@ export default {
       return this.$refs.form.validate()
     },
     initComment() {
-      this.comment.commentContent = "";
+      this.comment.content = "";
       this.comment.guestNickname = "";
       this.comment.guestPassword = "";
     },

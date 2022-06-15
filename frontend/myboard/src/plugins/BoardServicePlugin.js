@@ -37,9 +37,9 @@ export const boardServicePlugin = {
     writeGuestComment(formData) {
         return createGuestComment(formData);
     },
-    fetchCommentList(boardNo) {
+    fetchCommentList(boardId) {
         try {
-            return getCommentList(boardNo);
+            return getCommentList(boardId);
         } catch (error) {
             console.log(error.response.data);
         }

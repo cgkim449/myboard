@@ -20,8 +20,8 @@ public class BoardUpdateRequestValidator implements Validator {
     public void validate(Object target, Errors errors) {
         BoardUpdateRequest boardUpdateRequest = (BoardUpdateRequest) target;
 
-        String boardTitle = boardUpdateRequest.getBoardTitle();
-        String boardContent = boardUpdateRequest.getBoardContent();
+        String boardTitle = boardUpdateRequest.getTitle();
+        String boardContent = boardUpdateRequest.getContent();
 
         if (boardTitle == null || !(4 <= boardTitle.length() && boardTitle.length() < 100)) {
             errors.rejectValue("boardTitle", "length", new Object[] {4, 100}, null);
