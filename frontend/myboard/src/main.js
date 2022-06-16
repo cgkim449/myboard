@@ -4,7 +4,7 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import BoardServicePlugin from "@/plugins/BoardServicePlugin";
-import {formatBoardTitle, formatDate, formatQuestionNickname, hasAttachIcon} from "@/utils/filters";
+import {formatBoardTitle, formatDate, formatQuestionNickname,} from "@/utils/filters";
 import MemberServicePlugin from "@/plugins/MemberServicePlugin";
 import QuestionServicePlugin from "@/plugins/QuestionServicePlugin";
 import VueCookies from "vue-cookies";
@@ -25,7 +25,6 @@ Vue.$cookies.config("7d");
 Vue.filter("formatDate", formatDate);
 Vue.filter("formatBoardTitle", formatBoardTitle);
 Vue.filter("formatQuestionNickname", formatQuestionNickname);
-Vue.filter("hasAttachIcon", hasAttachIcon);
 
 new Vue({
   router,

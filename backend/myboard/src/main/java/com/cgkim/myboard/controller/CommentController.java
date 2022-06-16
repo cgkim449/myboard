@@ -1,5 +1,7 @@
 package com.cgkim.myboard.controller;
 
+import com.cgkim.myboard.argumentresolver.IsAdmin;
+import com.cgkim.myboard.argumentresolver.LoginUser;
 import com.cgkim.myboard.exception.ErrorCode;
 import com.cgkim.myboard.exception.GuestPasswordInvalidException;
 import com.cgkim.myboard.response.SuccessResponse;
@@ -11,7 +13,6 @@ import com.cgkim.myboard.vo.comment.CommentSaveRequest;
 import com.cgkim.myboard.vo.member.GuestPasswordCheckRequest;
 import com.cgkim.myboard.vo.member.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
@@ -23,21 +24,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.NativeWebRequest;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
 @RequiredArgsConstructor
 @RequestMapping("/comments")
 @RestController
 public class CommentController {
-    @Setter
-    private String username;
     private final CommentService commentService;
     private final MemberService memberService;
     private final CommentSaveRequestValidator commentSaveRequestValidator;
@@ -80,20 +77,20 @@ public class CommentController {
     }
 
     /**
-     * 댓글 작성 API
+     * 회원 및 관리자 댓글 작성 API
      */
     @PostMapping("/member")
     public ResponseEntity<SuccessResponse> writeMemberComment(
+            @LoginUser String username,
+            @IsAdmin boolean isAdmin,
             @Valid CommentSaveRequest commentSaveRequest
     ) {
-        Long memberId = memberService.getMemberId(username);
-
-        long commentId = commentService.writeComment(memberId, commentSaveRequest);
+        long commentId = commentService.writeComment(username, isAdmin, commentSaveRequest);
         return ResponseEntity.created(URI.create("/comments/" + commentId)).body(new SuccessResponse());
     }
 
     /**
-     * 댓글 작성 API
+     * 익명 댓글 작성 API
      */
     @PostMapping("/guest")
     public ResponseEntity<SuccessResponse> writeGuestComment(
@@ -110,20 +107,15 @@ public class CommentController {
      */
     @DeleteMapping("/{commentId}")
     public ResponseEntity<SuccessResponse> deleteComment(
+            @LoginUser String username,
+            @IsAdmin boolean isAdmin,
             @PathVariable Long commentId,
-            @RequestBody GuestPasswordCheckRequest guestPasswordCheckRequest
+            @RequestBody(required = false) GuestPasswordCheckRequest guestPasswordCheckRequest
     ) throws NoSuchAlgorithmException {
-        if(commentService.isAnonymous(commentId)) { //익명 댓글일때만
-            validateGuestPassword(guestPasswordCheckRequest.getGuestPassword()); //비밀번호 유효성 검증
-            commentService.checkGuestPassword(commentId, guestPasswordCheckRequest.getGuestPassword()); //비밀번호 체크
+        if(!isAdmin) {//관리자가 아니면 댓글 소유권 인증
+            commentService.checkOwner(commentId, username, guestPasswordCheckRequest.getGuestPassword());
         }
         commentService.delete(commentId);
         return ResponseEntity.noContent().build();
-    }
-
-    private void validateGuestPassword(String guestPassword) {
-        if(guestPassword == null || guestPassword.equals("")) {
-            throw new GuestPasswordInvalidException(ErrorCode.GUEST_PASSWORD_INVALID);
-        }
     }
 }

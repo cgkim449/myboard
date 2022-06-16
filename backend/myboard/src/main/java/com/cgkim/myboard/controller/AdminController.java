@@ -64,12 +64,11 @@ public class AdminController {
         // 로그인
         AdminVo loginAdmin = adminService.login(loginRequest.getUsername(), loginRequest.getPassword());
         // 토큰 생성
-        String token = jwtProvider.createToken(loginAdmin.getUsername());
+        String token = jwtProvider.createToken(loginAdmin.getUsername(), true);
         return ResponseEntity.ok(
                 new SuccessResponse()
                         .put("username", loginAdmin.getUsername())
                         .put("nickname", loginAdmin.getNickname())
-                        .put("token", token)
-                        .put("role", "admin"));
+                        .put("token", token));
     }
 }

@@ -11,13 +11,15 @@ public interface CommentService {
 
     List<CommentListResponse> getCommentList(Long boardId);
 
-    long writeComment(Long memberId, CommentSaveRequest commentSaveRequest);
 
     long writeComment(GuestSaveRequest guestSaveRequest, CommentSaveRequest commentSaveRequest) throws NoSuchAlgorithmException;
+    long writeComment(String username, boolean isAdmin, CommentSaveRequest commentSaveRequest);
 
     void delete(Long commentId);
 
     boolean isAnonymous(Long commentId);
 
     void checkGuestPassword(Long commentId, String guestPassword) throws NoSuchAlgorithmException;
+
+    void checkOwner(Long commentId, String username, String guestPassword) throws NoSuchAlgorithmException;
 }

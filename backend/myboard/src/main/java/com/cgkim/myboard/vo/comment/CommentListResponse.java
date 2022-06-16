@@ -16,6 +16,7 @@ public class CommentListResponse {
     private Date registerDate;
 
     private String guestNickname;
-
+    //TODO: 변수명 수정 memberNickname
     private String nickname;
+    private String adminNickname;
 }

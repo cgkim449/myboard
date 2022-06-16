@@ -98,14 +98,6 @@ const routes = [
     ],
   },
   {
-    path: "/test",
-    name: "RouterTestView",
-    component: RouterTestView,
-    meta: {
-      auth: true,
-    },
-  },
-  {
     path: "*",
     name: "PageNotFoundView",
     component: PageNotFoundView,

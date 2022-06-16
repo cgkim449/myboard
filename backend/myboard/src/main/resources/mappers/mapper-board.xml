@@ -117,12 +117,16 @@
         values(#{categoryId}, #{title}, #{content}, #{guestNickname}, #{guestPassword});
     </insert>
 
-    <insert id="insertLoginMemberBoard" useGeneratedKeys="true" keyProperty="boardId">
+    <insert id="insertMemberBoard" useGeneratedKeys="true" keyProperty="boardId">
         insert
         into tbl_board (member_id, category_id, title, content)
         values(#{memberId}, #{categoryId}, #{title}, #{content});
     </insert>
-
+    <insert id="insertAdminBoard" useGeneratedKeys="true" keyProperty="boardId">
+        insert
+        into tbl_board (admin_id, category_id, title, content)
+        values(#{adminId}, #{categoryId}, #{title}, #{content});
+    </insert>
     <delete id="delete" parameterType="long">
         delete
           from tbl_board

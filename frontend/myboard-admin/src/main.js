@@ -3,8 +3,15 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
+import BoardServicePlugin from "@/plugins/BoardServicePlugin";
+import {formatBoardTitle, formatDate} from "@/utils/filters";
 
 Vue.config.productionTip = false
+
+Vue.use(BoardServicePlugin);
+
+Vue.filter("formatDate", formatDate);
+Vue.filter("formatBoardTitle", formatBoardTitle);
 
 new Vue({
   router,

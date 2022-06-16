@@ -20,9 +20,12 @@ public interface BoardService {
 
     @Transactional(rollbackFor = Exception.class)
     long write(GuestSaveRequest guestSaveRequest, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
+    @Transactional(rollbackFor = Exception.class)
+    long write(String username, boolean isAdmin, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
 
     @Transactional(rollbackFor = Exception.class)
     long write(Long memberId, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
+
 
     void checkGuestPassword(Long boardId, String guestPassword) throws NoSuchAlgorithmException;
 
@@ -37,4 +40,9 @@ public interface BoardService {
                 List<AttachVo> attachDeleteList);
 
     boolean isAnonymous(Long boardId);
+
+    void checkOwner(Long boardId, String username, String guestPassword) throws NoSuchAlgorithmException;
+
+
+
 }
