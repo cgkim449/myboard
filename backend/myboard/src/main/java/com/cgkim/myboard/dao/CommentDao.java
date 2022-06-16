@@ -14,13 +14,15 @@ public interface CommentDao {
     List<CommentListResponse> selectList(Long boardId);
     void deleteByBoardId(Long boardId);
 
-    void insertMemberComment(CommentVo build);
+    void insertMemberComment(CommentVo commentVo);
+    void insertAdminComment(CommentVo commentVo);
 
-    void insertGuestComment(CommentVo build);
+    void insertGuestComment(CommentVo commentVo);
 
     void deleteByCommentId(Long commentId);
 
     Long selectMemberId(Long commentId);
 
     Long selectOneByGuestPassword(Map<String,Object> map);
+
 }

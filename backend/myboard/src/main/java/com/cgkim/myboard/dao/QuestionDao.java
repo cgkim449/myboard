@@ -31,7 +31,7 @@ public interface QuestionDao {
 //    void delete(Long boardId);
 //    int update(Map<String, Object> map);
 //    void insertGuestBoard(BoardVo boardVo);
-//    void insertLoginMemberBoard(BoardVo boardVo);
+//    void insertMemberBoard(BoardVo boardVo);
 //    Long selectMemberId(Long boardId);
 //
 }

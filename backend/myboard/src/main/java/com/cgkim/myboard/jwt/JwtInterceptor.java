@@ -1,5 +1,6 @@
-package com.cgkim.myboard.util.jwt;
+package com.cgkim.myboard.jwt;
 
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +10,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @Slf4j
@@ -28,26 +28,14 @@ public class JwtInterceptor implements HandlerInterceptor {
             HttpServletResponse response,
             Object handler
     ) {
-        //TODO: CORS 설정 WebConfig 에서
-        if (request.getMethod().equals("OPTIONS")) {
-            return true;
-        }
-
         String token = extractTokenFrom(request);
-
         if(token != null) {
             DecodedJWT jwt = jwtProvider.validate(token);
 
-            //TODO: 메서드로 빼기, 동시성 문제
-            try {
-                String username = jwt.getSubject();
-
-                HandlerMethod handlerMethod = (HandlerMethod) handler;
-                Method method = handlerMethod.getBeanType().getMethod("setUsername", String.class);
-                method.invoke(handlerMethod.getBean(), username);
-            } catch (ReflectiveOperationException e) {
-                return true;
-            }
+            String username = jwt.getClaim("username").asString();
+            boolean isAdmin = jwt.getClaim("isAdmin").asBoolean();
+            request.setAttribute("username", username);
+            request.setAttribute("isAdmin", isAdmin);
         }
         return true;
     }

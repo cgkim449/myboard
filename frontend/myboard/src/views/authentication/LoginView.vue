@@ -48,8 +48,6 @@
 </template>
 
 <script>
-import {memberLogin} from "@/api/auth";
-
 export default {
   name: "LoginPage",
   data() {
@@ -59,7 +57,6 @@ export default {
     })
     return {
       toPath: "",
-      prevRoute: null,
       showPasswordText: false,
       username: "",
       password: "",
@@ -92,7 +89,8 @@ export default {
           password: this.password,
         };
         try {
-          const data = await this.$store.dispatch("MEMBER_LOGIN", member);
+          const data = await this.$store.dispatch("LOGIN", member);
+
           await this.$router.push({
             path: this.toPath
             , query: this.searchCondition

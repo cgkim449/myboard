@@ -10,9 +10,12 @@
              , c.content
              , c.register_date
              , m.nickname
+             , a.nickname admin_nickname
           from tbl_comment c
      left join tbl_member m
             on m.member_id = c.member_id
+     left join tbl_admin a
+            on a.admin_id = c.admin_id
          where board_id=#{boardId};
     </select>
     <select id="selectMemberId" resultType="java.lang.Long" parameterType="long">
@@ -29,6 +32,10 @@
     <insert id="insertMemberComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
         insert into tbl_comment(board_id, member_id, content)
         values(#{boardId}, #{memberId}, #{content})
+    </insert>
+    <insert id="insertAdminComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
+        insert into tbl_comment(board_id, admin_id, content)
+        values(#{boardId}, #{adminId}, #{content})
     </insert>
     <insert id="insertGuestComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
         insert into tbl_comment(board_id, guest_nickname, guest_password, content)

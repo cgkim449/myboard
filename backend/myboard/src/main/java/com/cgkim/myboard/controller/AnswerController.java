@@ -1,5 +1,6 @@
 package com.cgkim.myboard.controller;
 
+import com.cgkim.myboard.argumentresolver.LoginUser;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.AdminService;
 import com.cgkim.myboard.service.AnswerService;
@@ -27,13 +28,12 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
 @RequestMapping("/answers")
 public class AnswerController {
 
-    @Setter
-    private String username;
     private final AnswerService answerService;
     private final AdminService adminService;
 
     @PostMapping
     public ResponseEntity<SuccessResponse> write(
+            @LoginUser String username,
             @Valid AnswerSaveRequest answerSaveRequest
     ) {
         Long adminId = adminService.getAdminId(username);

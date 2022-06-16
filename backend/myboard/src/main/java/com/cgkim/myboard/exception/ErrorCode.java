@@ -19,9 +19,10 @@ public enum ErrorCode { //TODO: properties 로 분리
     GUEST_PASSWORD_INVALID(HttpStatus.BAD_REQUEST, "C005", "비밀번호를 입력해주세요."),
 
     //Authorization
-    TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "A001", "올바르지 않은 토큰입니다."), // 401 인증실패
-    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "A002", "로그아웃 되셨습니다."), // 401 인증실패
+    TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "A001", "올바르지 않은 토큰입니다."),
+    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "A002", "로그아웃 되셨습니다."),
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "A003", "아이디 또는 비밀번호가 맞지 않습니다."),
+    NO_AUTHORIZATION(HttpStatus.FORBIDDEN, "A004", "권한이 없습니다."),
 
     //Member
     USERNAME_DUPLICATE(HttpStatus.BAD_REQUEST, "M001", "이미 가입된 이메일입니다."),

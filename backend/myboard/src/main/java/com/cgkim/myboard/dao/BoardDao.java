@@ -7,7 +7,6 @@ import com.cgkim.myboard.vo.board.BoardVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +22,10 @@ public interface BoardDao {
     void delete(Long boardId);
     int update(Map<String, Object> map);
     void insertGuestBoard(BoardVo boardVo);
-    void insertLoginMemberBoard(BoardVo boardVo);
+    void insertAdminBoard(BoardVo boardVo);
+    void insertMemberBoard(BoardVo boardVo);
     Long selectMemberId(Long boardId);
 
     int updateThumbnailUri(Map<String,Object> boardId);
+
 }

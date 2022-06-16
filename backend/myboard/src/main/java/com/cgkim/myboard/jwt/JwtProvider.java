@@ -1,4 +1,4 @@
-package com.cgkim.myboard.util.jwt;
+package com.cgkim.myboard.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Map;
+
 @Slf4j
 @Component
 public class JwtProvider {
@@ -27,17 +29,20 @@ public class JwtProvider {
     /**
      * 토큰 생성
      */
-    public String createToken(String subject) {
+    public String createToken(String username, boolean isAdmin) {
         Date now = new Date();
         Date expires = new Date(now.getTime() + maxAge);
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         return JWT.create()
-                .withSubject(subject)
+                .withClaim("username", username)
+                .withClaim("isAdmin", isAdmin)
                 .withIssuedAt(now)
                 .withExpiresAt(expires)
                 .sign(algorithm);
     }
+
+
 
     /**
      * 토큰 검증
@@ -47,4 +52,7 @@ public class JwtProvider {
         JWTVerifier verifier = JWT.require(algorithm).build();
         return verifier.verify(token);
     }
+
+
+
 }

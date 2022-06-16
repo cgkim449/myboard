@@ -1,11 +1,15 @@
 package com.cgkim.myboard.service.impl;
 
+import com.cgkim.myboard.dao.AdminDao;
 import com.cgkim.myboard.dao.BoardAttachDao;
 import com.cgkim.myboard.dao.BoardDao;
 import com.cgkim.myboard.dao.CommentDao;
+import com.cgkim.myboard.dao.MemberDao;
 import com.cgkim.myboard.exception.BoardInsertFailedException;
+import com.cgkim.myboard.exception.GuestPasswordInvalidException;
 import com.cgkim.myboard.exception.GuestPasswordMismatchException;
 import com.cgkim.myboard.exception.ErrorCode;
+import com.cgkim.myboard.exception.NoAuthorizationException;
 import com.cgkim.myboard.service.BoardService;
 import com.cgkim.myboard.util.SHA256PasswordEncoder;
 import com.cgkim.myboard.vo.attach.AttachVo;
@@ -30,6 +34,8 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardDao boardDao;
     private final CommentDao commentDao;
+    private final MemberDao memberDao;
+    private final AdminDao adminDao;
     private final BoardAttachDao boardAttachDao;
     private final SHA256PasswordEncoder sha256PasswordEncoder;
 
@@ -93,6 +99,38 @@ public class BoardServiceImpl implements BoardService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public long write(String username, boolean isAdmin, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList) {
+        BoardVo boardVo = BoardVo.builder()
+                .categoryId(boardSaveRequest.getCategoryId())
+                .title(boardSaveRequest.getTitle())
+                .content(boardSaveRequest.getContent())
+                .build();
+        try {
+            if(isAdmin) {
+                long adminId = adminDao.selectAdminIdByUsername(username);
+                boardVo.setAdminId(adminId);
+                boardDao.insertAdminBoard(boardVo);
+            } else {
+                long memberId = memberDao.selectMemberIdByUsername(username);
+                boardVo.setMemberId(memberId);
+                boardDao.insertMemberBoard(boardVo);
+            }
+
+            long boardId = boardVo.getBoardId();
+
+            if (attachInsertList != null && !attachInsertList.isEmpty()) {
+                insertAttaches(attachInsertList, boardId); //첨부파일 insert
+                updateHasAttach(boardId); //첨부파일 유무 update
+                updateThumbnailUri(attachInsertList, boardId);
+            }
+
+            return boardId; //등록한 게시물 번호 리턴
+        } catch (Exception e) { //게시물 등록 실패시 생성했던 파일 삭제하기 위해
+            throw new BoardInsertFailedException(attachInsertList, ErrorCode.BOARD_INSERT_FAILED);
+        }
+    }
 
 
     /**
@@ -109,7 +147,8 @@ public class BoardServiceImpl implements BoardService {
                     .memberId(memberId)
                     .build();
 
-            boardDao.insertLoginMemberBoard(boardVo); //게시물 insert
+            boardDao.insertMemberBoard(boardVo); //게시물 insert
+
             long boardId = boardVo.getBoardId();
 
             if (attachInsertList != null && !attachInsertList.isEmpty()) {
@@ -123,6 +162,8 @@ public class BoardServiceImpl implements BoardService {
             throw new BoardInsertFailedException(attachInsertList, ErrorCode.BOARD_INSERT_FAILED);
         }
     }
+
+
 
     /**
      * 게시물 썸네일 uri 업데이트
@@ -173,6 +214,24 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public boolean isAnonymous(Long boardId) {
         return boardDao.selectMemberId(boardId) == null;
+    }
+
+    @Override
+    public void checkOwner(Long boardId, String username, String guestPassword) throws NoSuchAlgorithmException {
+        if(isAnonymous(boardId)) { //익명 글이면
+            validateGuestPassword(guestPassword); //비밀번호 유효성 검증
+            checkGuestPassword(boardId, guestPassword); //비밀번호 체크
+        } else { //회원 글이면
+            if(!memberDao.selectMemberIdByUsername(username).equals(boardDao.selectMemberId(boardId))) {
+                throw new NoAuthorizationException(ErrorCode.NO_AUTHORIZATION);
+            }
+        }
+    }
+
+    private void validateGuestPassword(String guestPassword) {
+        if(guestPassword == null || guestPassword.equals("")) {
+            throw new GuestPasswordInvalidException(ErrorCode.GUEST_PASSWORD_INVALID);
+        }
     }
 
     /**

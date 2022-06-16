@@ -1,6 +1,6 @@
 package com.cgkim.myboard.controller;
 
-import com.cgkim.myboard.util.jwt.JwtProvider;
+import com.cgkim.myboard.jwt.JwtProvider;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.MemberService;
 import com.cgkim.myboard.validation.LoginRequestValidator;
@@ -78,7 +78,7 @@ public class MemberController {
         // 로그인
         MemberVo loginMember = memberService.login(loginRequest.getUsername(), loginRequest.getPassword());
         // 토큰 생성
-        String token = jwtProvider.createToken(loginMember.getUsername());
+        String token = jwtProvider.createToken(loginMember.getUsername(), false);
         return ResponseEntity.ok(
                 new SuccessResponse()
                         .put("username", loginMember.getUsername())

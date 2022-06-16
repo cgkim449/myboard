@@ -38,14 +38,14 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async MEMBER_LOGIN({ commit }, member) {
+    async LOGIN({ commit }, member) {
       const { data } = await memberLogin(member);
       commit("setToken", data.token);
       commit("setUsername", data.username);
       commit("setNickname", data.nickname);
       return data;
     },
-    MEMBER_LOGOUT({ commit }, member) {
+    LOGOUT({ commit }) {
       commit("clearToken");
       commit("clearUsername");
       commit("clearNickname");
@@ -56,11 +56,9 @@ export default new Vuex.Store({
     createPersistedState({
       storage: {
         getItem: (key) => Cookies.get(key),
-        // Please see https://github.com/js-cookie/js-cookie#json, on how to handle JSON.
-        setItem: (key, value) =>
-            Cookies.set(key, value/*, {expires: 3, secure: true}*/),
-        //TODO: 로그아웃시 쿠키 삭제
+        setItem: (key, value) => Cookies.set(key, value),
         removeItem: (key) => Cookies.remove(key),
+        //TODO: 로그아웃시 쿠키 삭제
       }
     })
   ],

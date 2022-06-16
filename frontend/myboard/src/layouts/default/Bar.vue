@@ -44,7 +44,7 @@ export default {
   name: "DefaultBar",
   methods: {
     memberLogout() {
-      this.$store.dispatch('MEMBER_LOGOUT');
+      this.$store.dispatch('LOGOUT');
       this.$router.go();
       alert("로그아웃 되셨습니다.");
     },

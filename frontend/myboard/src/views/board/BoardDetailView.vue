@@ -87,20 +87,19 @@
           </v-card-title>
           <v-card-text v-for="comment in boardDetail.commentList">
             <v-row dense>
-              <template v-if="comment.nickname == null">
-                <v-col
-                    cols="2"
-                >
+              <v-col
+                  cols="2"
+              >
+                <template v-if="comment.guestNickname != null">
                   {{comment.guestNickname}}
-                </v-col>
-              </template>
-              <template v-else>
-                <v-col
-                    cols="2"
-                >
+                </template>
+                <template v-else-if="comment.Nickname != null">
                   {{comment.nickname}}
-                </v-col>
-              </template>
+                </template>
+                <template v-else-if="comment.adminNickname != null">
+                  {{comment.adminNickname}}
+                </template>
+              </v-col>
               <v-col>
                 {{comment.content}}
               </v-col>
@@ -161,7 +160,7 @@
               <v-col
                   cols="auto"
               >
-                {{comment.commentRegisterDate}}
+                {{comment.registerDate}}
               </v-col>
             </v-row>
             <v-divider></v-divider>
