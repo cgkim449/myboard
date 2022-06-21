@@ -31,10 +31,10 @@ export const boardServicePlugin = {
     checkBoardPw(board) {
         return checkBoardPw(board);
     },
-    writeMemberComment(formData) {
+    saveMemberComment(formData) {
         return createMemberComment(formData);
     },
-    writeGuestComment(formData) {
+    saveGuestComment(formData) {
         return createGuestComment(formData);
     },
     fetchCommentList(boardId) {
@@ -44,7 +44,7 @@ export const boardServicePlugin = {
             console.log(error.response.data);
         }
     },
-    removeComment(comment) {
+    deleteComment(comment) {
         return deleteComment(comment);
     },
     async downloadAttach(attachId) {

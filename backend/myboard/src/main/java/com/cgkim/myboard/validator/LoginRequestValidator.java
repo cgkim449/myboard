@@ -1,4 +1,4 @@
-package com.cgkim.myboard.validation;
+package com.cgkim.myboard.validator;
 
 import com.cgkim.myboard.vo.member.LoginRequest;
 import org.springframework.stereotype.Component;

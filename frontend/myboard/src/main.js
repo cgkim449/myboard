@@ -3,15 +3,19 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
-import BoardServicePlugin from "@/plugins/BoardServicePlugin";
+import BoardServicePlugin from "@/plugins/services/BoardServicePlugin";
 import {formatBoardTitle, formatDate, formatQuestionNickname,} from "@/utils/filters";
-import MemberServicePlugin from "@/plugins/MemberServicePlugin";
-import QuestionServicePlugin from "@/plugins/QuestionServicePlugin";
+import MemberServicePlugin from "@/plugins/services/MemberServicePlugin";
+import QuestionServicePlugin from "@/plugins/services/QuestionServicePlugin";
 import VueCookies from "vue-cookies";
-import AnswerServicePlugin from "@/plugins/AnswerServicePlugin";
-import FAQServicePlugin from "@/plugins/FAQServicePlugin";
+import AnswerServicePlugin from "@/plugins/services/AnswerServicePlugin";
+import FAQServicePlugin from "@/plugins/services/FAQServicePlugin";
+import {ValidationObserver, ValidationProvider} from 'vee-validate';
+import BoardValidatorPlugin from "@/plugins/validators/BoardValidatorPlugin";
 
 Vue.config.productionTip = false
+
+Vue.use(BoardValidatorPlugin);
 
 Vue.use(BoardServicePlugin);
 Vue.use(QuestionServicePlugin);
@@ -25,6 +29,9 @@ Vue.$cookies.config("7d");
 Vue.filter("formatDate", formatDate);
 Vue.filter("formatBoardTitle", formatBoardTitle);
 Vue.filter("formatQuestionNickname", formatQuestionNickname);
+
+Vue.component('ValidationObserver', ValidationObserver);
+Vue.component('ValidationProvider', ValidationProvider);
 
 new Vue({
   router,

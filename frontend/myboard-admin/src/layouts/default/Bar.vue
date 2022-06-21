@@ -1,7 +1,7 @@
 <template>
   <v-app-bar
       app
-      color="indigo"
+      color="secondary"
       dark
   >
     <v-app-bar-nav-icon @click="$emit('drawer')"></v-app-bar-nav-icon>

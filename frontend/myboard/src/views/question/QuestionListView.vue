@@ -1,132 +1,15 @@
 <template>
   <v-container >
-    <v-row>
-      <v-col
-          cols="auto"
+    <PageTitle>
+      <h2 slot="title">
+        Q&A
+      </h2>
+    </PageTitle>
 
-      >
-        <h2>
-          Q&A
-        </h2>
-      </v-col>
-    </v-row>
-
-<!--    검색창 코드 시작-->
-      <v-row dense>
-        <v-col
-            cols="auto"
-        >
-          <div class="mt-2">
-            등록일
-          </div>
-        </v-col>
-        <v-col
-          cols="2"
-        >
-          <v-menu
-              v-model="menu1"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-
-                  dense
-                  outlined
-                  v-model="searchCondition.fromDate"
-                  label="From"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-              ></v-text-field>
-            </template>
-            <v-date-picker
-                v-model="searchCondition.fromDate"
-                @input="menu1 = false"
-            ></v-date-picker>
-          </v-menu>
-        </v-col>
-        <v-col
-            cols="auto"
-        >
-          <div class="mt-2">
-            ~
-          </div>
-        </v-col>
-        <v-col
-          cols="2"
-        >
-          <v-menu
-              v-model="menu2"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                  dense
-                  outlined
-                  v-model="searchCondition.toDate"
-                  label="To"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-              ></v-text-field>
-            </template>
-            <v-date-picker
-                v-model="searchCondition.toDate"
-                @input="menu2 = false"
-            ></v-date-picker>
-          </v-menu>
-        </v-col>
-        <v-col
-            cols="2"
-        >
-          <v-select
-              dense
-              outlined
-              v-model="searchCondition.categoryId"
-              :items="items"
-              item-text="categoryName"
-              item-value="categoryId"
-          ></v-select>
-        </v-col>
-
-        <v-col
-        >
-          <v-text-field
-              dense
-              outlined
-              label="검색어를 입력해주세요. (제목 + 작성자 + 내용)"
-              clearable
-              v-model="searchCondition.keyword"
-              v-on:keyup.enter="search"
-          ></v-text-field>
-
-        </v-col>
-        <v-col
-          cols="auto"
-        >
-          <v-btn
-              normal
-              class="mt-1"
-              color="primary"
-              v-on:click="search"
-          >
-            검색
-          </v-btn>
-        </v-col>
-    </v-row>
-
-
-<!--    여기까지 검색창 코드 자유게시판이랑 완전히 같음-->
+    <SearchForm
+        v-on:searchBtnClick="search"
+        v-bind:updatedSearchCondition="searchCondition"
+    ></SearchForm>
 
 
     <v-row dense>
@@ -256,10 +139,15 @@
 <script>
 import {formatDate} from "@/utils/filters";
 import {formatQuestionNickname} from "@/utils/filters";
+import PageTitle from "@/components/common/PageTitle";
+import SearchForm from "@/components/common/SearchForm";
 
 export default {
   name: "QuestionListView",
-  components: {},
+  components: {
+    PageTitle,
+    SearchForm
+  },
   data() {
     return {
       searchCondition: {
@@ -269,6 +157,8 @@ export default {
         toDate: "",
         page: 1,
       },
+
+
       date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       menu1: false,
       menu2: false,
@@ -341,19 +231,6 @@ export default {
     };
   },
   async created() {
-    this.searchCondition = {...this.$route.query};
-    if(this.isEmpty(this.searchCondition)) {
-      this.searchCondition = {
-        categoryId: "0",
-        keyword: "",
-        fromDate: "",
-        toDate: "",
-        page: 1,
-      };
-    }
-    if(!isNaN(this.searchCondition.page)) {
-      this.searchCondition.page = Number(this.searchCondition.page);
-    }
     try {
         const response = await this.$_QuestionService.fetchItemList(this.searchCondition);
         this.itemList = response.data.itemList;

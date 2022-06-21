@@ -21,7 +21,7 @@ const getBoardDetail = (boardId) => {
  */
 const createMemberBoard = (formData) => {
     return boardsInstance.post(
-        "/member",
+        "/",
         formData,
         {headers:{"Content-Type" : "multipart/form-data"}}
     )

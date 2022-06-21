@@ -5,6 +5,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.cgkim.myboard.exception.BoardInsertFailedException;
 import com.cgkim.myboard.exception.BusinessException;
 import com.cgkim.myboard.exception.ErrorCode;
+import com.cgkim.myboard.exception.GuestSaveRequestInvalidException;
 import com.cgkim.myboard.response.ErrorResponse;
 import com.cgkim.myboard.util.FileHandler;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(exception.getErrorCode().getHttpStatus())
                 .body(buildErrorResponse(exception.getErrorCode()));
+    }
+
+    /**
+     * 게시물 DB에 insert 실패 시, 생성한 첨부파일이 있다면 그 파일을 삭제
+     */
+    @ExceptionHandler(GuestSaveRequestInvalidException.class)
+    public ResponseEntity<ErrorResponse> GuestSaveRequestInvalidExceptionHandler(GuestSaveRequestInvalidException exception) {
+        log.error("handleGuestSaveRequestInvalidException", exception);
+        List<ErrorResponse.FieldErrorDetail> fieldErrorDetails = getFieldErrorDetails(exception.getBindingResult());
+        return ResponseEntity
+                .status(exception.getErrorCode().getHttpStatus())
+                .body(buildErrorResponse(exception.getErrorCode(), fieldErrorDetails));
     }
 
     /**

@@ -3,8 +3,8 @@ package com.cgkim.myboard.controller;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.QuestionService;
 import com.cgkim.myboard.util.FileHandler;
-import com.cgkim.myboard.validation.FileSaveRequestValidator;
-import com.cgkim.myboard.validation.GuestSaveRequestValidator;
+import com.cgkim.myboard.validator.FileSaveRequestValidator;
+import com.cgkim.myboard.validator.GuestSaveRequestValidator;
 import com.cgkim.myboard.vo.attach.AttachVo;
 import com.cgkim.myboard.vo.attach.FileSaveRequest;
 import com.cgkim.myboard.vo.question.QuestionDetailResponse;
@@ -12,7 +12,6 @@ import com.cgkim.myboard.vo.question.QuestionListResponse;
 import com.cgkim.myboard.vo.question.QuestionSaveRequest;
 import com.cgkim.myboard.vo.question.QuestionSearchRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +46,7 @@ public class QuestionController {
      */
     @InitBinder
     public void initBinder(WebDataBinder webDataBinder) {
+
         addPropertyEditors(webDataBinder);
         addValidators(webDataBinder);
     }
@@ -55,6 +55,7 @@ public class QuestionController {
      * PropertyEditor 등록
      */
     private void addPropertyEditors(WebDataBinder webDataBinder) {
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         webDataBinder.registerCustomEditor(Date.class, new CustomDateEditor(simpleDateFormat, true));
     }
@@ -63,13 +64,16 @@ public class QuestionController {
      * Validator 등록
      */
     private void addValidators(WebDataBinder webDataBinder) {
+
         if (webDataBinder.getTarget() == null) {
             return;
         }
+
         final List<Validator> validatorList = List.of(
                 fileSaveRequestValidator,
                 guestSaveRequestValidator
         );
+
         for (Validator validator : validatorList) {
             if (validator.supports(webDataBinder.getTarget().getClass())) {
                 webDataBinder.addValidators(validator);
@@ -78,12 +82,14 @@ public class QuestionController {
     }
 
     /**
-     * 질문 목록 API
+     * 질문 목록
      */
     @GetMapping
     public ResponseEntity<SuccessResponse> getList(QuestionSearchRequest questionSearchRequest){
+
         List<QuestionListResponse> questionList = questionService.getQuestionList(questionSearchRequest);
         int totalCounts = questionService.getTotalCounts(questionSearchRequest);
+
         return ResponseEntity
                 .ok(new SuccessResponse()
                         .put("itemList", questionList)
@@ -91,17 +97,18 @@ public class QuestionController {
     }
 
     /**
-     * 회원 질문 등록 API
+     * 회원 질문 등록
      */
     @PostMapping
-    public ResponseEntity<SuccessResponse> write(
-            Long memberId,
-            @Valid QuestionSaveRequest questionSaveRequest,
-            @Valid FileSaveRequest fileSaveRequest
+    public ResponseEntity<SuccessResponse> write(Long memberId,
+                                                 @Valid QuestionSaveRequest questionSaveRequest,
+                                                 @Valid FileSaveRequest fileSaveRequest
     ) throws IOException {
+
         List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles()); //첨부파일 생성 (C://upload)
         //TODO: 첨부파일 경로를 찢어야하나 찢어야겟지
         long id = questionService.write(memberId, questionSaveRequest, attachInsertList); //회원 질문 작성
+
         return ResponseEntity.created(URI.create("/questions/" + id)).body(new SuccessResponse());
     }
 
@@ -110,7 +117,9 @@ public class QuestionController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<SuccessResponse> getBoardDetail(@PathVariable Long id) {
+
         QuestionDetailResponse questionDetail = questionService.viewDetail(id);
+
         return ResponseEntity
                 .ok(new SuccessResponse()
                         .put("itemDetail", questionDetail));

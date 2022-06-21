@@ -7,10 +7,10 @@ import com.cgkim.myboard.dao.MemberDao;
 import com.cgkim.myboard.exception.ErrorCode;
 import com.cgkim.myboard.exception.GuestPasswordInvalidException;
 import com.cgkim.myboard.exception.GuestPasswordMismatchException;
+import com.cgkim.myboard.exception.LoginRequiredException;
 import com.cgkim.myboard.exception.NoAuthorizationException;
 import com.cgkim.myboard.service.CommentService;
 import com.cgkim.myboard.util.SHA256PasswordEncoder;
-import com.cgkim.myboard.vo.board.BoardVo;
 import com.cgkim.myboard.vo.comment.CommentListResponse;
 import com.cgkim.myboard.vo.comment.CommentSaveRequest;
 import com.cgkim.myboard.vo.comment.CommentVo;
@@ -43,20 +43,23 @@ public class CommentServiceImpl implements CommentService {
      * 회원 및 관리자 댓글 작성
      */
     @Override
-    public long writeComment(String username, boolean isAdmin, CommentSaveRequest commentSaveRequest) {
+    public long writeComment(String username, CommentSaveRequest commentSaveRequest) {
         CommentVo commentVo = CommentVo.builder()
                 .boardId(commentSaveRequest.getBoardId())
                 .content(commentSaveRequest.getContent())
                 .build();
-        if(isAdmin) {
-            long adminId = adminDao.selectAdminIdByUsername(username);
-            commentVo.setAdminId(adminId);
-            commentDao.insertAdminComment(commentVo);
-        } else {
-            long memberId = memberDao.selectMemberIdByUsername(username);
-            commentVo.setMemberId(memberId);
-            commentDao.insertMemberComment(commentVo);
-        }
+
+        long memberId = memberDao.selectMemberIdByUsername(username);
+
+        commentVo.setMemberId(memberId);
+
+        commentDao.insertMemberComment(commentVo);
+//        if(isAdmin) {
+//            long adminId = adminDao.selectAdminIdByUsername(username);
+//            commentVo.setAdminId(adminId);
+//            commentDao.insertAdminComment(commentVo);
+//        } else {
+//        }
         return commentVo.getCommentId();
     }
 
@@ -115,7 +118,20 @@ public class CommentServiceImpl implements CommentService {
             validateGuestPassword(guestPassword); //비밀번호 유효성 검증
             checkGuestPassword(commentId, guestPassword); //비밀번호 체크
         } else {
-            if(!memberDao.selectMemberIdByUsername(username).equals(commentDao.selectMemberId(commentId))) {
+
+            if(username == null) {
+                throw new LoginRequiredException(ErrorCode.LOGIN_REQUIRED);
+            }
+
+            Long verificationTargetMemberId = memberDao.selectMemberIdByUsername(username);
+
+            if(verificationTargetMemberId == null) {
+                throw new NoAuthorizationException(ErrorCode.NO_AUTHORIZATION);
+            }
+
+            Long realMemberId = commentDao.selectMemberId(commentId);
+
+            if(!verificationTargetMemberId.equals(realMemberId)) {
                 throw new NoAuthorizationException(ErrorCode.NO_AUTHORIZATION);
             }
         }

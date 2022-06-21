@@ -12,17 +12,6 @@ export default {
   components: {
     AuthenticationView
   },
-  data() {
-    return {
-      previousPath: null
-    }
-  },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.previousPath = from
-      console.log(from);
-    });
-  }
 }
 </script>
 

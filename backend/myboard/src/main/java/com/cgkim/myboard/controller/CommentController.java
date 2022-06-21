@@ -1,14 +1,14 @@
 package com.cgkim.myboard.controller;
 
-import com.cgkim.myboard.argumentresolver.IsAdmin;
 import com.cgkim.myboard.argumentresolver.LoginUser;
 import com.cgkim.myboard.exception.ErrorCode;
-import com.cgkim.myboard.exception.GuestPasswordInvalidException;
+import com.cgkim.myboard.exception.LoginRequiredException;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.CommentService;
 import com.cgkim.myboard.service.MemberService;
-import com.cgkim.myboard.validation.CommentSaveRequestValidator;
-import com.cgkim.myboard.validation.GuestSaveRequestValidator;
+import com.cgkim.myboard.validator.CommentSaveRequestValidator;
+import com.cgkim.myboard.validator.GuestSaveRequestValidator;
+import com.cgkim.myboard.vo.comment.CommentListResponse;
 import com.cgkim.myboard.vo.comment.CommentSaveRequest;
 import com.cgkim.myboard.vo.member.GuestPasswordCheckRequest;
 import com.cgkim.myboard.vo.member.GuestSaveRequest;
@@ -52,13 +52,16 @@ public class CommentController {
      * Validator 등록
      */
     private void addValidators(WebDataBinder webDataBinder) {
+
         if (webDataBinder.getTarget() == null) {
             return;
         }
+
         final List<Validator> validatorList = List.of(
                 commentSaveRequestValidator,
                 guestSaveRequestValidator
         );
+
         for (Validator validator : validatorList) {
             if (validator.supports(webDataBinder.getTarget().getClass())) {
                 webDataBinder.addValidators(validator);
@@ -67,55 +70,63 @@ public class CommentController {
     }
 
     /**
-     * 댓글 리스트 API
+     * 댓글 목록 조회
      */
     @GetMapping
     public ResponseEntity<SuccessResponse> getCommentList(Long boardId) {
+        List<CommentListResponse> commentList = commentService.getCommentList(boardId);
         return ResponseEntity
                 .ok(new SuccessResponse()
-                        .put("commentList", commentService.getCommentList(boardId)));
+                        .put("commentList", commentList));
     }
 
     /**
-     * 회원 및 관리자 댓글 작성 API
+     * 회원 댓글 작성
      */
     @PostMapping("/member")
-    public ResponseEntity<SuccessResponse> writeMemberComment(
-            @LoginUser String username,
-            @IsAdmin boolean isAdmin,
-            @Valid CommentSaveRequest commentSaveRequest
+    public ResponseEntity<SuccessResponse> writeMemberComment(@LoginUser String username,
+                                                              @Valid CommentSaveRequest commentSaveRequest
     ) {
-        long commentId = commentService.writeComment(username, isAdmin, commentSaveRequest);
+
+        if(username == null) {
+            throw new LoginRequiredException(ErrorCode.LOGIN_REQUIRED);
+        }
+
+        long commentId = commentService.writeComment(username, commentSaveRequest);
+
         return ResponseEntity.created(URI.create("/comments/" + commentId)).body(new SuccessResponse());
     }
 
     /**
-     * 익명 댓글 작성 API
+     * 익명 댓글 작성
      */
     @PostMapping("/guest")
-    public ResponseEntity<SuccessResponse> writeGuestComment(
-            @Valid GuestSaveRequest guestSaveRequest,
-            @Valid CommentSaveRequest commentSaveRequest
+    public ResponseEntity<SuccessResponse> writeGuestComment(@Valid GuestSaveRequest guestSaveRequest,
+                                                             @Valid CommentSaveRequest commentSaveRequest
     ) throws NoSuchAlgorithmException {
+
         long commentId =  commentService.writeComment(guestSaveRequest, commentSaveRequest);
+
         return ResponseEntity.created(URI.create("/comments/" + commentId)).body(new SuccessResponse());
     }
 
-
     /**
-     * 댓글 삭제 API
+     * 댓글 삭제
      */
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<SuccessResponse> deleteComment(
-            @LoginUser String username,
-            @IsAdmin boolean isAdmin,
-            @PathVariable Long commentId,
-            @RequestBody(required = false) GuestPasswordCheckRequest guestPasswordCheckRequest
+    public ResponseEntity<SuccessResponse> deleteComment(@LoginUser String username,
+                                                         @PathVariable Long commentId,
+                                                         @RequestBody(required = false) GuestPasswordCheckRequest guestPasswordCheckRequest
     ) throws NoSuchAlgorithmException {
-        if(!isAdmin) {//관리자가 아니면 댓글 소유권 인증
-            commentService.checkOwner(commentId, username, guestPasswordCheckRequest.getGuestPassword());
+        //TODO: 리팩토링
+        String guestPassword = null;
+        if(guestPasswordCheckRequest != null) {
+            guestPassword = guestPasswordCheckRequest.getGuestPassword();
         }
+
+        commentService.checkOwner(commentId, username, guestPassword);
         commentService.delete(commentId);
+
         return ResponseEntity.noContent().build();
     }
 }

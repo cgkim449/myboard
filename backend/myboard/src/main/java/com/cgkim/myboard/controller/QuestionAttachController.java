@@ -38,11 +38,14 @@ public class QuestionAttachController {
     //TODO: url 수정
     @GetMapping("/{attachId}")
     public ResponseEntity<Resource> downloadAttach(@PathVariable Long attachId) {
+
         AttachVo attachVo = attachService.get(attachId);
         Resource resource = new FileSystemResource(getAbsolutePathOf(attachVo));
+
         if(!resource.exists()) {
             throw new AttachNotFoundException(ErrorCode.ATTACH_NOT_FOUND);
         }
+
         return ResponseEntity
                 .ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
@@ -59,11 +62,14 @@ public class QuestionAttachController {
      */
     @GetMapping("/{attachId}/display")
     public ResponseEntity<Resource> displayImageAttach(@PathVariable Long attachId) {
+
         AttachVo attachVo = attachService.get(attachId);
         Resource resource = new FileSystemResource(getThumbnailAbsolutePathOf(attachVo));
+
         if(!resource.exists()) {
             throw new AttachNotFoundException(ErrorCode.ATTACH_NOT_FOUND);
         }
+
         return ResponseEntity.ok().body(resource);
     }
 
@@ -71,6 +77,7 @@ public class QuestionAttachController {
      * 파일 절대경로 리턴
      */
     private String getAbsolutePathOf(AttachVo attachVo) {
+
         return basePath + File.separator
                 + attachVo.getUploadPath() + File.separator
                 + attachVo.getUuid() + '.' + attachVo.getExtension();
@@ -79,8 +86,9 @@ public class QuestionAttachController {
     /**
      * 첨부파일 절대경로 리턴
      */
-    //TODO: 200x200 상수로
+    //TODO: 삭제
     private String getThumbnailAbsolutePathOf(AttachVo attachVo) {
+
         return basePath + File.separator
                 + attachVo.getUploadPath() + File.separator
                 + attachVo.getUuid() + "_200x200" + '.' + attachVo.getExtension();

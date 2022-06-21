@@ -24,7 +24,8 @@ public class BoardListResponse {
 
     private String guestNickname;
 
-    private String nickname; // 로그인 사용자 닉네임
+    private String memberNickname;
+    private String adminNickname;
 
     private String thumbnailUri;
 }

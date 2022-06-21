@@ -26,6 +26,10 @@ public class AttachVo {
     public boolean isImage() {
         return isImage;
     }
+
+    private String thumbnailUri;
+    private String originalImageUri;
+
     @Builder
     public AttachVo(String uploadPath, String uuid, String name, String extension, boolean isImage, long size) {
         this.uploadPath = uploadPath;
@@ -40,5 +44,6 @@ public class AttachVo {
     public String getFullName() {
         return getName() + '.' + getExtension();
     }
+
 
 }

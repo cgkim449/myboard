@@ -160,7 +160,7 @@
                       outlined
                       height="90"
                       width="94"
-                      color="primary"
+                      color="secondary"
                       v-on:click="writeComment"
                   >
                     등록
@@ -183,7 +183,7 @@
                   query: this.searchCondition
                 }">
                   <v-btn
-                      color="primary"
+                      color="secondary"
                   >
                     목록
                   </v-btn>
@@ -199,7 +199,7 @@
                 }">
                   <v-btn
                       outlined
-                      color="primary"
+                      color="secondary"
                   >
                     수정
                   </v-btn>
@@ -211,7 +211,7 @@
               >
                   <v-btn
                       outlined
-                      color="primary"
+                      color="secondary"
                       @click="removeBoard"
                   >
                     삭제

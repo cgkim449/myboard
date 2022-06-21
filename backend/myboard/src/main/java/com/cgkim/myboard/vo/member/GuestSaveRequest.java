@@ -1,20 +1,12 @@
 package com.cgkim.myboard.vo.member;
 
-import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@Setter
+@RequiredArgsConstructor
 public class GuestSaveRequest {
-    private String guestNickname;
-    private String guestPassword;
-    private String guestPasswordConfirm;
-
-    @Builder
-    public GuestSaveRequest(String guestNickname, String guestPassword, String guestPasswordConfirm) {
-        this.guestNickname = guestNickname;
-        this.guestPassword = guestPassword;
-        this.guestPasswordConfirm = guestPasswordConfirm;
-    }
+    private final String guestNickname;
+    private final String guestPassword;
+    private final String guestPasswordConfirm;
 }

@@ -12,7 +12,7 @@
           {{ $store.state.username }}
         </span>
 
-        <v-btn text @click="memberLogout">
+        <v-btn text @click="logout">
           로그아웃
         </v-btn>
       </template>
@@ -20,7 +20,7 @@
       <template v-else>
         <v-divider vertical></v-divider>
 
-        <v-btn text @click="moveToMemberLoginPage">
+        <v-btn text @click="moveToLoginPage">
           로그인
         </v-btn>
 
@@ -43,15 +43,19 @@
 export default {
   name: "DefaultBar",
   methods: {
-    memberLogout() {
+    logout() {
       this.$store.dispatch('LOGOUT');
+
       this.$router.go();
+
       alert("로그아웃 되셨습니다.");
     },
-    moveToMemberLoginPage() {
+    moveToLoginPage() {
       this.$router.push({
         path: '/login'
-        , query: {toPath:this.$route.path}
+        , query: {
+          toPath: this.$route.path
+        }
       });
     },
   },

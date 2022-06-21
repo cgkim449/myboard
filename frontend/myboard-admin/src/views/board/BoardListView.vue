@@ -117,7 +117,7 @@
           <v-btn
               normal
               class="mt-1"
-              color="primary"
+              color="secondary"
               v-on:click="search"
           >
             검색
@@ -251,6 +251,7 @@
       >
         <div class="text-center">
           <v-pagination
+              color="secondary"
               v-model="searchCondition.page"
               :length="Math.ceil(boardTotalCounts / 10)"
               :total-visible="10"
@@ -272,7 +273,7 @@
                     query: this.searchCondition
                   }">
           <v-btn
-              color="primary"
+              color="secondary"
           >
             글쓰기
           </v-btn>

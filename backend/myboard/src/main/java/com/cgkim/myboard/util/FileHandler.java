@@ -111,7 +111,7 @@ public class FileHandler {
         String saveFileName = saveFileFullName.substring(0, saveFileFullName.lastIndexOf("."));
         String saveFileExtension = saveFileFullName.substring(saveFileFullName.lastIndexOf('.') + 1);
 
-        return saveFileName + "_200x200" + "." + saveFileExtension;
+        return saveFileName + "_thumbnail" + "." + saveFileExtension;
     }
 
     public void deleteFiles(List<AttachVo> attachesDeleteRequest){

@@ -9,7 +9,7 @@
              , c.guest_nickname
              , c.content
              , c.register_date
-             , m.nickname
+             , m.nickname member_nickname
              , a.nickname admin_nickname
           from tbl_comment c
      left join tbl_member m

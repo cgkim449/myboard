@@ -1,4 +1,4 @@
-package com.cgkim.myboard.validation;
+package com.cgkim.myboard.validator;
 
 import com.cgkim.myboard.vo.attach.FileSaveRequest;
 import org.springframework.stereotype.Component;
@@ -8,7 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 파일 업로드시 유효성 검증
- *
  */
 @Component
 public class FileSaveRequestValidator implements Validator {
@@ -42,9 +41,6 @@ public class FileSaveRequestValidator implements Validator {
 
     /**
      * 파일 업로드 확장자 제한 : jsp, jspx, jsw, jsv, jspf, htm, html
-     *
-     * @param multipartFile
-     * @return
      */
     private boolean isValid(MultipartFile multipartFile) {
         String contentType = multipartFile.getContentType();

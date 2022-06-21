@@ -16,7 +16,6 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
 @Component
 public class IsAdminArgumentResolver implements HandlerMethodArgumentResolver {
 
-
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         boolean hasIsAdminAnnotation = parameter.hasParameterAnnotation(IsAdmin.class);
@@ -34,6 +33,7 @@ public class IsAdminArgumentResolver implements HandlerMethodArgumentResolver {
             NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory
     ) {
-        return webRequest.getAttribute("isAdmin", SCOPE_REQUEST);
+        Boolean isAdmin = (Boolean) webRequest.getAttribute("isAdmin", SCOPE_REQUEST);
+        return isAdmin != null && isAdmin;
     }
 }

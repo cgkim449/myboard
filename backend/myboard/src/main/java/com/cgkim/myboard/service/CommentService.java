@@ -13,7 +13,7 @@ public interface CommentService {
 
 
     long writeComment(GuestSaveRequest guestSaveRequest, CommentSaveRequest commentSaveRequest) throws NoSuchAlgorithmException;
-    long writeComment(String username, boolean isAdmin, CommentSaveRequest commentSaveRequest);
+    long writeComment(String username, CommentSaveRequest commentSaveRequest);
 
     void delete(Long commentId);
 

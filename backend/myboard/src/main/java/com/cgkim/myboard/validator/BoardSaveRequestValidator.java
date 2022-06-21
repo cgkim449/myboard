@@ -1,4 +1,4 @@
-package com.cgkim.myboard.validation;
+package com.cgkim.myboard.validator;
 
 import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import org.springframework.stereotype.Component;
@@ -29,11 +29,11 @@ public class BoardSaveRequestValidator implements Validator {
         }
 
         if (boardTitle == null || !(4 <= boardTitle.length() && boardTitle.length() < 100)) {
-            errors.rejectValue("boardTitle", "length", new Object[] {4, 100}, null);
+            errors.rejectValue("title", "length", new Object[] {4, 100}, null);
         }
 
         if (boardContent == null || !(4 <= boardContent.length() && boardContent.length() < 2000)) {
-            errors.rejectValue("boardContent", "length", new Object[] {4, 2000}, null);
+            errors.rejectValue("content", "length", new Object[] {4, 2000}, null);
         }
     }
 }

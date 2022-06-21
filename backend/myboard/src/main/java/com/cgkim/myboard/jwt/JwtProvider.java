@@ -42,8 +42,6 @@ public class JwtProvider {
                 .sign(algorithm);
     }
 
-
-
     /**
      * 토큰 검증
      */

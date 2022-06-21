@@ -8,19 +8,22 @@ import SignUpView from "@/views/authentication/SignUpView";
 import PageNotFoundView from "@/views/PageNotFoundView";
 import BoardDetailView from "@/views/board/BoardDetailView";
 import BoardWriteView from "@/views/board/BoardWriteView";
-import BoardPwCheck from "@/views/board/BoardPwCheck";
 import BoardModifyView from "@/views/board/BoardModifyView";
-import RouterTestView from "@/views/RouterTestView";
 import QuestionListView from "@/views/question/QuestionListView";
 import QuestionWriteView from "@/views/question/QuestionWriteView";
 import QuestionDetailView from "@/views/question/QuestionDetailView";
-import AdminLoginView from "@/views/admin/AdminLoginView";
 import FAQListView from "@/views/faq/FAQListView";
 import store from "@/store";
 
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: "/",
+    redirect: {
+      name: "BoardListView"
+    }
+  },
   {
     path: "/",
     component: DefaultLayout,
@@ -37,17 +40,12 @@ const routes = [
         component: BoardWriteView,
       },
       {
-        path: "/boards/:id",
+        path: "/boards/:boardId",
         name: "BoardDetailView",
         component: BoardDetailView,
       },
       {
-        path: "/boards/:id/pwCheck",
-        name: "BoardPwCheck",
-        component: BoardPwCheck,
-      },
-      {
-        path: "/boards/:id/modify",
+        path: "/boards/:boardId/modify",
         name: "BoardModifyView",
         component: BoardModifyView,
       },
@@ -89,11 +87,6 @@ const routes = [
         path: "/signUp",
         name: "SignUpView",
         component: SignUpView,
-      },
-      {
-        path: "/admin/login",
-        name: "AdminLoginView",
-        component: AdminLoginView,
       },
     ],
   },

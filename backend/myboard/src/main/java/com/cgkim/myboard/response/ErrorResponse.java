@@ -11,9 +11,9 @@ import java.util.List;
  */
 @Getter
 public class ErrorResponse {
-    private String errorCode;
-    private String errorMessage;
-    private List<FieldErrorDetail> fieldErrorDetails;
+    private final String errorCode;
+    private final String errorMessage;
+    private final List<FieldErrorDetail> fieldErrorDetails;
 
     @Builder
     public ErrorResponse(String errorCode, String errorMessage, List<FieldErrorDetail> fieldErrorDetails) {

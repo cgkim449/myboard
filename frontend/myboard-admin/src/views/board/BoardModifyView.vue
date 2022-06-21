@@ -98,7 +98,7 @@
               <v-btn
                   outlined
                   text
-                  color="primary"
+                  color="indigo"
                   @click="modifyBoard"
               >
                 저장

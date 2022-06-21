@@ -157,7 +157,7 @@
                 <v-btn
                     outlined
                     text
-                    color="primary"
+                    color="indigo"
                     @click="writeBoard"
                 >
                   저장
@@ -225,12 +225,7 @@ export default {
     async writeBoard() {
       if(this.validateForm()) {
         let formData = this.prepareFormData();
-        let response;
-        if(this.$store.getters.loggedIn) {
-          response = await this.$_BoardService.writeMemberBoard(formData);
-        } else {
-          response = await this.$_BoardService.writeGuestBoard(formData);
-        }
+        const response = await this.$_BoardService.writeMemberBoard(formData);
         this.moveToBoardDetail(response.headers.location);
       }
     },

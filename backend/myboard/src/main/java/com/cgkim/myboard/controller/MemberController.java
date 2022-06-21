@@ -3,8 +3,8 @@ package com.cgkim.myboard.controller;
 import com.cgkim.myboard.jwt.JwtProvider;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.MemberService;
-import com.cgkim.myboard.validation.LoginRequestValidator;
-import com.cgkim.myboard.validation.SignUpRequestValidator;
+import com.cgkim.myboard.validator.LoginRequestValidator;
+import com.cgkim.myboard.validator.SignUpRequestValidator;
 import com.cgkim.myboard.vo.member.LoginRequest;
 import com.cgkim.myboard.vo.member.MemberVo;
 import com.cgkim.myboard.vo.member.SignUpRequest;
@@ -66,7 +66,9 @@ public class MemberController {
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) throws NoSuchAlgorithmException {
+
         String username = memberService.signUp(signUpRequest);
+
         return ResponseEntity.created(URI.create("/members/" + username)).body(new SuccessResponse());
     }
 
@@ -79,6 +81,7 @@ public class MemberController {
         MemberVo loginMember = memberService.login(loginRequest.getUsername(), loginRequest.getPassword());
         // 토큰 생성
         String token = jwtProvider.createToken(loginMember.getUsername(), false);
+
         return ResponseEntity.ok(
                 new SuccessResponse()
                         .put("username", loginMember.getUsername())

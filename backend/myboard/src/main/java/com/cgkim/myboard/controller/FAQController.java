@@ -23,7 +23,9 @@ public class FAQController {
 
     @GetMapping
     public ResponseEntity<SuccessResponse> getList(Integer categoryId){
+
         List<FAQListResponse> faqList = faqService.getList(categoryId);
+
         return ResponseEntity
                 .ok(new SuccessResponse()
                         .put("faqList", faqList));

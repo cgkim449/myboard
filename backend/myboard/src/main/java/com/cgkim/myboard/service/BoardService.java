@@ -8,20 +8,20 @@ import com.cgkim.myboard.vo.board.BoardSearchRequest;
 import com.cgkim.myboard.vo.member.GuestSaveRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.Valid;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-
 public interface BoardService {
     List<BoardListResponse> getBoardList(BoardSearchRequest boardSearchRequest);
 
-    int getTotalCounts(BoardSearchRequest boardSearchRequest);
+    int getTotalCount(BoardSearchRequest boardSearchRequest);
 
     BoardDetailResponse viewBoardDetail(Long boardId);
 
     @Transactional(rollbackFor = Exception.class)
-    long write(GuestSaveRequest guestSaveRequest, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
+    long write(@Valid GuestSaveRequest guestSaveRequest, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
     @Transactional(rollbackFor = Exception.class)
-    long write(String username, boolean isAdmin, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
+    long write(String username, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);
 
     @Transactional(rollbackFor = Exception.class)
     long write(Long memberId, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList);

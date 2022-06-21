@@ -3,7 +3,7 @@ package com.cgkim.myboard.controller;
 import com.cgkim.myboard.jwt.JwtProvider;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.AdminService;
-import com.cgkim.myboard.validation.LoginRequestValidator;
+import com.cgkim.myboard.validator.LoginRequestValidator;
 import com.cgkim.myboard.vo.admin.AdminVo;
 import com.cgkim.myboard.vo.member.LoginRequest;
 import lombok.RequiredArgsConstructor;
@@ -43,12 +43,15 @@ public class AdminController {
      * Validator 등록
      */
     private void addValidators(WebDataBinder webDataBinder) {
+
         if (webDataBinder.getTarget() == null) {
             return;
         }
+
         final List<Validator> validatorList = List.of(
                 loginRequestValidator
         );
+
         for (Validator validator : validatorList) {
             if (validator.supports(webDataBinder.getTarget().getClass())) {
                 webDataBinder.addValidators(validator);
@@ -65,6 +68,7 @@ public class AdminController {
         AdminVo loginAdmin = adminService.login(loginRequest.getUsername(), loginRequest.getPassword());
         // 토큰 생성
         String token = jwtProvider.createToken(loginAdmin.getUsername(), true);
+
         return ResponseEntity.ok(
                 new SuccessResponse()
                         .put("username", loginAdmin.getUsername())

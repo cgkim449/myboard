@@ -1,4 +1,4 @@
-package com.cgkim.myboard.validation;
+package com.cgkim.myboard.validator;
 
 import com.cgkim.myboard.vo.member.GuestSaveRequest;
 import lombok.extern.slf4j.Slf4j;

@@ -58,7 +58,6 @@ export default new Vuex.Store({
         getItem: (key) => Cookies.get(key),
         setItem: (key, value) => Cookies.set(key, value),
         removeItem: (key) => Cookies.remove(key),
-        //TODO: 로그아웃시 쿠키 삭제
       }
     })
   ],
