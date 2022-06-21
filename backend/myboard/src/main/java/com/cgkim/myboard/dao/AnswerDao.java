@@ -21,4 +21,6 @@ public interface AnswerDao {
     void insert(AnswerVo answerVo);
 
     AnswerDetailResponse selectOne(Long id);
+
+    Long selectAnswerIdByQuestionId(Long questionId);
 }

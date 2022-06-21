@@ -24,6 +24,7 @@
         </v-btn>
       </v-col>
     </v-row>
+
     <template v-if="updatedListView">
       <v-row>
         <v-col
@@ -33,7 +34,6 @@
               dense
               :headers="tableHeaders"
               :items="fetchedBoardList"
-              :items-per-page="12"
               hide-default-footer
               class="elevation-2"
           >
@@ -105,8 +105,9 @@
                     <v-card-actions>
                       <v-col cols="auto">
                         <small class="font-weight-bold">[{{board.categoryName}}] {{ board.title }}</small><br>
-                        <small class="font-weight-bold" v-if="board.nickname !== null">{{board.nickname}}</small>
-                        <small class="font-weight-bold" v-if="board.nickname === null">{{board.guestNickname}}</small><br>
+                        <small class="font-weight-bold" v-if="board.adminNickname !== null">{{board.adminNickname}}</small>
+                        <small class="font-weight-bold" v-if="board.memberNickname !== null">{{board.memberNickname}}</small>
+                        <small class="font-weight-bold" v-if="board.guestNickname === null">{{board.guestNickname}}</small><br>
                         <small>조회수: {{board.viewCount}}</small><br>
                         <small>{{board.registerDate | formatDate}}</small>
                       </v-col>
@@ -183,7 +184,6 @@ export default {
     }
   },
   methods: {
-    //TODO: 뷰 모드 클릭하면 쿼리에 넣어야됨
     clickGalleryView() {
       this.$emit("GalleryViewBtnClick");
     },

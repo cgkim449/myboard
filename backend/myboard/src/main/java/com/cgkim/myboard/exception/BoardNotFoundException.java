@@ -2,8 +2,8 @@ package com.cgkim.myboard.exception;
 
 import com.cgkim.myboard.exception.errorcode.ErrorCode;
 
-public class LoginFailedException extends BusinessException {
-    public LoginFailedException(ErrorCode errorCode) {
+public class BoardNotFoundException extends BusinessException {
+    public BoardNotFoundException(ErrorCode errorCode) {
         super(errorCode);
     }
 }

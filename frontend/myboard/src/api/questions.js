@@ -1,15 +1,24 @@
 import {questionsInstance} from "@/api/index";
 
+/**
+ * 질문 목록 조회
+ */
 const getQuestionList = (searchCondition) => {
     return questionsInstance.get("/", { params: searchCondition});
 };
 
+/**
+ * 질문 상세 조회
+ */
 const getQuestionDetail = (id) => {
     return questionsInstance.get(
         `/${id}`
     );
 };
 
+/**
+ * 질문 등록
+ */
 const createQuestion = (formData) => {
     return questionsInstance.post(
         "/",
@@ -18,43 +27,29 @@ const createQuestion = (formData) => {
     )
 }
 
-// /**
-//  * 게시글 삭제 API
-//  */
-// const deleteBoard = (request) => {
-//     console.log(request.guestPassword)
-//     return boardsInstance.delete(
-//         `/${request.boardId}`,
-//         {data: {guestPassword: request.guestPassword}});
-// };
-//
-// /**
-//  * 게시글 수정 API
-//  */
-// const patchBoard = (formData) => {
-//     return boardsInstance.patch(
-//         `/${formData.get('boardId')}`,
-//         formData,
-//         {headers: {"Content-Type" : "multipart/form-data"},
-//         });
-// };
-//
-// /**
-//  * 게시글 익명 작성자 비밀번호 확인 API
-//  */
-// const checkBoardPw = (board) => {
-//     console.log(board.guestPassword)
-//     //TODO: json stringify 로 바꾸기?
-//     return boardsInstance.post(
-//             `/${board.boardId}/pwCheck`,
-//         {
-//             'guestPassword': board.guestPassword
-//         },
-//     );
-// }
+/**
+ * 질문 삭제
+ */
+const deleteQuestion = (questionId) => {
+    return questionsInstance.delete(
+        `/${questionId}`,);
+};
+
+/**
+ * 질문 수정
+ */
+const patchQuestion = (formData) => {
+    return questionsInstance.patch(
+        `/${formData.get('questionId')}`,
+        formData,
+        {headers: {"Content-Type" : "multipart/form-data"},
+        });
+};
 
 export {
     getQuestionList,
     createQuestion,
-    getQuestionDetail
+    getQuestionDetail,
+    deleteQuestion,
+    patchQuestion
 }

@@ -11,6 +11,7 @@ import com.cgkim.myboard.vo.question.QuestionVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -27,11 +28,12 @@ public interface QuestionDao {
     void increaseViewCnt(Long id);
 
     QuestionDetailResponse selectOne(Long id);
-//    Long selectOneByGuestPassword(Map<String, Object> map);
-//    void delete(Long boardId);
-//    int update(Map<String, Object> map);
-//    void insertGuestBoard(BoardVo boardVo);
-//    void insertMemberBoard(BoardVo boardVo);
+
+    void delete(Long questionId);
+
+    Long selectMemberId(Long questionId);
+
+    int update(Map<String, Object> questionId);
+
 //    Long selectMemberId(Long boardId);
-//
 }

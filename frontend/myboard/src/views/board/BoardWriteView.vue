@@ -1,8 +1,7 @@
 <template>
   <v-container>
-
     <PageTitle>
-      <h2 slot="title">
+      <h2 slot="title" @click="moveToBoardList" v-bind:style="{ cursor: 'pointer' }">
         자유게시판
       </h2>
     </PageTitle>
@@ -196,13 +195,13 @@ export default {
       form: Object.assign({}, defaultForm),
 
       rules: {
-        guestNickname: [value => this.$_BoardValidator.validateGuestNickname(value),],
-        guestPassword: [value => this.$_BoardValidator.validateGuestPassword(value),],
-        guestPasswordConfirm: [value => this.$_BoardValidator.validateGuestPasswordConfirm(value, this.form.guestPassword),],
-        categoryId: [value => this.$_BoardValidator.validateCategoryId(value),],
-        title: [value => this.$_BoardValidator.validateTitle(value),],
-        content: [value => this.$_BoardValidator.validateContent(value)],
-        multipartFiles: [value => this.$_BoardValidator.validateMultipartFiles(value),],
+        guestNickname: [value => this.$_ItemFormValidator.validateGuestNickname(value),],
+        guestPassword: [value => this.$_ItemFormValidator.validateGuestPassword(value),],
+        guestPasswordConfirm: [value => this.$_ItemFormValidator.validateGuestPasswordConfirm(value, this.form.guestPassword),],
+        categoryId: [value => this.$_ItemFormValidator.validateCategoryId(value),],
+        title: [value => this.$_ItemFormValidator.validateTitle(value),],
+        content: [value => this.$_ItemFormValidator.validateContent(value),],
+        multipartFiles: [value => this.$_ItemFormValidator.validateMultipartFiles(value),],
       },
 
       categories: [
@@ -265,6 +264,13 @@ export default {
         path:location,
         query: this.$route.query
       }).catch(()=>{});
+    },
+
+    moveToBoardList() {
+      this.$router.push({
+        name: "BoardListView",
+        query: this.$route.query
+      });
     },
   },
 }

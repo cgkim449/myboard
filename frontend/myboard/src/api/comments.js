@@ -1,7 +1,7 @@
 import {commentsInstance} from "@/api/index";
 
 /**
- * 회원 댓글 작성 API
+ * 회원 댓글 작성
  */
 const createMemberComment = (comment) => {
     let form = new FormData();
@@ -16,7 +16,7 @@ const createMemberComment = (comment) => {
 }
 
 /**
- * 익명 댓글 작성 API
+ * 익명 댓글 작성
  */
 const createGuestComment = (comment) => {
     let form = new FormData();

@@ -20,9 +20,9 @@ public class CommentSaveRequestValidator implements Validator {
     public void validate(Object target, Errors errors) {
         CommentSaveRequest commentSaveRequest = (CommentSaveRequest) target;
 
-        String commentContent = commentSaveRequest.getContent();
+        String content = commentSaveRequest.getContent();
 
-        if (commentContent == null || !(1 <= commentContent.length() && commentContent.length() < 100)) {
+        if (content == null || !(1 <= content.length() && content.length() < 100)) {
             errors.rejectValue("content", "length", new Object[] {1, 100}, null);
         }
     }

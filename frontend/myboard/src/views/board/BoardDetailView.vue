@@ -1,18 +1,24 @@
 <template>
 <!--  <v-container v-if="!isEmpty(boardDetail)">-->
   <v-container>
+    <PageTitle>
+      <h2 slot="title" @click="moveToBoardList" v-bind:style="{ cursor: 'pointer' }">
+        자유게시판
+      </h2>
+    </PageTitle>
 
     <v-row justify="center">
       <v-col
-        cols="11"
+        cols="12"
       >
-        <BoardDetail
-            v-bind:fetchedBoardDetail="boardDetail"
-        ></BoardDetail>
+        <ItemDetail
+            v-bind:fetchedItemDetail="boardDetail"
+        ></ItemDetail>
 
         <AttachList
             v-if="boardDetail.hasAttach"
             v-bind:fetchedAttachList="boardDetail.attachList"
+            v-bind:attachOf="attachOf"
         ></AttachList>
 
         <v-card outlined class="px-1 pt-1 mt-3">
@@ -229,15 +235,17 @@
 </template>
 
 <script>
-import BoardDetail from "@/components/board/BoardDetail";
-import AttachList from "@/components/board/AttachList";
+import AttachList from "@/components/common/AttachList";
 import CommentList from "@/components/board/CommentList";
 import CommentWriteForm from "@/components/board/CommentWriteForm";
+import ItemDetail from "@/components/common/ItemDetail";
+import PageTitle from "@/components/common/PageTitle";
 
 export default {
   name: "BoardDetailView",
   components: {
-    BoardDetail,
+    PageTitle,
+    ItemDetail,
     AttachList,
     CommentList,
     CommentWriteForm
@@ -245,6 +253,7 @@ export default {
   data() {
     return {
       boardDetail: {},
+      attachOf: "board",
 
       commentSaveResponseStatus: 0,
       commentDeleteResponseStatus: 0,
@@ -291,18 +300,30 @@ export default {
         commentSaveRequest.boardId = this.boardDetail.boardId;
 
         let commentSaveResponse;
+
         if(this.$store.getters.loggedIn) {
           commentSaveResponse = await this.$_BoardService.saveMemberComment(commentSaveRequest);
         } else {
           commentSaveResponse = await this.$_BoardService.saveGuestComment(commentSaveRequest)
         }
+
         this.commentSaveResponseStatus = commentSaveResponse.status;
 
         const {data} = await this.$_BoardService.fetchCommentList(this.boardDetail.boardId);
         this.boardDetail.commentList = data.commentList;
+
       } catch (error) {
-        //TODO: 프론트에서 유효성 검증
-        alert(error.response.data.fieldErrorDetails[0].fieldErrorMessage)
+        const firstErrorField = error.response.data.fieldErrorDetails[0].field;
+        const fieldErrorMessage = error.response.data.fieldErrorDetails[0].fieldErrorMessage;
+
+        //TODO: alert 말고 출력으로 바꾸기
+        if(firstErrorField === "content") {
+          alert(`댓글은 ${fieldErrorMessage}`)
+        } else if(firstErrorField === "guestPassword") {
+          alert(`${fieldErrorMessage}`)
+        } else if(firstErrorField === "guestNickname") {
+          alert(`닉네임은 ${fieldErrorMessage}`)
+        }
       }
     },
     initCommentDeleteResponseStatus() {

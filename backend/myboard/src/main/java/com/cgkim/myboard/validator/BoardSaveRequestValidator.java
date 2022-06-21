@@ -21,18 +21,18 @@ public class BoardSaveRequestValidator implements Validator {
         BoardSaveRequest boardSaveRequest = (BoardSaveRequest) target;
 
         Integer categoryId = boardSaveRequest.getCategoryId();
-        String boardTitle = boardSaveRequest.getTitle();
-        String boardContent = boardSaveRequest.getContent();
+        String title = boardSaveRequest.getTitle();
+        String content = boardSaveRequest.getContent();
 
         if (categoryId == null || categoryId == 0) {
             errors.rejectValue("categoryId", "required");
         }
 
-        if (boardTitle == null || !(4 <= boardTitle.length() && boardTitle.length() < 100)) {
+        if (title == null || !(4 <= title.length() && title.length() < 100)) {
             errors.rejectValue("title", "length", new Object[] {4, 100}, null);
         }
 
-        if (boardContent == null || !(4 <= boardContent.length() && boardContent.length() < 2000)) {
+        if (content == null || !(4 <= content.length() && content.length() < 2000)) {
             errors.rejectValue("content", "length", new Object[] {4, 2000}, null);
         }
     }

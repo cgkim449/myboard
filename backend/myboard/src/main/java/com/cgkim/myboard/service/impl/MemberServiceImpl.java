@@ -3,7 +3,7 @@ package com.cgkim.myboard.service.impl;
 import com.cgkim.myboard.dao.MemberDao;
 import com.cgkim.myboard.exception.NicknameDuplicateException;
 import com.cgkim.myboard.exception.UsernameDuplicateException;
-import com.cgkim.myboard.exception.ErrorCode;
+import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.exception.LoginFailedException;
 import com.cgkim.myboard.service.MemberService;
 import com.cgkim.myboard.util.SHA256PasswordEncoder;

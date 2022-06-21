@@ -4,7 +4,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.cgkim.myboard.exception.BoardInsertFailedException;
 import com.cgkim.myboard.exception.BusinessException;
-import com.cgkim.myboard.exception.ErrorCode;
+import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.exception.GuestSaveRequestInvalidException;
 import com.cgkim.myboard.response.ErrorResponse;
 import com.cgkim.myboard.util.FileHandler;

@@ -18,8 +18,8 @@ public class QuestionAttachServiceImpl implements AttachService {
      * 특정 질문의 첨부파일 리스트
      */
     @Override
-    public List<AttachVo> getList(Long id) {
-        return questionAttachDao.selectList(id);
+    public List<AttachVo> getList(Long questionId) {
+        return questionAttachDao.selectList(questionId);
     }
 
     /**

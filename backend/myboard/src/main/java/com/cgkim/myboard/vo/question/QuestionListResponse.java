@@ -23,7 +23,8 @@ public class QuestionListResponse {
     private Integer categoryId;
     private String categoryName;
 
-    private String nickname; // 로그인 사용자 닉네임
+    private String memberNickname;
+    private String adminNickname;
 
     private String thumbnailUri;
 }

@@ -1,19 +1,19 @@
-import {createQuestion, getQuestionDetail, getQuestionList} from "@/api/questions";
+import {patchQuestion, createQuestion, deleteQuestion, getQuestionDetail, getQuestionList} from "@/api/questions";
 import {downloadQuestionAttach} from "@/api/questionAttaches";
 
 export const questionServicePlugin = {
-    fetchItemList: (searchCondition) => {
+    fetchQuestionList: (searchCondition) => {
         return getQuestionList(searchCondition);
     },
-    fetchItem: (id) => {
+    fetchQuestion: (id) => {
         return getQuestionDetail(id);
     },
     writeQuestion(formData) {
         return createQuestion(formData);
     },
-    // removeBoard(board) {
-    //     return deleteBoard(board);
-    // },
+    removeQuestion(questionId) {
+        return deleteQuestion(questionId);
+    },
     // updateBoard(formData) {
     //     return patchBoard(formData);
     // },
@@ -52,6 +52,9 @@ export const questionServicePlugin = {
             console.log(error);
         }
     },
+    updateQuestion(formData) {
+        return patchQuestion(formData);
+    }
 };
 
 export default {

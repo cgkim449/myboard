@@ -18,6 +18,6 @@ public class AnswerDetailResponse {
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date updateDate;
 
-    private String username; //관리자
-    private String nickname; //관리자
+    private String adminUsername; //관리자
+    private String adminNickname; //관리자
 }

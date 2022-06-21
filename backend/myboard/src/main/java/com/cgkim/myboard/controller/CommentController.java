@@ -1,7 +1,7 @@
 package com.cgkim.myboard.controller;
 
 import com.cgkim.myboard.argumentresolver.LoginUser;
-import com.cgkim.myboard.exception.ErrorCode;
+import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.exception.LoginRequiredException;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.CommentService;

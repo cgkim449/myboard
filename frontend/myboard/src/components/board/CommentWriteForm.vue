@@ -37,13 +37,12 @@
 
         <v-col>
           <v-textarea
+              counter
               dense
               v-model="saveCommentRequest.content"
               outlined
               rows="3"
-              label="
-                          댓글을 입력해주세요.
-                          "
+              label="댓글을 입력해주세요."
               v-on:keydown.enter.exact.prevent="clickSaveCommentBtn"
               v-on:keydown.enter.shift.exact.prevent="saveCommentRequest.content += '\n'"
           ></v-textarea>
@@ -73,7 +72,11 @@ export default {
   props: ["commentSaveResponseStatus"],
   data() {
     return {
-      saveCommentRequest: {},
+      saveCommentRequest: {
+        guestNickname: "",
+        guestPassword: "",
+        content: "",
+      },
     }
   },
   watch: {
@@ -86,10 +89,7 @@ export default {
   },
   methods: {
     clickSaveCommentBtn() {
-      //TODO: 프론트에서 유효성 검증
-      // if(this.validateForm()) {
         this.$emit("saveCommentBtnClick", this.saveCommentRequest);
-      // }
     },
     validateForm() {
       return this.$refs.form.validate()

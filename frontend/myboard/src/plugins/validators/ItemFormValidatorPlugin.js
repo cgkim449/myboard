@@ -1,4 +1,4 @@
-export const boardValidatorPlugin = {
+export const itemFormValidatorPlugin = {
 //TODO: 메시지 분리
     validateMultipartFile(multipartFile) {
         let regex = new RegExp("(.*?)\.(jsp|jspx|jsw|jsv|jspf|htm|html)$");
@@ -134,6 +134,6 @@ export const boardValidatorPlugin = {
 
 export default {
     install(Vue) {
-        Vue.prototype.$_BoardValidator = boardValidatorPlugin;
+        Vue.prototype.$_ItemFormValidator = itemFormValidatorPlugin;
     },
 };

@@ -3,6 +3,7 @@
     <v-card-title class="text-subtitle-1 grey--text">
       첨부파일 {{ fetchedAttachList.length }}개
     </v-card-title>
+
     <v-card-text>
       <p v-for="attach in fetchedAttachList">
         <template  v-if="attach.isImage">
@@ -20,8 +21,9 @@
             </v-img>
           </a>
         </template>
+
         <template v-else>
-          <span v-on:click="$_BoardService.downloadAttach(attach.attachId)" v-bind:style="{cursor: 'pointer'}">
+          <span v-on:click="downloadAttach(attach.attachId)" v-bind:style="{cursor: 'pointer'}">
             <v-icon>mdi-attachment</v-icon>
             {{attach.name}}.{{attach.extension}}
           </span>
@@ -34,7 +36,18 @@
 <script>
 export default {
   name: "AttachList",
-  props: ["fetchedAttachList",]
+  props: ["fetchedAttachList","attachOf"],
+  methods: {
+    downloadAttach(attachId) {
+      if(this.attachOf === "board") {
+
+        this.$_BoardService.downloadAttach(attachId);
+      } else if(this.attachOf === "question") {
+
+        this.$_QuestionService.downloadAttach(attachId);
+      }
+    },
+  },
 }
 </script>
 

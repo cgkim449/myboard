@@ -31,7 +31,7 @@
           cols="auto"
       >
         <router-link v-bind:to="{
-                    path: `/boards/new`,
+                    name: 'BoardWriteView',
                     query: $route.query
                   }">
           <v-btn
@@ -82,6 +82,7 @@ export default {
 
     try {
         const response = await this.$_BoardService.fetchBoardList(this.searchCondition);
+
         this.boardList = response.data.boardList;
         this.boardTotalCount= response.data.boardTotalCount;
     } catch(error) {
@@ -136,13 +137,14 @@ export default {
       this.searchCondition.toDate = updatedToDate === undefined ? "" : updatedToDate;
       this.searchCondition.page = updatedPage === undefined ? 1 : Number(updatedPage);
     },
+    //TODO: 뷰 모드 바꾸는데 지금 api 호출할필요없는데 하고잇음. 수정해야됨.
     switchToListView() {
       this.listView = true;
-      this.updateQueryParameter(this.listView, this.searchCondition);
+      this.updateQueryParameter(true, this.searchCondition);
     },
     switchToGalleryView() {
       this.listView = false;
-      this.updateQueryParameter(this.listView, this.searchCondition);
+      this.updateQueryParameter(false, this.searchCondition);
     },
     movePage(page) {
       this.searchCondition.page = page;
@@ -150,13 +152,13 @@ export default {
     },
     updateQueryParameter(listView, searchCondition) {
       this.$router.push({
-        path:'/boards',
+        path: 'boards',
         query: {
           listView: listView,
           ...searchCondition
         }
       }).catch(()=>{});
-    }
+    },
   },
 };
 </script>

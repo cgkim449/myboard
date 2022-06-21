@@ -2,7 +2,7 @@
   <v-container>
     <PageTitle>
       <h2 slot="title">
-        자유게시판
+        Q&A
       </h2>
     </PageTitle>
 
@@ -11,46 +11,51 @@
           cols="12"
       >
         <v-card flat outlined class="px-8 py-8">
-
           <v-form
               ref="form"
           >
             <v-container fluid>
-
-              <!--          TODO: computed 로 분리-->
-              <template v-if="!($store.state.username === boardDetail.memberUsername)">
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                        disabled
-                        v-model="boardDetail.guestNickname"
-                        required
-                        color="purple darken-2"
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col>
-                    <v-text-field
-                        type="password"
-                        v-model="form.guestPassword"
-                        :rules="rules.guestPassword"
-                        required
-                        label="비밀번호"
-                        hint="작성하셨을 때의 비밀번호를 입력해주세요."
-                        color="purple darken-2"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </template>
-
               <v-row>
+                <v-col
+                    cols="2"
+                    align-self="center"
+                >
+                  <div>
+                    공개 여부
+                  </div>
+                </v-col>
+
+                <v-col cols="10">
+                  <v-radio-group
+                      v-model="form.isSecret"
+                      row
+                  >
+                    <v-radio
+                        value="0"
+                    >
+                      <template v-slot:label>
+                        <div>공개</div>
+                      </template>
+                    </v-radio>
+
+                    <v-radio
+                        value="1"
+                    >
+                      <template v-slot:label>
+                        <div>비공개</div>
+                      </template>
+                    </v-radio>
+                  </v-radio-group>
+                </v-col>
+
+
                 <v-col
                     cols="2"
                 >
                   <v-select
                       disabled
                       readonly
-                      v-model="boardDetail.categoryId"
+                      v-model="questionDetail.categoryId"
                       :items="categories"
                       item-text="categoryName"
                       item-value="categoryId"
@@ -84,8 +89,8 @@
                 <v-card-text>
                   <v-row>
                     <v-col>
-                      <p v-for="attach in boardDetail.attachList">
-                        <span v-on:click="$_BoardService.downloadAttach(attach.attachId)" style="cursor:pointer;">
+                      <p v-for="attach in questionDetail.attachList">
+                        <span v-on:click="$_QuestionService.downloadAttach(attach.attachId)" style="cursor:pointer;">
 
                           <v-icon>mdi-attachment</v-icon>
                           {{attach.name}}.{{attach.extension}} - {{attach.size}} byte
@@ -108,7 +113,7 @@
               </v-row>
 
 
-              <v-row v-if="boardDetail.attachList.length + form.multipartFiles.length < 3">
+              <v-row v-if="questionDetail.attachList.length + form.multipartFiles.length < 3">
                 <v-file-input
                     v-on:change="addNewAttach" v-bind:key="fileInputKey"
                     show-size
@@ -122,7 +127,7 @@
                     cols="auto"
                 >
                   <v-btn
-                      @click="moveToBoardDetail"
+                      @click="moveToQuestionDetail"
                       outlined
                       text
                   >
@@ -139,7 +144,7 @@
                       outlined
                       text
                       color="primary"
-                      @click="modifyBoard"
+                      @click="modifyQuestion"
                   >
                     저장
                   </v-btn>
@@ -157,27 +162,25 @@
 import PageTitle from "@/components/common/PageTitle";
 
 export default {
-  name: "BoardModifyView",
+  name: "QuestionModifyView",
   components: {
     PageTitle
   },
   data() {
     return {
       form: {
-        guestPassword: "",
+        isSecret: "1",
         multipartFiles: [],
         deleteAttaches: [],
       },
 
-      rules: {
-        //TODO: validator에 메서드 만들기
-        guestPassword: [value => (value || '').length > 0 || "필수 항목입니다.",],
-        title: [value => this.$_ItemFormValidator.validateTitle(value),],
-        content: [value => this.$_ItemFormValidator.validateContent(value)],
+      questionDetail: {
+        attachList: [],
       },
 
-      boardDetail: {
-        attachList: [],
+      rules: {
+        title: [value => this.$_ItemFormValidator.validateTitle(value),],
+        content: [value => this.$_ItemFormValidator.validateContent(value)],
       },
 
       fileInputKey: 0,
@@ -190,14 +193,15 @@ export default {
     }
   },
   async created() {
-    let boardId = this.$route.params.boardId;
+    let questionId = this.$route.params.questionId;
 
-    const {data} = await this.$_BoardService.fetchBoard(boardId);
+    const {data} = await this.$_QuestionService.fetchQuestion(questionId);
 
-    this.boardDetail = data.boardDetail;
+    this.questionDetail = data.questionDetail;
 
-    this.form.title = data.boardDetail.title;
-    this.form.content = data.boardDetail.content;
+    this.form.isSecret = String(data.questionDetail.isSecret);
+    this.form.title = data.questionDetail.title;
+    this.form.content = data.questionDetail.content;
   },
   methods: {
     validateForm() {
@@ -219,16 +223,16 @@ export default {
     removeOldAttach(attach) {
       this.form.deleteAttaches.push(attach.attachId);
 
-      let index = this.boardDetail.attachList.indexOf(attach);
+      let index = this.questionDetail.attachList.indexOf(attach);
 
-      this.boardDetail.attachList.splice(index, 1);
+      this.questionDetail.attachList.splice(index, 1);
     },
 
-    async modifyBoard () {
-      if(this.validateForm()) {
+    async modifyQuestion() {
+      if (this.validateForm()) {
         const validationResult = this.$_ItemFormValidator.validateMultipartFiles(this.form.multipartFiles);
 
-        if(validationResult !== true) {
+        if (validationResult !== true) {
           alert(validationResult);
           return;
         }
@@ -236,37 +240,38 @@ export default {
         let formData = this.prepareFormData();
 
         try {
-          await this.$_BoardService.updateBoard(formData);
 
-          this.moveToBoardDetail(this.boardDetail.boardId);
+          await this.$_QuestionService.updateQuestion(formData);
         } catch (error) {
 
           alert(error.response.data.errorMessage)
         }
+
+        this.moveToQuestionDetail(this.questionDetail.questionId);
       }
     },
 
-    moveToBoardDetail(boardId) {
+    moveToQuestionDetail(questionId) {
       this.$router.push({
-        name: "BoardDetailView",
+        name: "QuestionDetailView",
         params: {
-          boardId: boardId
+          questionId: questionId
         },
         query: this.$route.query
-      }).catch(()=>{});
+      }).catch(() => {
+      });
     },
 
     prepareFormData() {
       let formData = new FormData();
 
-      formData.append("guestPassword", this.form.guestPassword);
-      formData.append("boardId", this.boardDetail.boardId);
-      formData.append("categoryId", this.boardDetail.categoryId);
+      formData.append("questionId", this.questionDetail.questionId);
+      formData.append("isSecret", this.form.isSecret);
       formData.append("title", this.form.title);
       formData.append("content", this.form.content);
       formData.append("attachDeleteRequest", this.form.deleteAttaches);
 
-      if(this.form.multipartFiles.length > 0) {
+      if (this.form.multipartFiles.length > 0) {
         for (const multipartFile of this.form.multipartFiles) {
           formData.append("multipartFiles", multipartFile);
         }
@@ -281,6 +286,3 @@ export default {
 <style scoped>
 
 </style>
-
-
-

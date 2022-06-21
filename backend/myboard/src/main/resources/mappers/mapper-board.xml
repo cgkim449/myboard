@@ -107,6 +107,7 @@
         SET view_count = view_count + 1
         WHERE board_id = #{boardId}
     </update>
+
     <update id="updateHasAttach" parameterType="map">
         update tbl_board
         set has_attach = #{hasAttach}
@@ -120,6 +121,7 @@
             update_date = now()
         where board_id = #{boardId}
     </update>
+
     <update id="updateThumbnailUri" parameterType="map">
         update tbl_board
         set thumbnail_uri = #{thumbnailUri}
@@ -142,6 +144,7 @@
         into tbl_board (admin_id, category_id, title, content)
         values(#{adminId}, #{categoryId}, #{title}, #{content});
     </insert>
+
     <delete id="delete" parameterType="long">
         delete
         from tbl_board

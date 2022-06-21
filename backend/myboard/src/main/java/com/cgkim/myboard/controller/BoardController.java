@@ -1,7 +1,7 @@
 package com.cgkim.myboard.controller;
 
 import com.cgkim.myboard.argumentresolver.LoginUser;
-import com.cgkim.myboard.exception.ErrorCode;
+import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.exception.LoginRequiredException;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.BoardService;
@@ -52,7 +52,6 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    //TODO: 인터페이스 없애야할듯
     private final BoardAttachServiceImpl attachService;
     private final FileHandler fileHandler;
     private final BoardSaveRequestValidator boardSaveRequestValidator;
@@ -119,7 +118,6 @@ public class BoardController {
 
     /**
      * 게시물 상세 조회
-     * TODO: 게시물 없을때 예외 던짐(도란 참고)
      */
     @GetMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> getBoardDetail(@PathVariable Long boardId) {

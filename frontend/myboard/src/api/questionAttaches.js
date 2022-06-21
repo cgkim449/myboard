@@ -1,7 +1,7 @@
 import {questionAttachesInstance} from "@/api/index";
 
 /**
- * 첨부파일 다운로드 API
+ * 첨부파일 다운로드
  */
 const downloadQuestionAttach = (attachId) => {
     return questionAttachesInstance.get(

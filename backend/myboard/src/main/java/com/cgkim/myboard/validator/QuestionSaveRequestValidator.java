@@ -1,27 +1,32 @@
 package com.cgkim.myboard.validator;
 
-import com.cgkim.myboard.vo.board.BoardUpdateRequest;
+import com.cgkim.myboard.vo.question.QuestionSaveRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 /**
- * 게시글 수정시 유효성 검증
+ * 질문 등록시 유효성 검증
  *
  */
 @Component
-public class BoardUpdateRequestValidator implements Validator {
+public class QuestionSaveRequestValidator implements Validator {
     @Override
     public boolean supports(Class<?> clazz) {
-        return BoardUpdateRequest.class.isAssignableFrom(clazz);
+        return QuestionSaveRequest.class.isAssignableFrom(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        BoardUpdateRequest boardUpdateRequest = (BoardUpdateRequest) target;
+        QuestionSaveRequest questionSaveRequest = (QuestionSaveRequest) target;
 
-        String title = boardUpdateRequest.getTitle();
-        String content = boardUpdateRequest.getContent();
+        Integer categoryId = questionSaveRequest.getCategoryId();
+        String title = questionSaveRequest.getTitle();
+        String content = questionSaveRequest.getContent();
+
+        if (categoryId == null || categoryId == 0) {
+            errors.rejectValue("categoryId", "required");
+        }
 
         if (title == null || !(4 <= title.length() && title.length() < 100)) {
             errors.rejectValue("title", "length", new Object[] {4, 100}, null);

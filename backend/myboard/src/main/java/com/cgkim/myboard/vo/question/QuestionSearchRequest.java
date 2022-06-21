@@ -20,7 +20,7 @@ public class QuestionSearchRequest {
         this.toDate = toDate;
     }
 
-    public final int limit = 10; // 한 페이지에 표시할 게시물 수
+    public final int limit = 12; // 한 페이지에 표시할 게시물 수
 
     public int getOffset() {
         return (page - 1) * limit;

@@ -1,6 +1,7 @@
 package com.cgkim.myboard.validator;
 
 import com.cgkim.myboard.vo.board.BoardUpdateRequest;
+import com.cgkim.myboard.vo.question.QuestionUpdateRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -10,18 +11,19 @@ import org.springframework.validation.Validator;
  *
  */
 @Component
-public class BoardUpdateRequestValidator implements Validator {
+public class QuestionUpdateRequestValidator implements Validator {
     @Override
     public boolean supports(Class<?> clazz) {
-        return BoardUpdateRequest.class.isAssignableFrom(clazz);
+        return QuestionUpdateRequest.class.isAssignableFrom(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        BoardUpdateRequest boardUpdateRequest = (BoardUpdateRequest) target;
+        QuestionUpdateRequest questionUpdateRequest = (QuestionUpdateRequest) target;
 
-        String title = boardUpdateRequest.getTitle();
-        String content = boardUpdateRequest.getContent();
+        String title = questionUpdateRequest.getTitle();
+        String content = questionUpdateRequest.getContent();
+        Integer isSecret = questionUpdateRequest.getIsSecret();
 
         if (title == null || !(4 <= title.length() && title.length() < 100)) {
             errors.rejectValue("title", "length", new Object[] {4, 100}, null);
@@ -29,6 +31,10 @@ public class BoardUpdateRequestValidator implements Validator {
 
         if (content == null || !(4 <= content.length() && content.length() < 2000)) {
             errors.rejectValue("content", "length", new Object[] {4, 2000}, null);
+        }
+
+        if (isSecret == null) {
+            errors.rejectValue("isSecret", "required");
         }
     }
 }

@@ -18,6 +18,7 @@ public class QuestionDetailResponse {
     private String content;
     private int viewCount;
     private boolean hasAttach;
+    private Integer isSecret;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date registerDate;
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -26,11 +27,13 @@ public class QuestionDetailResponse {
     private Integer categoryId;
     private String categoryName;
 
-    private List<AttachVo> attachList;
+    private String memberUsername;
+    private String memberNickname;
 
-    private String username; // 로그인 사용자 이메일
-    private String nickname; // 로그인 사용자 닉네임
+    private String adminUsername;
+    private String adminNickname;
 
     private AnswerVo answer;
 
+    private List<AttachVo> attachList;
 }

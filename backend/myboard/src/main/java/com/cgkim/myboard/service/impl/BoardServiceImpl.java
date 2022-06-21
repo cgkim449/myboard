@@ -5,9 +5,10 @@ import com.cgkim.myboard.dao.BoardDao;
 import com.cgkim.myboard.dao.CommentDao;
 import com.cgkim.myboard.dao.MemberDao;
 import com.cgkim.myboard.exception.BoardInsertFailedException;
+import com.cgkim.myboard.exception.BoardNotFoundException;
 import com.cgkim.myboard.exception.GuestPasswordInvalidException;
 import com.cgkim.myboard.exception.GuestPasswordMismatchException;
-import com.cgkim.myboard.exception.ErrorCode;
+import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.exception.LoginRequiredException;
 import com.cgkim.myboard.exception.NoAuthorizationException;
 import com.cgkim.myboard.service.BoardService;
@@ -78,8 +79,13 @@ public class BoardServiceImpl implements BoardService {
 
         BoardDetailResponse boardDetailResponse = boardDao.selectOne(boardId); //게시글
 
+        if(boardDetailResponse == null) {
+            throw new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND);
+        }
+
         //TODO: 리팩토링
         List<AttachVo> attachVoList = boardAttachDao.selectList(boardId);
+
         for (AttachVo attachVo : attachVoList) {
             if(attachVo.isImage()) {
                 attachVo.setThumbnailUri(
@@ -156,13 +162,6 @@ public class BoardServiceImpl implements BoardService {
             boardVo.setMemberId(memberId);
             boardDao.insertMemberBoard(boardVo);
 
-//            if(isAdmin) {
-//                long adminId = adminDao.selectAdminIdByUsername(username);
-//                boardVo.setAdminId(adminId);
-//                boardDao.insertAdminBoard(boardVo);
-//            } else {
-//            }
-
             long boardId = boardVo.getBoardId();
 
             if (attachInsertList != null && !attachInsertList.isEmpty()) {
@@ -230,12 +229,11 @@ public class BoardServiceImpl implements BoardService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void modify(
-            Long boardId,
-            String content,
-            String title,
-            List<AttachVo> attachInsertList,
-            List<AttachVo> attachDeleteList
+    public void modify(Long boardId,
+                       String content,
+                       String title,
+                       List<AttachVo> attachInsertList,
+                       List<AttachVo> attachDeleteList
     ) {
         if(attachDeleteList != null && attachDeleteList.size() > 0) { //첨부파일 delete
             deleteAttaches(attachDeleteList);

@@ -1,10 +1,11 @@
-# insert 문 : 관리자(tbl_admin), 회원(tbl_member), 자유게시판 게시글(tbl_board)
+# insert 문 : 관리자(tbl_admin), 회원(tbl_member), 자유게시판 게시글(tbl_board), 카테고리(tbl_category)
 
 ## 전체 복붙해서 실행하시면 됩니다(경고뜨면 Execute All 클릭)
 ## password 는 전부 '1a@@'를 SHA256으로 암호화한 것 https://emn178.github.io/online-tools/sha256.html
 
-## 관리자, 회원, 자유게시판 데이터 전체 삭제
+## 관리자, 회원, 자유게시판 게시글, 카테고리 데이터 전체 삭제
 DELETE FROM tbl_board;
+DELETE FROM tbl_category;
 DELETE FROM tbl_member;
 DELETE FROM tbl_admin;
 
@@ -20,6 +21,16 @@ UPDATE tbl_member SET member_id = @COUNT:=@COUNT+1;
 ALTER TABLE tbl_board AUTO_INCREMENT=1;
 SET @COUNT = 0;
 UPDATE tbl_board SET board_id = @COUNT:=@COUNT+1;
+
+## 카테고리 insert
+INSERT INTO tbl_category(category_id, name)
+VALUES(1, 'Java');
+
+INSERT INTO tbl_category(category_id, name)
+VALUES(2, 'JavaScript');
+
+INSERT INTO tbl_category(category_id, name)
+VALUES(3, 'Database');
 
 ## 관리자 insert
 INSERT INTO tbl_admin(username, nickname, password)

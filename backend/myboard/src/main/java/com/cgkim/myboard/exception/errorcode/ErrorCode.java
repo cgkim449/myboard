@@ -1,4 +1,4 @@
-package com.cgkim.myboard.exception;
+package com.cgkim.myboard.exception.errorcode;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,11 @@ public enum ErrorCode { //TODO: properties 로 분리
     NICKNAME_DUPLICATE(HttpStatus.BAD_REQUEST, "M002", "이미 사용된 사용자 이름입니다."),
 
     //Board
-    BOARD_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "B002", "게시물 작성에 실패했습니다."),
+    BOARD_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "B001", "게시물 작성에 실패했습니다."),
+    BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "B002", "존재하지 않는 게시글입니다."),
+
+    //Question
+    QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "B002", "존재하지 않는 게시글입니다."),
 
     //File
     ATTACH_NOT_FOUND(HttpStatus.NOT_FOUND, "F001", "해당 첨부파일이 없습니다."),

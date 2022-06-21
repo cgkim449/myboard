@@ -17,8 +17,8 @@ public class AnswerVo {
     private String title;
     private String content;
 
-    private String username;
-    private String nickname;
+    private String adminUsername;
+    private String adminNickname;
 
     @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date registerDate;

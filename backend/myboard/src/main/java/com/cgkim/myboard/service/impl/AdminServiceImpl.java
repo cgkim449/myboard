@@ -1,7 +1,7 @@
 package com.cgkim.myboard.service.impl;
 
 import com.cgkim.myboard.dao.AdminDao;
-import com.cgkim.myboard.exception.ErrorCode;
+import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.exception.LoginFailedException;
 import com.cgkim.myboard.service.AdminService;
 import com.cgkim.myboard.util.SHA256PasswordEncoder;

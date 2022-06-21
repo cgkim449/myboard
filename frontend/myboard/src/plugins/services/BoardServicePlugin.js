@@ -7,7 +7,7 @@ import {
     createGuestBoard, createMemberBoard
 } from "@/api/boards";
 import {getCommentList, deleteComment, createMemberComment, createGuestComment} from "@/api/comments";
-import {downloadAttach} from "@/api/attaches";
+import {downloadAttach} from "@/api/boardAttaches";
 
 export const boardServicePlugin = {
     fetchBoardList: (searchCondition) => {

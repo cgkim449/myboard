@@ -1,7 +1,7 @@
 <template>
   <v-container >
     <PageTitle>
-      <h2 slot="title">
+      <h2 slot="title" @click="initSearchCondition" v-bind:style="{ cursor: 'pointer'}">
         Q&A
       </h2>
     </PageTitle>
@@ -11,107 +11,19 @@
         v-bind:updatedSearchCondition="searchCondition"
     ></SearchForm>
 
+    <QuestionList
+        v-on:ListViewBtnClick="switchToListView"
+        v-on:GalleryViewBtnClick="switchToGalleryView"
+        v-bind:updatedQuestionTotalCount="questionTotalCount"
+        v-bind:updatedListView="listView"
+        v-bind:fetchedQuestionList="questionList"
+    ></QuestionList>
 
-    <v-row dense>
-      <v-col
-          cols="auto"
-      >
-          총 {{totalCounts}} 건
-      </v-col>
-    </v-row>
-
-
-  <v-row justify="center" >
-    <v-col
-        cols="12"
-    >
-      <v-data-table
-          dense
-          :headers="headers"
-          :items="itemList"
-          hide-default-footer
-          class="elevation-2"
-      >
-        <template v-slot:item.hasAttach="{item}">
-          <v-icon
-              v-if="item.hasAttach === 1"
-          >
-            mdi-attachment
-          </v-icon>
-          <v-icon
-              v-else
-          >
-          </v-icon>
-        </template>
-        <template v-slot:item.title="{item}">
-
-          <template v-if="item.isSecret === 0">
-              <span
-                  @click="moveToDetail(item.questionId)"
-                  v-bind:style="{cursor: 'pointer'}"
-                  class="d-flex start"
-              >
-                {{item.title | formatBoardTitle}}
-              </span>
-          </template>
-          <template v-else-if="(item.isSecret === 1 && item.nickname === $store.state.nickname) || $cookies.get('role') === 'admin'">
-              <span
-                  @click="moveToDetail(item.questionId)"
-                  v-bind:style="{cursor: 'pointer'}"
-                  class="d-flex start"
-              >
-                {{item.title | formatBoardTitle}} <v-icon small>mdi-lock</v-icon>
-              </span>
-          </template>
-          <template v-else>
-            <span
-                v-if="item.isSecret === 1 && item.nickname !== $cookies.get('nickname')"
-                class="d-flex start"
-            >
-                비공개 글 입니다. <v-icon small>mdi-lock</v-icon>
-              </span>
-          </template>
-
-
-        </template>
-        <template v-slot:item.nickname="{item}">
-            {{ item.nickname | formatQuestionNickname }}
-        </template>
-        <template v-slot:item.registerDate="{item}">
-          {{item.registerDate | formatDate}}
-        </template>
-        <template v-slot:item.updateDate="{item}">
-          {{formatUpdateDate(item)}}
-        </template>
-        <template v-slot:item.answerId="{item}">
-          <span v-if="item.answerId === null">
-            대기
-          </span>
-          <span v-if="item.answerId !== null">
-            처리완료
-          </span>
-        </template>
-      </v-data-table>
-    </v-col>
-  </v-row>
-
-<!--    리스트 보기 방식 여기까지. questionId boardId만 통일하면 여기도 코드 똑같을듯.-->
-
-    <v-row justify="center">
-      <v-col
-          cols="12"
-      >
-        <div class="text-center">
-          <v-pagination
-              v-model="searchCondition.page"
-              :length="Math.ceil(totalCounts / 10)"
-              :total-visible="10"
-          ></v-pagination>
-        </div>
-      </v-col>
-    </v-row>
-
-
+    <Pagination
+        v-on:pageBtnClick="movePage"
+        v-bind:updatedPage="searchCondition.page"
+        v-bind:itemTotalCount="questionTotalCount"
+    ></Pagination>
 
     <v-row>
       <v-spacer></v-spacer>
@@ -120,8 +32,8 @@
           cols="auto"
       >
         <router-link v-bind:to="{
-                    path: `/questions/new`, //TODO: 이거 router-link말고 메서드로 바꾸자, 비로그인이면 버튼 안보이게
-                    query: this.searchCondition
+                    name: 'QuestionWriteView',
+                    query: $route.query
                   }">
           <v-btn
               color="primary"
@@ -137,14 +49,16 @@
 
 <!--TODO: 자유게시판이랑 걍 똑같음. 근데 qna는 비밀글 등 더 추가할게 있는듯.-->
 <script>
-import {formatDate} from "@/utils/filters";
-import {formatQuestionNickname} from "@/utils/filters";
 import PageTitle from "@/components/common/PageTitle";
 import SearchForm from "@/components/common/SearchForm";
+import QuestionList from "@/components/question/QuestionList";
+import Pagination from "@/components/common/Pagination";
 
 export default {
   name: "QuestionListView",
   components: {
+    Pagination,
+    QuestionList,
     PageTitle,
     SearchForm
   },
@@ -158,157 +72,95 @@ export default {
         page: 1,
       },
 
+      listView: true,
 
-      date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-      menu1: false,
-      menu2: false,
-      items: [
-        { categoryName: '전체 카테고리', categoryId: "0"},
-        { categoryName: 'Java', categoryId: "1"},
-        { categoryName: 'JavaScript', categoryId: "2"},
-        { categoryName: 'Database', categoryId: "3"},
-      ],
-      headers: [
-        {
-          text: '카테고리',
-          align: 'center',
-          sortable: false,
-          value: 'categoryName',
-          width: '10%',
-        },
-        {
-          text: '',
-          align: 'center',
-          sortable: false,
-          value: 'hasAttach',
-          width: '1%',
-        },
-        {
-          text: '제목',
-          align: 'center',
-          sortable: false,
-          value: 'title',
-        },
-        {
-          text: '작성자',
-          align: 'center',
-          sortable: false,
-          value: 'nickname',
-          width: '10%',
-        },
-        {
-          text: '조회수',
-          align: 'center',
-          sortable: false,
-          value: 'viewCount',
-          width: '7%',
-        },
-        {
-          text: '등록 일시',
-          align: 'center',
-          sortable: false,
-          value: 'registerDate',
-          width: '13%',
-        },
-        {
-          text: '수정 일시',
-          align: 'center',
-          sortable: false,
-          value: 'updateDate',
-          width: '13%',
-        },
-        {
-          text: '상태',
-          align: 'center',
-          sortable: false,
-          value: 'answerId',
-          width: '10%',
-        },
-      ],
-
-      totalCounts: 0,
-      itemList: [],
+      questionTotalCount: 0,
+      questionList: [],
     };
   },
   async created() {
+    this.updateSearchConditionByQuery();
+    this.updateListViewByQuery();
+
     try {
-        const response = await this.$_QuestionService.fetchItemList(this.searchCondition);
-        this.itemList = response.data.itemList;
-        for (const item of this.itemList) {
-          if(item.thumbnailUri !== "") {
-            item.display = `http://localhost:8080/upload/${item.thumbnailUri}`
-          }
-        }
-        this.totalCounts= response.data.totalCounts;
+      //TODO: 이거 세줄 바로 아래랑 아래아래랑 중복됨, Board도 마찬가지
+        const response = await this.$_QuestionService.fetchQuestionList(this.searchCondition);
+
+        this.questionList = response.data.questionList;
+        this.questionTotalCount = response.data.questionTotalCount;
     } catch(error) {
       console.log(error.response.data.errorMessages)
     }
   },
-  computed: {
-
-  },
+  computed: {},
   watch: {
-    "searchCondition.page"() {
-      this.movePage();
-    },
     async "$route.query"() {
-      this.prepareSearchCondition();
-      const response = await this.$_QuestionService.fetchItemList(this.searchCondition);
-      this.itemList = response.data.itemList;
-      for (const item of this.itemList) {
-        if(item.thumbnailUri !== "") {
-          item.display = `http://localhost:8080/upload/${item.thumbnailUri}`
-        }
-      }
-      this.totalCounts= response.data.totalCounts;
+      this.updateSearchConditionByQuery();
+      this.updateListViewByQuery();
+
+      const response = await this.$_QuestionService.fetchQuestionList(this.searchCondition);
+
+      this.questionList = response.data.questionList;
+      this.questionTotalCount= response.data.questionTotalCount;
     },
   },
   methods: {
-    prepareSearchCondition() {
-      this.searchCondition = {...this.$route.query};
+    async search(searchCondition) {
+      this.updateQueryParameter(this.listView, searchCondition);
 
-      if(this.isEmpty(this.searchCondition)) {
-        this.searchCondition = {
-          categoryId: "0",
-          keyword: "",
-          fromDate: "",
-          toDate: "",
-          page: 1,
-        };
-      }
+      const response = await this.$_QuestionService.fetchQuestionList(searchCondition);
 
-      if(!isNaN(this.searchCondition.page)) {
-        this.searchCondition.page = Number(this.searchCondition.page);
-      }
+      this.questionList = response.data.questionList;
+      this.questionTotalCount= response.data.questionTotalCount;
     },
-    // 빈 객체인지 체크
-    isEmpty(obj) {
-      return Object.keys(obj).length === 0 && obj.constructor === Object;
+    initSearchCondition() {
+      const searchCondition = {
+        categoryId: "0",
+        keyword: "",
+        fromDate: "",
+        toDate: "",
+        page: 1,
+      };
+
+      this.search(searchCondition);
     },
-    //TODO: 게시글 리스트 보기 모드 유지해야
-    moveToDetail(id) {
+    updateListViewByQuery() {
+      this.listView = this.$route.query.listView === undefined ? true : this.$route.query.listView === "true";
+    },
+    updateSearchConditionByQuery() {
+      const updatedCategoryId = this.$route.query.categoryId;
+      const updatedKeyword = this.$route.query.keyword;
+      const updatedFromDate = this.$route.query.fromDate;
+      const updatedToDate = this.$route.query.toDate;
+      const updatedPage = this.$route.query.page;
+
+      this.searchCondition.categoryId = updatedCategoryId === undefined ? "0" : updatedCategoryId;
+      this.searchCondition.keyword = updatedKeyword === undefined ? "" : updatedKeyword;
+      this.searchCondition.fromDate = updatedFromDate === undefined ? "" : updatedFromDate;
+      this.searchCondition.toDate = updatedToDate === undefined ? "" : updatedToDate;
+      this.searchCondition.page = updatedPage === undefined ? 1 : Number(updatedPage);
+    },
+    switchToListView() {
+      this.listView = true;
+      this.updateQueryParameter(this.listView, this.searchCondition);
+    },
+    switchToGalleryView() {
+      this.listView = false;
+      this.updateQueryParameter(this.listView, this.searchCondition);
+    },
+    movePage(page) {
+      this.searchCondition.page = page;
+      this.updateQueryParameter(this.listView, this.searchCondition);
+    },
+    updateQueryParameter(listView, searchCondition) {
       this.$router.push({
-        path:`/questions/${id}`,
-        query: this.searchCondition
+        path: "questions",
+        query: {
+          listView: listView,
+          ...searchCondition
+        }
       }).catch(()=>{});
     },
-    movePage() {
-      this.$router.push({
-        path:'/questions',
-        query: this.searchCondition
-      }).catch(()=>{});
-    },
-    search() {
-      this.searchCondition.page = 1;
-
-      this.$router.push({
-        path:'/questions',
-        query: this.searchCondition
-      }).catch(()=>{});
-    },
-    formatUpdateDate(item) {
-      return item.registerDate === item.updateDate ? '-' : formatDate(item.updateDate);
-    }
   },
 };
 </script>

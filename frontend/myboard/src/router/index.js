@@ -14,6 +14,7 @@ import QuestionWriteView from "@/views/question/QuestionWriteView";
 import QuestionDetailView from "@/views/question/QuestionDetailView";
 import FAQListView from "@/views/faq/FAQListView";
 import store from "@/store";
+import QuestionModifyView from "@/views/question/QuestionModifyView";
 
 Vue.use(VueRouter)
 
@@ -63,9 +64,14 @@ const routes = [
         },
       },
       {
-        path: "/questions/:id",
+        path: "/questions/:questionId",
         name: "QuestionDetailView",
         component: QuestionDetailView,
+      },
+      {
+        path: "/questions/:questionId/modify",
+        name: "QuestionModifyView",
+        component: QuestionModifyView,
       },
       {
         path: "/faqs",

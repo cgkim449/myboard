@@ -4,7 +4,7 @@ package com.cgkim.myboard.service.impl;
 import com.cgkim.myboard.dao.AdminDao;
 import com.cgkim.myboard.dao.CommentDao;
 import com.cgkim.myboard.dao.MemberDao;
-import com.cgkim.myboard.exception.ErrorCode;
+import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.exception.GuestPasswordInvalidException;
 import com.cgkim.myboard.exception.GuestPasswordMismatchException;
 import com.cgkim.myboard.exception.LoginRequiredException;
