@@ -1,5 +1,10 @@
 <template>
   <v-container>
+    <NoticeDialog
+        v-on:blockNoticeCookieNotFound="fetchNotice"
+        v-bind:fetchedNoticeDetail="noticeDetail"
+    ></NoticeDialog>
+
     <PageTitle>
       <h2 slot="title" @click="initSearchCondition" v-bind:style="{ cursor: 'pointer' }">
         자유게시판
@@ -51,10 +56,12 @@ import PageTitle from "@/components/common/PageTitle";
 import SearchForm from "@/components/common/SearchForm";
 import BoardList from "@/components/board/BoardList";
 import Pagination from "@/components/common/Pagination";
+import NoticeDialog from "@/components/common/NoticeDialog";
 
 export default {
   name: "BoardListView",
   components: {
+    NoticeDialog,
     PageTitle,
     SearchForm,
     BoardList,
@@ -62,6 +69,8 @@ export default {
   },
   data() {
     return {
+      noticeDetail: {},
+
       searchCondition: {
         categoryId: "0",
         keyword: "",
@@ -80,14 +89,7 @@ export default {
     this.updateSearchConditionByQuery();
     this.updateListViewByQuery();
 
-    try {
-        const response = await this.$_BoardService.fetchBoardList(this.searchCondition);
-
-        this.boardList = response.data.boardList;
-        this.boardTotalCount= response.data.boardTotalCount;
-    } catch(error) {
-      console.log(error.response.data.errorMessages)
-    }
+    await this.fetchBoardList(this.searchCondition);
   },
   computed: {},
   watch: {
@@ -95,21 +97,41 @@ export default {
       this.updateSearchConditionByQuery();
       this.updateListViewByQuery();
 
-      const response = await this.$_BoardService.fetchBoardList(this.searchCondition);
-
-      this.boardList = response.data.boardList;
-      this.boardTotalCount= response.data.boardTotalCount;
+      await this.fetchBoardList(this.searchCondition);
     },
   },
   methods: {
+    async fetchNotice() {
+      try {
+        const {data} = await this.$_NoticeService.fetchNoticeDetail();
+
+        this.noticeDetail = data.noticeDetail;
+
+      } catch (error) {
+        console.log(error.response.data.errorMessages)
+      }
+    },
+
+    async fetchBoardList(searchCondition) {
+      try {
+
+        const {data} = await this.$_BoardService.fetchBoardList(searchCondition);
+
+        this.boardList = data.boardList;
+        this.boardTotalCount= data.boardTotalCount;
+
+      } catch (error) {
+        console.log(error.response.data.errorMessages)
+      }
+
+    },
+
     async search(searchCondition) {
       this.updateQueryParameter(this.listView, searchCondition);
 
-      const response = await this.$_BoardService.fetchBoardList(searchCondition);
-
-      this.boardList = response.data.boardList;
-      this.boardTotalCount= response.data.boardTotalCount;
+      await this.fetchBoardList(searchCondition);
     },
+
     initSearchCondition() {
       const searchCondition = {
         categoryId: "0",
@@ -121,9 +143,11 @@ export default {
 
       this.search(searchCondition);
     },
+
     updateListViewByQuery() {
       this.listView = this.$route.query.listView === undefined ? true : this.$route.query.listView === "true";
     },
+
     updateSearchConditionByQuery() {
       const updatedCategoryId = this.$route.query.categoryId;
       const updatedKeyword = this.$route.query.keyword;
@@ -142,14 +166,17 @@ export default {
       this.listView = true;
       this.updateQueryParameter(true, this.searchCondition);
     },
+
     switchToGalleryView() {
       this.listView = false;
       this.updateQueryParameter(false, this.searchCondition);
     },
+
     movePage(page) {
       this.searchCondition.page = page;
       this.updateQueryParameter(this.listView, this.searchCondition);
     },
+
     updateQueryParameter(listView, searchCondition) {
       this.$router.push({
         path: 'boards',

@@ -150,12 +150,14 @@ export default {
   computed: {},
   async created() {
     let questionId = this.$route.params.questionId;
-
-    const {data} = await this.$_QuestionService.fetchQuestion(questionId);
-
-    this.questionDetail = data.questionDetail;
+    await this.fetchQuestionDetail(questionId);
   },
   methods: {
+    async fetchQuestionDetail(questionId) {
+      const {data} = await this.$_QuestionService.fetchQuestion(questionId);
+      this.questionDetail = data.questionDetail;
+    },
+
     async removeQuestion() {
       try {
         await this.$_QuestionService.removeQuestion(this.questionDetail.questionId);

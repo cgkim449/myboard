@@ -195,7 +195,6 @@ export default {
     const {data} = await this.$_BoardService.fetchBoard(boardId);
 
     this.boardDetail = data.boardDetail;
-
     this.form.title = data.boardDetail.title;
     this.form.content = data.boardDetail.content;
   },
@@ -209,8 +208,6 @@ export default {
     },
 
     addNewAttach(file) {
-      console.log(file)
-
       this.form.multipartFiles.push(file);
 
       this.fileInputKey++;

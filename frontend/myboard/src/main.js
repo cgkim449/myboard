@@ -12,6 +12,7 @@ import AnswerServicePlugin from "@/plugins/services/AnswerServicePlugin";
 import FAQServicePlugin from "@/plugins/services/FAQServicePlugin";
 import {ValidationObserver, ValidationProvider} from 'vee-validate';
 import ItemFormValidator from "@/plugins/validators/ItemFormValidatorPlugin";
+import NoticeServicePlugin from "@/plugins/services/NoticeServicePlugin";
 
 Vue.config.productionTip = false
 
@@ -22,9 +23,10 @@ Vue.use(QuestionServicePlugin);
 Vue.use(AnswerServicePlugin);
 Vue.use(MemberServicePlugin);
 Vue.use(FAQServicePlugin);
+Vue.use(NoticeServicePlugin);
 
 Vue.use(VueCookies);
-Vue.$cookies.config("7d");
+// Vue.$cookies.config("7d");
 
 Vue.filter("formatDate", formatDate);
 Vue.filter("formatBoardTitle", formatBoardTitle);

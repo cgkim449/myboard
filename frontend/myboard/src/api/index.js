@@ -27,3 +27,5 @@ export const questionAttachesInstance = createInstanceWithToken("question-attach
 export const answersInstance = createInstanceWithToken("answers");
 
 export const faqsInstance = createInstanceWithToken("faqs");
+
+export const noticesInstance = createInstanceWithToken("notices");

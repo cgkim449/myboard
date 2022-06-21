@@ -13,8 +13,6 @@ import com.cgkim.myboard.validator.QuestionSaveRequestValidator;
 import com.cgkim.myboard.validator.QuestionUpdateRequestValidator;
 import com.cgkim.myboard.vo.attach.AttachVo;
 import com.cgkim.myboard.vo.attach.FileSaveRequest;
-import com.cgkim.myboard.vo.board.BoardUpdateRequest;
-import com.cgkim.myboard.vo.member.GuestPasswordCheckRequest;
 import com.cgkim.myboard.vo.question.QuestionDetailResponse;
 import com.cgkim.myboard.vo.question.QuestionListResponse;
 import com.cgkim.myboard.vo.question.QuestionSaveRequest;
@@ -32,9 +30,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -180,7 +176,7 @@ public class QuestionController {
                                                           @Valid QuestionUpdateRequest questionUpdateRequest,
                                                           @Valid FileSaveRequest fileSaveRequest,
                                                           Long[] attachDeleteRequest
-    ) throws IOException, NoSuchAlgorithmException {
+    ) throws IOException {
         //소유권 인증.
         questionService.checkOwner(questionId, username);
 

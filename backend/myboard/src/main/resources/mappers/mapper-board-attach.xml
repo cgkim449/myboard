@@ -3,56 +3,54 @@
 
 <mapper namespace="com.cgkim.myboard.dao.BoardAttachDao">
     <select id="selectList" resultType="attachVo" parameterType="long">
-        select attach_id
-             , board_id
-             , upload_path
-             , uuid
-             , name
-             , extension
-             , is_image
-             , size
-          from tbl_board_attach
-         where board_id = #{boardId};
+        select attach_id,
+               board_id,
+               upload_path,
+               uuid,
+               name,
+               extension,
+               is_image,
+               size
+        from tbl_board_attach
+        where board_id = #{boardId};
     </select>
 
     <select id="selectOne" resultType="attachVo" parameterType="long">
-        select attach_id
-             , board_id
-             , upload_path
-             , uuid
-             , name
-             , extension
-             , is_image
-             , size
-             , register_date
-             , update_date
-          from tbl_board_attach
-         where attach_id = #{attachId};
+        select attach_id,
+               board_id,
+               upload_path,
+               uuid,
+               name,
+               extension,
+               is_image,
+               size,
+               register_date,
+               update_date
+        from tbl_board_attach
+        where attach_id = #{attachId};
     </select>
-
-
 
     <select id="selectCountByBoardId" resultType="int" parameterType="long">
         select count(*)
-          from tbl_board_attach
-         where board_id = #{boardId};
+        from tbl_board_attach
+        where board_id = #{boardId};
     </select>
 
     <insert id="insert" parameterType="attachVo">
         insert
-          into tbl_board_attach (board_id, upload_path, uuid, name, extension, is_image, size)
+        into tbl_board_attach (board_id, upload_path, uuid, name, extension, is_image, size)
         values (#{boardId}, #{uploadPath}, #{uuid}, #{name}, #{extension}, #{isImage}, #{size});
     </insert>
 
     <delete id="deleteByBoardId" parameterType="long" >
         delete
-          from tbl_board_attach
-         where board_id = #{boardId}
+        from tbl_board_attach
+        where board_id = #{boardId}
     </delete>
 
     <delete id="delete" parameterType="long">
         delete
-          from tbl_board_attach
-         where attach_id = #{attachId}
+        from tbl_board_attach
+        where attach_id = #{attachId}
     </delete>
 </mapper>

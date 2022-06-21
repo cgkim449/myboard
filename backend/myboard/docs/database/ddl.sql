@@ -45,6 +45,24 @@ create table tbl_faq
 )
     comment 'FAQ';
 
+create table tbl_faq_attach
+(
+    attach_id     int auto_increment comment '첨부파일 ID'
+        primary key,
+    faq_id      int                                    not null comment 'faq ID',
+    upload_path   varchar(200)                           not null comment '저장 경로',
+    uuid          varchar(100)                           not null comment 'UUID',
+    name          varchar(100)                           not null comment '이름',
+    extension     varchar(20)                            not null comment '확장자',
+    is_image      tinyint(1) default 0                   null comment '이미지 여부',
+    size          int                                    not null comment '파일 크기',
+    register_date timestamp  default current_timestamp() null comment '등록일',
+    update_date   timestamp  default current_timestamp() null comment '수정일',
+    constraint faq_attach_faq_faq_id_fk
+        foreign key (faq_id) references tbl_faq (faq_id)
+)
+    comment 'faq 첨부파일';
+
 create table tbl_member
 (
     member_id     int auto_increment comment '회원 ID'
@@ -139,6 +157,24 @@ create table tbl_notice
 )
     comment '공지사항';
 
+create table tbl_notice_attach
+(
+    attach_id     int auto_increment comment '첨부파일 ID'
+        primary key,
+    notice_id      int                                    not null comment '공지사항 ID',
+    upload_path   varchar(200)                           not null comment '저장 경로',
+    uuid          varchar(100)                           not null comment 'UUID',
+    name          varchar(100)                           not null comment '이름',
+    extension     varchar(20)                            not null comment '확장자',
+    is_image      tinyint(1) default 0                   null comment '이미지 여부',
+    size          int                                    not null comment '파일 크기',
+    register_date timestamp  default current_timestamp() null comment '등록일',
+    update_date   timestamp  default current_timestamp() null comment '수정일',
+    constraint notice_attach_notice_notice_id_fk
+        foreign key (notice_id) references tbl_notice (notice_id)
+)
+    comment '공지사항 첨부파일';
+
 create table tbl_question
 (
     question_id   int auto_increment comment '질문 ID'
@@ -182,6 +218,24 @@ create table tbl_answer
         foreign key (question_id) references tbl_question (question_id)
 )
     comment 'Q&A 답변';
+
+create table tbl_answer_attach
+(
+    attach_id     int auto_increment comment '첨부파일 ID'
+        primary key,
+    answer_id      int                                    not null comment '답변 ID',
+    upload_path   varchar(200)                           not null comment '저장 경로',
+    uuid          varchar(100)                           not null comment 'UUID',
+    name          varchar(100)                           not null comment '이름',
+    extension     varchar(20)                            not null comment '확장자',
+    is_image      tinyint(1) default 0                   null comment '이미지 여부',
+    size          int                                    not null comment '파일 크기',
+    register_date timestamp  default current_timestamp() null comment '등록일',
+    update_date   timestamp  default current_timestamp() null comment '수정일',
+    constraint answer_attach_answer_answer_id_fk
+        foreign key (answer_id) references tbl_answer (answer_id)
+)
+    comment '답변 첨부파일';
 
 create table tbl_question_attach
 (

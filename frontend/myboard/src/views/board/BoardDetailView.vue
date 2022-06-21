@@ -268,29 +268,38 @@ export default {
   },
   computed: {},
   async created() {
+
     let boardId = this.$route.params.boardId;
 
-    const response = await this.$_BoardService.fetchBoard(boardId);
-
-    this.boardDetail = response.data.boardDetail;
+    await this.fetchBoardDetail(boardId);
   },
   methods: {
     isEmpty(obj) {
       return Object.keys(obj).length === 0 && obj.constructor === Object;
     },
 
+    async fetchBoardDetail(boardId) {
+        const {data} = await this.$_BoardService.fetchBoard(boardId);
+
+        this.boardDetail = data.boardDetail;
+    },
+
+    async fetchCommentList(boardId) {
+      const { data } = await this.$_BoardService.fetchCommentList(boardId);
+
+      this.boardDetail.commentList = data.commentList;
+    },
+
     async deleteComment(deleteCommentRequest){
       try {
         const {status} = await this.$_BoardService.deleteComment(deleteCommentRequest);
         this.commentDeleteResponseStatus = status;
-        console.log(this.commentDeleteResponseStatus)
+
         alert('삭제되었습니다.');
 
-        const { data } = await this.$_BoardService.fetchCommentList(this.boardDetail.boardId);
+        await this.fetchCommentList(this.boardDetail.boardId);
 
-        this.boardDetail.commentList = data.commentList;
       } catch (error) {
-
         alert(error.response.data.errorMessage);
       }
     },
@@ -309,8 +318,7 @@ export default {
 
         this.commentSaveResponseStatus = commentSaveResponse.status;
 
-        const {data} = await this.$_BoardService.fetchCommentList(this.boardDetail.boardId);
-        this.boardDetail.commentList = data.commentList;
+        await this.fetchCommentList(this.boardDetail.boardId)
 
       } catch (error) {
         const firstErrorField = error.response.data.fieldErrorDetails[0].field;

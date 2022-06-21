@@ -79,40 +79,44 @@ export default {
     };
   },
   async created() {
+
     this.updateSearchConditionByQuery();
     this.updateListViewByQuery();
 
-    try {
-      //TODO: 이거 세줄 바로 아래랑 아래아래랑 중복됨, Board도 마찬가지
-        const response = await this.$_QuestionService.fetchQuestionList(this.searchCondition);
-
-        this.questionList = response.data.questionList;
-        this.questionTotalCount = response.data.questionTotalCount;
-    } catch(error) {
-      console.log(error.response.data.errorMessages)
-    }
+    await this.fetchQuestionList(this.searchCondition);
   },
   computed: {},
   watch: {
     async "$route.query"() {
+
       this.updateSearchConditionByQuery();
       this.updateListViewByQuery();
 
-      const response = await this.$_QuestionService.fetchQuestionList(this.searchCondition);
-
-      this.questionList = response.data.questionList;
-      this.questionTotalCount= response.data.questionTotalCount;
+      await this.fetchQuestionList(this.searchCondition);
     },
   },
   methods: {
+    async fetchQuestionList(searchCondition) {
+
+      try {
+
+        const {data} = await this.$_QuestionService.fetchQuestionList(searchCondition);
+
+        this.questionList = data.questionList;
+        this.questionTotalCount= data.questionTotalCount;
+      } catch (error) {
+
+        console.log(error.response.data.errorMessages)
+      }
+    },
+
     async search(searchCondition) {
+
       this.updateQueryParameter(this.listView, searchCondition);
 
-      const response = await this.$_QuestionService.fetchQuestionList(searchCondition);
-
-      this.questionList = response.data.questionList;
-      this.questionTotalCount= response.data.questionTotalCount;
+      await this.fetchQuestionList(searchCondition);
     },
+
     initSearchCondition() {
       const searchCondition = {
         categoryId: "0",
@@ -124,9 +128,11 @@ export default {
 
       this.search(searchCondition);
     },
+
     updateListViewByQuery() {
       this.listView = this.$route.query.listView === undefined ? true : this.$route.query.listView === "true";
     },
+
     updateSearchConditionByQuery() {
       const updatedCategoryId = this.$route.query.categoryId;
       const updatedKeyword = this.$route.query.keyword;
@@ -140,18 +146,22 @@ export default {
       this.searchCondition.toDate = updatedToDate === undefined ? "" : updatedToDate;
       this.searchCondition.page = updatedPage === undefined ? 1 : Number(updatedPage);
     },
+
     switchToListView() {
       this.listView = true;
       this.updateQueryParameter(this.listView, this.searchCondition);
     },
+
     switchToGalleryView() {
       this.listView = false;
       this.updateQueryParameter(this.listView, this.searchCondition);
     },
+
     movePage(page) {
       this.searchCondition.page = page;
       this.updateQueryParameter(this.listView, this.searchCondition);
     },
+
     updateQueryParameter(listView, searchCondition) {
       this.$router.push({
         path: "questions",
