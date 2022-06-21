@@ -33,6 +33,7 @@
               dense
               :headers="tableHeaders"
               :items="fetchedBoardList"
+              :items-per-page="12"
               hide-default-footer
               class="elevation-2"
           >

@@ -36,7 +36,7 @@ export default {
   },
   computed: {
     paginationLength() {
-      return Math.ceil(this.itemTotalCount / 10);
+      return Math.ceil(this.itemTotalCount / 12);
     }
   },
   methods: {

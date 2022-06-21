@@ -54,7 +54,7 @@ public class BoardServiceImpl implements BoardService {
         for (BoardListResponse boardListResponse : boardList) {
             String thumbnailUri = boardListResponse.getThumbnailUri();
             if(thumbnailUri != null) {
-                boardListResponse.setThumbnailUri(hostUrl + thumbnailUri);
+                boardListResponse.setThumbnailUri(hostUrl + "upload" + File.separator + thumbnailUri);
             }
         }
 
