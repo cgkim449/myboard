@@ -74,6 +74,7 @@
 
               <v-col cols="12">
                 <v-textarea
+                    outlined
                     v-model="form.content"
                     :rules="rules.content"
                     color="teal"
@@ -126,7 +127,6 @@
                 <v-btn
                     @click="moveToQuestionList"
                     outlined
-                    text
                 >
                   취소
                 </v-btn>
@@ -138,9 +138,7 @@
                 cols="auto"
               >
                 <v-btn
-                    outlined
-                    text
-                    color="primary"
+                    color="secondary"
                     @click="writeQuestion"
                 >
                   저장

@@ -17,13 +17,16 @@ public class QuestionVo {
 
     private Long memberId;
 
+    private Long adminId;
+
     @Builder
-    public QuestionVo(Integer categoryId, String title, String content, Long questionId, Integer isSecret, Long memberId) {
+    public QuestionVo(Integer categoryId, String title, String content, Long questionId, Integer isSecret, Long memberId, Long adminId) {
         this.categoryId = categoryId;
         this.title = title;
         this.content = content;
         this.questionId = questionId;
         this.isSecret = isSecret;
         this.memberId = memberId;
+        this.adminId = adminId;
     }
 }

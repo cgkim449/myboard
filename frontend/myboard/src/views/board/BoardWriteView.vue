@@ -77,6 +77,7 @@
 
                 <v-col cols="12">
                   <v-textarea
+                      outlined
                       v-model="form.content"
                       :rules="rules.content"
                       label="내용"
@@ -151,7 +152,7 @@
                     cols="auto"
                 >
                   <v-btn
-                      color="primary"
+                      color="secondary"
                       @click="writeBoard"
                   >
                     저장

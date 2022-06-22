@@ -14,25 +14,6 @@ export const questionServicePlugin = {
     removeQuestion(questionId) {
         return deleteQuestion(questionId);
     },
-    // updateBoard(formData) {
-    //     return patchBoard(formData);
-    // },
-    // checkBoardPw(board) {
-    //     return checkBoardPw(board);
-    // },
-    // writeComment(comment) {
-    //     return createComment(comment);
-    // },
-    // fetchCommentList(boardNo) {
-    //     try {
-    //         return getCommentList(boardNo);
-    //     } catch (error) {
-    //         console.log(error.response.data);
-    //     }
-    // },
-    // removeComment(comment) {
-    //     return deleteComment(comment);
-    // },
     async downloadAttach(attachId) {
         try {
             const response = await downloadQuestionAttach(attachId);

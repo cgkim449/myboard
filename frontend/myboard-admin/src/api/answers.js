@@ -1,4 +1,4 @@
-import {answersInstance} from "@/api/index";
+import {answersInstance, boardsInstance} from "@/api/index";
 
 const getAnswerDetail = (id) => {
     return answersInstance.get(
@@ -14,7 +14,21 @@ const createAnswer = (formData) => {
     )
 }
 
+const deleteAnswer = (answerId) => {
+    return answersInstance.delete(`/${answerId}`,);
+};
+
+const patchAnswer = (formData) => {
+    return answersInstance.patch(
+        `/${formData.get('answerId')}`,
+        formData,
+        {tableHeaders: {"Content-Type" : "multipart/form-data"},
+        });
+};
+
 export {
     getAnswerDetail,
-    createAnswer
+    createAnswer,
+    deleteAnswer,
+    patchAnswer
 }

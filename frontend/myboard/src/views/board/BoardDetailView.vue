@@ -46,7 +46,7 @@
               >
                 <v-btn
                     @click="moveToBoardList"
-                    color="primary"
+                    color="secondary"
                 >
                   목록
                 </v-btn>

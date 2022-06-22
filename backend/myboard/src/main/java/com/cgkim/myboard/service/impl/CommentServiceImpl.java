@@ -25,7 +25,6 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
-    private final AdminDao adminDao;
     private final MemberDao memberDao;
     private final CommentDao commentDao;
     private final SHA256PasswordEncoder sha256PasswordEncoder;

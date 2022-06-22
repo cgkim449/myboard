@@ -9,11 +9,43 @@
         values(#{questionId}, #{adminId}, #{title}, #{content});
     </insert>
 
+    <update id="updateThumbnailUri" parameterType="map">
+        update tbl_answer
+        set thumbnail_uri = #{thumbnailUri}
+        where answer_id = #{answerId}
+    </update>
+
+    <update id="updateHasAttach" parameterType="map">
+        update tbl_answer
+        set has_attach = #{hasAttach}
+        where answer_id = #{answerId}
+    </update>
+
+    <update id="update" parameterType="AnswerUpdateRequest">
+        update tbl_answer
+        set title = #{title},
+            content = #{content},
+            update_date = now()
+        where answer_id = #{answerId}
+    </update>
+
+    <delete id="deleteByQuestionId" parameterType="long">
+        delete
+        from tbl_answer
+        where question_id = #{questionId};
+    </delete>
+    <delete id="delete" parameterType="long">
+        delete
+        from tbl_answer
+        where answer_id = #{answerId};
+    </delete>
+
     <select id="selectOne" resultType="answerDetailResponse" parameterType="long">
         select an.answer_id,
                an.question_id,
                an.title,
                an.content,
+               an.has_attach,
                an.register_date,
                an.update_date,
                ad.username admin_username,
@@ -24,10 +56,11 @@
         where an.answer_id = #{answerId};
     </select>
 
-    <select id="selectByQuestionId" resultType="answerVo" parameterType="long">
+    <select id="selectByQuestionId" resultType="answerDetailResponse" parameterType="long">
         select an.answer_id,
                an.title,
                an.content,
+               an.has_attach,
                an.register_date,
                an.update_date,
                ad.admin_id,

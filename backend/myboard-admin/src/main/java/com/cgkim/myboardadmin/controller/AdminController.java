@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -74,5 +75,12 @@ public class AdminController {
                         .put("username", loginAdmin.getUsername())
                         .put("nickname", loginAdmin.getNickname())
                         .put("token", token));
+    }
+
+
+    @GetMapping("/check")
+    public ResponseEntity<SuccessResponse> check(){
+
+        return ResponseEntity.ok(new SuccessResponse());
     }
 }

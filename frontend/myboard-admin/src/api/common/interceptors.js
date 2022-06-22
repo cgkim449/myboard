@@ -22,7 +22,6 @@ export function setInterceptors(axiosInstance) {
             return response;
         },
         async function (error) {
-
             //TODO: enum
             if(error.response.data.errorCode === "A002") { //토큰 만료
                 alert(error.response.data.errorMessage)

@@ -1,5 +1,6 @@
 package com.cgkim.myboardadmin.vo.question;
 
+import com.cgkim.myboardadmin.vo.answer.AnswerDetailResponse;
 import com.cgkim.myboardadmin.vo.answer.AnswerVo;
 import com.cgkim.myboardadmin.vo.attach.AttachVo;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -32,7 +33,7 @@ public class QuestionDetailResponse {
     private String adminUsername;
     private String adminNickname;
 
-    private AnswerVo answer;
+    private AnswerDetailResponse answer;
 
     private List<AttachVo> attachList;
 }

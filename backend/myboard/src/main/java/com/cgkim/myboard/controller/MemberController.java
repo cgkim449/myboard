@@ -80,7 +80,7 @@ public class MemberController {
         // 로그인
         MemberVo loginMember = memberService.login(loginRequest.getUsername(), loginRequest.getPassword());
         // 토큰 생성
-        String token = jwtProvider.createToken(loginMember.getUsername(), false);
+        String token = jwtProvider.createToken(loginMember.getUsername());
 
         return ResponseEntity.ok(
                 new SuccessResponse()

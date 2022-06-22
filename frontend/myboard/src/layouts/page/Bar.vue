@@ -1,7 +1,7 @@
 <template>
   <v-app-bar
       app
-      color="primary"
+      color="secondary"
   >
     <v-toolbar-title>Page Layout</v-toolbar-title>
   </v-app-bar>

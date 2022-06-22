@@ -1,15 +1,18 @@
 package com.cgkim.myboardadmin.service.impl;
 
+import com.cgkim.myboardadmin.dao.AdminDao;
+import com.cgkim.myboardadmin.dao.AnswerAttachDao;
 import com.cgkim.myboardadmin.dao.AnswerDao;
 import com.cgkim.myboardadmin.dao.MemberDao;
 import com.cgkim.myboardadmin.dao.QuestionAttachDao;
 import com.cgkim.myboardadmin.dao.QuestionDao;
-import com.cgkim.myboardadmin.exception.BoardInsertFailedException;
 import com.cgkim.myboardadmin.exception.LoginRequiredException;
 import com.cgkim.myboardadmin.exception.NoAuthorizationException;
+import com.cgkim.myboardadmin.exception.QuestionInsertFailedException;
 import com.cgkim.myboardadmin.exception.QuestionNotFoundException;
 import com.cgkim.myboardadmin.exception.errorcode.ErrorCode;
 import com.cgkim.myboardadmin.service.QuestionService;
+import com.cgkim.myboardadmin.vo.answer.AnswerDetailResponse;
 import com.cgkim.myboardadmin.vo.answer.AnswerVo;
 import com.cgkim.myboardadmin.vo.attach.AttachVo;
 import com.cgkim.myboardadmin.vo.question.QuestionDetailResponse;
@@ -33,7 +36,9 @@ public class QuestionServiceImpl implements QuestionService {
     private final QuestionDao questionDao;
     private final AnswerDao answerDao;
     private final MemberDao memberDao;
+    private final AdminDao adminDao;
     private final QuestionAttachDao questionAttachDao;
+    private final AnswerAttachDao answerAttachDao;
 
     @Value("${host.url}")
     private String hostUrl;
@@ -61,13 +66,13 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public long write(String username, QuestionSaveRequest questionSaveRequest, List<AttachVo> attachInsertList) {
         try {
-            long memberId = memberDao.selectMemberIdByUsername(username);
+            Long adminId = adminDao.selectAdminIdByUsername(username);
 
             QuestionVo questionVo = QuestionVo.builder()
                     .categoryId(questionSaveRequest.getCategoryId())
                     .title(questionSaveRequest.getTitle())
                     .content(questionSaveRequest.getContent())
-                    .memberId(memberId)
+                    .adminId(adminId)
                     .isSecret(questionSaveRequest.getIsSecret())
                     .build();
 
@@ -82,7 +87,7 @@ public class QuestionServiceImpl implements QuestionService {
 
             return id; //등록한 게시물 번호 리턴
         } catch (Exception e) { //게시물 등록 실패시 생성했던 파일 삭제하기 위해 TODO: question
-            throw new BoardInsertFailedException(attachInsertList, ErrorCode.BOARD_INSERT_FAILED);
+            throw new QuestionInsertFailedException(attachInsertList, ErrorCode.QUESTION_INSERT_FAILED);
         }
     }
 
@@ -97,9 +102,9 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         //TODO: 리팩토링
-        List<AttachVo> attachVoList = questionAttachDao.selectList(id);
+        List<AttachVo> questionAttachList = questionAttachDao.selectList(id);
 
-        for (AttachVo attachVo : attachVoList) {
+        for (AttachVo attachVo : questionAttachList) {
             if (attachVo.isImage()) {
                 attachVo.setThumbnailUri(
                         hostUrl
@@ -123,10 +128,41 @@ public class QuestionServiceImpl implements QuestionService {
                                 + attachVo.getExtension());
             }
         }
-        questionDetailResponse.setAttachList(attachVoList); //첨부파일 리스트
+        questionDetailResponse.setAttachList(questionAttachList); //첨부파일 리스트
 
-        AnswerVo answerVo = answerDao.selectByQuestionId(id);
-        questionDetailResponse.setAnswer(answerVo);
+        AnswerDetailResponse answerDetailResponse = answerDao.selectByQuestionId(id);
+
+        if(answerDetailResponse != null) { //답변이 있으면
+            List<AttachVo> answerAttachList = answerAttachDao.selectList(answerDetailResponse.getAnswerId());
+            for (AttachVo attachVo : answerAttachList) {
+                if (attachVo.isImage()) {
+                    attachVo.setThumbnailUri(
+                            hostUrl
+                                    + "upload"
+                                    + File.separator
+                                    + attachVo.getUploadPath()
+                                    + File.separator
+                                    + attachVo.getUuid()
+                                    + "_thumbnail"
+                                    + "."
+                                    + attachVo.getExtension());
+
+                    attachVo.setOriginalImageUri(
+                            hostUrl
+                                    + "upload"
+                                    + File.separator
+                                    + attachVo.getUploadPath()
+                                    + File.separator
+                                    + attachVo.getUuid()
+                                    + "."
+                                    + attachVo.getExtension());
+                }
+            }
+            answerDetailResponse.setAttachList(answerAttachList);
+
+            questionDetailResponse.setAnswer(answerDetailResponse);
+        }
+
         return questionDetailResponse;
     }
 
@@ -135,25 +171,6 @@ public class QuestionServiceImpl implements QuestionService {
     public void delete(Long questionId) {
         questionAttachDao.deleteById(questionId);
         questionDao.delete(questionId);
-    }
-
-    @Override
-    public void checkOwner(Long questionId, String username) {
-        if(username == null) {
-            throw new LoginRequiredException(ErrorCode.LOGIN_REQUIRED);
-        }
-
-        Long verificationTargetMemberId = memberDao.selectMemberIdByUsername(username);
-
-        if(verificationTargetMemberId == null) {
-            throw new NoAuthorizationException(ErrorCode.NO_AUTHORIZATION);
-        }
-
-        Long realMemberId = questionDao.selectMemberId(questionId);
-
-        if(!verificationTargetMemberId.equals(realMemberId)) {
-            throw new NoAuthorizationException(ErrorCode.NO_AUTHORIZATION);
-        }
     }
 
     @Override

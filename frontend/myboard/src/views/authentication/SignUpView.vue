@@ -71,11 +71,10 @@
 
                 <v-btn
                     v-on:click="signUp"
-
                     class="mt-6"
                     block
                     x-large
-                    color="primary"
+                    color="secondary"
                 >
                   가입하기
                 </v-btn>
@@ -96,7 +95,7 @@ setInteractionMode('eager')
 
 extend('required', {
   ...required,
-  message: '{_field_} 을 입력해주세요.',
+  message: '{_field_}을 입력해주세요.',
 })
 
 extend('email', {

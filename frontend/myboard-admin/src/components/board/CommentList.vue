@@ -55,9 +55,7 @@ export default {
   props: ["fetchedCommentList", "commentDeleteResponseStatus"],
   data() {
     return {
-      showDeleteGuestCommentDialog: false,
       deleteCommentRequest: {
-        guestPassword: "",
         commentId: 0,
       },
     }
@@ -71,14 +69,9 @@ export default {
     },
   },
   watch: {
-    showDeleteGuestCommentDialog() {
-      if(!this.showDeleteGuestCommentDialog) {
-        this.initDeleteCommentRequest();
-      }
-    },
+
     commentDeleteResponseStatus() {
       if(this.commentDeleteResponseStatus === 204) {
-        this.showDeleteGuestCommentDialog = false
         this.deleteCommentRequest = {};
         this.$emit("initCommentDeleteResponseStatus")
       }
@@ -89,10 +82,6 @@ export default {
       if(!dialog) {
         this.deleteCommentRequest = {};
       }
-    },
-    async clickDeleteGuestCommentDialog(commentId) {
-      console.log(commentId)
-      this.deleteCommentRequest.commentId = commentId;
     },
 
     clickDeleteCommentBtn(commentId) {

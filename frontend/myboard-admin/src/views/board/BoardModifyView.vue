@@ -16,33 +16,6 @@
               ref="form"
           >
             <v-container fluid>
-
-              <!--          TODO: computed 로 분리-->
-              <template v-if="boardDetail.guestNickname !== null">
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                        disabled
-                        v-model="boardDetail.guestNickname"
-                        required
-                        color="purple darken-2"
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col>
-                    <v-text-field
-                        type="password"
-                        v-model="form.guestPassword"
-                        :rules="rules.guestPassword"
-                        required
-                        label="비밀번호"
-                        hint="작성하셨을 때의 비밀번호를 입력해주세요."
-                        color="purple darken-2"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </template>
-
               <v-row>
                 <v-col
                     cols="2"
@@ -71,6 +44,7 @@
 
                 <v-col cols="12">
                   <v-textarea
+                      outlined
                       v-model="form.content"
                       :rules="rules.content"
                       color="teal"
@@ -80,7 +54,7 @@
                 </v-col>
               </v-row>
 
-              <v-row>
+              <v-row v-if="!(boardDetail.attachList.length === 0 && form.multipartFiles.length === 0)">
                 <v-card-text>
                   <v-row>
                     <v-col>

@@ -4,6 +4,7 @@ import com.cgkim.myboardadmin.argumentresolver.LoginUser;
 import com.cgkim.myboardadmin.exception.LoginRequiredException;
 import com.cgkim.myboardadmin.exception.errorcode.ErrorCode;
 import com.cgkim.myboardadmin.response.SuccessResponse;
+import com.cgkim.myboardadmin.service.AnswerService;
 import com.cgkim.myboardadmin.service.QuestionService;
 import com.cgkim.myboardadmin.service.impl.QuestionAttachServiceImpl;
 import com.cgkim.myboardadmin.util.FileHandler;
@@ -47,6 +48,7 @@ import java.util.List;
 @RequestMapping("/questions")
 public class QuestionController {
     private final QuestionService questionService;
+    private final AnswerService answerService;
     private final QuestionAttachServiceImpl attachService;
     private final FileHandler fileHandler;
     private final QuestionSaveRequestValidator questionSaveRequestValidator;
@@ -97,9 +99,8 @@ public class QuestionController {
     }
 
     /**
-     * 질문 목록
+     * 질문 목록 조회
      */
-    //TODO: 비공개 글 검색 안되게
     @GetMapping
     public ResponseEntity<SuccessResponse> getList(QuestionSearchRequest questionSearchRequest){
 
@@ -126,7 +127,7 @@ public class QuestionController {
     }
 
     /**
-     * 질문 작성(회원만 가능)
+     * 질문 작성
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> write(@LoginUser String username,
@@ -134,33 +135,22 @@ public class QuestionController {
                                                  @Valid FileSaveRequest fileSaveRequest
     ) throws IOException {
 
-        if(username == null) {
-            throw new LoginRequiredException(ErrorCode.LOGIN_REQUIRED);
-        }
-
         //TODO: 첨부파일 경로 찢기
         List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles()); //첨부파일 생성 (C://upload)
         long questionId = questionService.write(username, questionSaveRequest, attachInsertList); //회원 질문 작성
 
-        return ResponseEntity.created(URI.create("/questions/" + questionId)).body(new SuccessResponse());
+        return ResponseEntity.created(URI.create("/admin/questions/" + questionId)).body(new SuccessResponse());
     }
 
     /**
      * 질문 삭제
      */
     @DeleteMapping("/{questionId}")
-    public ResponseEntity<SuccessResponse> delete(@LoginUser String username,
-                                                  @PathVariable Long questionId
-    ) throws NoSuchAlgorithmException {
-
-        //소유권 인증
-        questionService.checkOwner(questionId, username);
-
-        //답변이 달린 질문은 수정, 삭제 불가
-        questionService.checkHasAnswer(questionId);
+    public ResponseEntity<SuccessResponse> delete(@PathVariable Long questionId) throws NoSuchAlgorithmException {
 
         List<AttachVo> attachDeleteList = attachService.getList(questionId); //첨부파일 삭제 리스트
-        questionService.delete(questionId); //게시물 삭제
+        answerService.deleteByQuestionId(questionId); //질문에 달린 답변 삭제
+        questionService.delete(questionId); //질문 삭제
         fileHandler.deleteFiles(attachDeleteList); //첨부파일 삭제 (C://upload)
 
         return ResponseEntity.noContent().build();
@@ -171,14 +161,11 @@ public class QuestionController {
      * TODO: 질문 수정시 썸네일 업데이트 해야함.
      */
     @PatchMapping("/{questionId}")
-    public ResponseEntity<SuccessResponse> updateQuestion(@LoginUser String username,
-                                                          @PathVariable Long questionId,
+    public ResponseEntity<SuccessResponse> updateQuestion(@PathVariable Long questionId,
                                                           @Valid QuestionUpdateRequest questionUpdateRequest,
                                                           @Valid FileSaveRequest fileSaveRequest,
                                                           Long[] attachDeleteRequest
     ) throws IOException {
-        //소유권 인증.
-        questionService.checkOwner(questionId, username);
 
         List<AttachVo> attachDeleteList = attachService.getList(attachDeleteRequest); //첨부파일 삭제 리스트
         List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles());//첨부파일 삽입 리스트

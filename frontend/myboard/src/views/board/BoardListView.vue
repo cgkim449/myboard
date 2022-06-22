@@ -36,11 +36,17 @@
           cols="auto"
       >
         <v-btn
-            color="primary"
+            color="secondary"
             @click="moveToBoardWrite"
         >
           글쓰기
         </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col>
+
       </v-col>
     </v-row>
 

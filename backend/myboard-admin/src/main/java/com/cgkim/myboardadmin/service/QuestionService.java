@@ -23,8 +23,6 @@ public interface QuestionService {
     @Transactional(rollbackFor = Exception.class)
     void delete(Long questionId);
 
-    void checkOwner(Long questionId, String username);
-
     void checkHasAnswer(Long questionId);
     @Transactional(rollbackFor = Exception.class)
     void modify(Long questionId, String content, String title, Integer isSecret, List<AttachVo> attachInsertList, List<AttachVo> attachDeleteList);

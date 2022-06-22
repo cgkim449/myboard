@@ -26,7 +26,7 @@
         <AttachList
             v-if="questionDetail.hasAttach"
             v-bind:fetchedAttachList="questionDetail.attachList"
-            v-bind:attachOf="attachOf"
+            v-bind:attachOf="attachOf1"
         ></AttachList>
 
       </v-col>
@@ -69,11 +69,14 @@
               v-bind:fetchedItemDetail="questionDetail.answer"
               v-bind:itemType="itemType"
           ></ItemDetail>
+
+          <AttachList
+              v-if="questionDetail.answer.hasAttach"
+              v-bind:fetchedAttachList="questionDetail.answer.attachList"
+              v-bind:attachOf="attachOf2"
+          ></AttachList>
         </v-col>
-
       </template>
-
-
 
       <v-card elevation="0">
         <v-card-text>
@@ -82,16 +85,12 @@
                 cols="auto"
 
             >
-              <router-link v-bind:to="{
-                  path: `/questions`,
-                  query: $route.query
-                }">
-                <v-btn
-                    color="primary"
-                >
-                  목록
-                </v-btn>
-              </router-link>
+              <v-btn
+                  @click="moveToQuestionList"
+                  color="secondary"
+              >
+                목록
+              </v-btn>
             </v-col>
 
             <!-- 본인 글이고 답글 아직 안달려있으면 수정 삭제 버튼 보임. -->
@@ -125,6 +124,12 @@
         </v-card-text>
       </v-card>
     </v-row>
+
+    <v-row>
+      <v-col>
+
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -142,8 +147,13 @@ export default {
   },
   data() {
     return {
-      questionDetail: {},
-      attachOf: "question",
+      questionDetail: {
+        answer: {}
+      },
+
+      //TODO: 변수명 수정
+      attachOf1: "question",
+      attachOf2: "answer",
       itemType: "answer",
     }
   },
@@ -176,6 +186,7 @@ export default {
         , query: this.$route.query
       });
     },
+
     moveToQuestionModify() {
       this.$router.push({
             name: "QuestionModifyView",

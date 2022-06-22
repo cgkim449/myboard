@@ -74,6 +74,7 @@
 
               <v-col cols="12">
                 <v-textarea
+                    outlined
                     v-model="form.content"
                     :rules="rules.content"
                     color="teal"
@@ -222,7 +223,7 @@ export default {
 
     moveToQuestionList() {
       this.$router.push({
-        path: '/questions'
+        path: '/admin/questions'
         , query: this.$route.query
       });
     },

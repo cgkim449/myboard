@@ -65,8 +65,8 @@
     </sql>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="questionId">
-        insert into tbl_question (member_id, category_id, title, content, is_secret)
-        values(#{memberId}, #{categoryId}, #{title}, #{content}, #{isSecret});
+        insert into tbl_question (admin_id, category_id, title, content, is_secret)
+        values(#{adminId}, #{categoryId}, #{title}, #{content}, #{isSecret});
     </insert>
 
     <update id="updateThumbnailUri" parameterType="map">

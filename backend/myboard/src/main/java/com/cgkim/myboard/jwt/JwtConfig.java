@@ -1,6 +1,5 @@
 package com.cgkim.myboard.jwt;
 
-import com.cgkim.myboard.argumentresolver.IsAdminArgumentResolver;
 import com.cgkim.myboard.argumentresolver.LoginUserArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +15,6 @@ public class JwtConfig implements WebMvcConfigurer {
 
     private final JwtInterceptor jwtInterceptor;
     private final LoginUserArgumentResolver loginUserArgumentResolver;
-    private final IsAdminArgumentResolver isAdminArgumentResolver;
 
     /**
      * Interceptor 등록
@@ -34,6 +32,5 @@ public class JwtConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(loginUserArgumentResolver);
-        resolvers.add(isAdminArgumentResolver);
     }
 }

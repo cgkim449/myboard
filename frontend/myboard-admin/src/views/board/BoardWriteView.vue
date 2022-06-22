@@ -15,41 +15,6 @@
               ref="form"
           >
             <v-container fluid>
-
-              <template v-if="!$store.getters.loggedIn">
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                        v-model="form.guestNickname"
-                        :rules="rules.guestNickname"
-                        required
-                        label="닉네임"
-                        color="purple darken-2"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                        v-model="form.guestPassword"
-                        :rules="rules.guestPassword"
-                        required
-                        type="password"
-                        label="비밀번호"
-                        color="purple darken-2"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                        v-model="form.guestPasswordConfirm"
-                        :rules="rules.guestPasswordConfirm"
-                        required
-                        type="password"
-                        label="비밀번호 확인"
-                        color="blue darken-2"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </template>
-
               <v-row>
                 <v-col
                     cols="2"
@@ -77,6 +42,7 @@
 
                 <v-col cols="12">
                   <v-textarea
+                      outlined
                       v-model="form.content"
                       :rules="rules.content"
                       label="내용"
@@ -151,7 +117,7 @@
                     cols="auto"
                 >
                   <v-btn
-                      color="primary"
+                      color="secondary"
                       @click="writeBoard"
                   >
                     저장
@@ -191,9 +157,6 @@ export default {
       form: Object.assign({}, defaultForm),
 
       rules: {
-        guestNickname: [value => this.$_ItemFormValidator.validateGuestNickname(value),],
-        guestPassword: [value => this.$_ItemFormValidator.validateGuestPassword(value),],
-        guestPasswordConfirm: [value => this.$_ItemFormValidator.validateGuestPasswordConfirm(value, this.form.guestPassword),],
         categoryId: [value => this.$_ItemFormValidator.validateCategoryId(value),],
         title: [value => this.$_ItemFormValidator.validateTitle(value),],
         content: [value => this.$_ItemFormValidator.validateContent(value),],

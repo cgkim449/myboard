@@ -1,5 +1,6 @@
 package com.cgkim.myboard.service.impl;
 
+import com.cgkim.myboard.dao.AnswerAttachDao;
 import com.cgkim.myboard.dao.AnswerDao;
 import com.cgkim.myboard.dao.MemberDao;
 import com.cgkim.myboard.dao.QuestionAttachDao;
@@ -8,9 +9,11 @@ import com.cgkim.myboard.exception.BoardInsertFailedException;
 import com.cgkim.myboard.exception.BoardNotFoundException;
 import com.cgkim.myboard.exception.LoginRequiredException;
 import com.cgkim.myboard.exception.NoAuthorizationException;
+import com.cgkim.myboard.exception.QuestionInsertFailedException;
 import com.cgkim.myboard.exception.QuestionNotFoundException;
 import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.service.QuestionService;
+import com.cgkim.myboard.vo.answer.AnswerDetailResponse;
 import com.cgkim.myboard.vo.answer.AnswerVo;
 import com.cgkim.myboard.vo.attach.AttachVo;
 import com.cgkim.myboard.vo.board.BoardListResponse;
@@ -36,7 +39,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final AnswerDao answerDao;
     private final MemberDao memberDao;
     private final QuestionAttachDao questionAttachDao;
-
+    private final AnswerAttachDao answerAttachDao;
     @Value("${host.url}")
     private String hostUrl;
 
@@ -83,8 +86,8 @@ public class QuestionServiceImpl implements QuestionService {
             }
 
             return id; //등록한 게시물 번호 리턴
-        } catch (Exception e) { //게시물 등록 실패시 생성했던 파일 삭제하기 위해 TODO: question
-            throw new BoardInsertFailedException(attachInsertList, ErrorCode.BOARD_INSERT_FAILED);
+        } catch (Exception e) { //게시물 등록 실패시 생성했던 파일 삭제하기 위해
+            throw new QuestionInsertFailedException(attachInsertList, ErrorCode.QUESTION_INSERT_FAILED);
         }
     }
 
@@ -99,9 +102,9 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         //TODO: 리팩토링
-        List<AttachVo> attachVoList = questionAttachDao.selectList(id);
+        List<AttachVo> questionAttachList = questionAttachDao.selectList(id);
 
-        for (AttachVo attachVo : attachVoList) {
+        for (AttachVo attachVo : questionAttachList) {
             if (attachVo.isImage()) {
                 attachVo.setThumbnailUri(
                         hostUrl
@@ -125,10 +128,41 @@ public class QuestionServiceImpl implements QuestionService {
                                 + attachVo.getExtension());
             }
         }
-        questionDetailResponse.setAttachList(attachVoList); //첨부파일 리스트
+        questionDetailResponse.setAttachList(questionAttachList); //첨부파일 리스트
 
-        AnswerVo answerVo = answerDao.selectByQuestionId(id);
-        questionDetailResponse.setAnswer(answerVo);
+        AnswerDetailResponse answerDetailResponse = answerDao.selectByQuestionId(id);
+
+        if(answerDetailResponse != null) { //답변이 있으면
+            List<AttachVo> answerAttachList = answerAttachDao.selectList(answerDetailResponse.getAnswerId());
+            for (AttachVo attachVo : answerAttachList) {
+                if (attachVo.isImage()) {
+                    attachVo.setThumbnailUri(
+                            hostUrl
+                                    + "upload"
+                                    + File.separator
+                                    + attachVo.getUploadPath()
+                                    + File.separator
+                                    + attachVo.getUuid()
+                                    + "_thumbnail"
+                                    + "."
+                                    + attachVo.getExtension());
+
+                    attachVo.setOriginalImageUri(
+                            hostUrl
+                                    + "upload"
+                                    + File.separator
+                                    + attachVo.getUploadPath()
+                                    + File.separator
+                                    + attachVo.getUuid()
+                                    + "."
+                                    + attachVo.getExtension());
+                }
+            }
+            answerDetailResponse.setAttachList(answerAttachList);
+
+            questionDetailResponse.setAnswer(answerDetailResponse);
+        }
+
         return questionDetailResponse;
     }
 

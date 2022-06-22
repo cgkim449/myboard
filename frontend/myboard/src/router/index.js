@@ -96,7 +96,7 @@ const routes = [
         component: LoginView,
       },
       {
-        path: "/signUp",
+        path: "/signup",
         name: "SignUpView",
         component: SignUpView,
       },

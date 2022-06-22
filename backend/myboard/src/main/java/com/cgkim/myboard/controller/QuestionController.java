@@ -4,6 +4,7 @@ import com.cgkim.myboard.argumentresolver.LoginUser;
 import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.exception.LoginRequiredException;
 import com.cgkim.myboard.response.SuccessResponse;
+import com.cgkim.myboard.service.AnswerService;
 import com.cgkim.myboard.service.QuestionService;
 import com.cgkim.myboard.service.impl.QuestionAttachServiceImpl;
 import com.cgkim.myboard.util.FileHandler;
@@ -48,6 +49,7 @@ import java.util.List;
 public class QuestionController {
     private final QuestionService questionService;
     private final QuestionAttachServiceImpl attachService;
+    private final AnswerService answerService;
     private final FileHandler fileHandler;
     private final QuestionSaveRequestValidator questionSaveRequestValidator;
     private final QuestionUpdateRequestValidator questionUpdateRequestValidator;
@@ -97,7 +99,7 @@ public class QuestionController {
     }
 
     /**
-     * 질문 목록
+     * 질문 목록 조회
      */
     //TODO: 비공개 글 검색 안되게
     @GetMapping

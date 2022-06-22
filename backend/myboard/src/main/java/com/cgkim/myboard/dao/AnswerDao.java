@@ -16,7 +16,7 @@ import java.util.Map;
 @Repository
 public interface AnswerDao {
 
-    AnswerVo selectByQuestionId(Long id);
+    AnswerDetailResponse selectByQuestionId(Long id);
 
     void insert(AnswerVo answerVo);
 

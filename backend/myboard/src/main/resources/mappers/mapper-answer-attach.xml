@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cgkim.myboard.dao.AnswerAttachDao">
+    <select id="selectList" resultType="attachVo" parameterType="long">
+        select attach_id,
+               answer_id,
+               upload_path,
+               uuid,
+               name,
+               extension,
+               is_image,
+               size
+        from tbl_answer_attach
+        where answer_id = #{answerId};
+    </select>
+
+    <select id="selectOne" resultType="attachVo" parameterType="long">
+        select attach_id,
+               answer_id,
+               upload_path,
+               uuid,
+               name,
+               extension,
+               is_image,
+               size,
+               register_date,
+               update_date
+        from tbl_answer_attach
+        where attach_id = #{attachId};
+    </select>
+
+    <select id="selectCountByAnswerId" resultType="int" parameterType="long">
+        select count(*)
+        from tbl_answer_attach
+        where answer_id = #{answerId};
+    </select>
+
+    <insert id="insert" parameterType="attachVo">
+        insert
+        into tbl_answer_attach (answer_id, upload_path, uuid, name, extension, is_image, size)
+        values (#{answerId}, #{uploadPath}, #{uuid}, #{name}, #{extension}, #{isImage}, #{size});
+    </insert>
+
+    <delete id="deleteByAnswerId" parameterType="long" >
+        delete
+        from tbl_answer_attach
+        where answer_id = #{answerId}
+    </delete>
+
+    <delete id="delete" parameterType="long">
+        delete
+        from tbl_answer_attach
+        where attach_id = #{attachId}
+    </delete>
+</mapper>

@@ -5,19 +5,11 @@
   >
     <v-card>
       <v-card-title class="text-h5">
-        공지사항
+        {{ fetchedNoticeDetail.title }}
       </v-card-title>
 
-      <v-img
-          src="http://localhost:8080/upload/2022/06/e24a95e4-f763-4a4e-8d38-41590f13adb4.png"
-      >
-
-      </v-img>
-
       <v-card-text>
-
         {{ fetchedNoticeDetail.content }}
-
       </v-card-text>
 
       <v-card-actions>

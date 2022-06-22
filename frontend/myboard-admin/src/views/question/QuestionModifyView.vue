@@ -76,6 +76,7 @@
 
                 <v-col cols="12">
                   <v-textarea
+                      outlined
                       v-model="form.content"
                       :rules="rules.content"
                       color="teal"
@@ -85,7 +86,7 @@
                 </v-col>
               </v-row>
 
-              <v-row>
+              <v-row v-if="!(questionDetail.attachList.length === 0 && form.multipartFiles.length === 0)">
                 <v-card-text>
                   <v-row>
                     <v-col>
@@ -114,11 +115,14 @@
 
 
               <v-row v-if="questionDetail.attachList.length + form.multipartFiles.length < 3">
-                <v-file-input
-                    v-on:change="addNewAttach" v-bind:key="fileInputKey"
-                    show-size
-                    label="첨부파일"
-                ></v-file-input>
+                <v-col>
+                  <v-file-input
+                      outlined
+                      v-on:change="addNewAttach" v-bind:key="fileInputKey"
+                      show-size
+                      label="첨부파일"
+                  ></v-file-input>
+                </v-col>
               </v-row>
 
 
@@ -127,7 +131,7 @@
                     cols="auto"
                 >
                   <v-btn
-                      @click="moveToQuestionDetail"
+                      @click="moveToQuestionDetail(questionDetail.questionId)"
                       outlined
                       text
                   >
@@ -253,10 +257,7 @@ export default {
 
     moveToQuestionDetail(questionId) {
       this.$router.push({
-        name: "QuestionDetailView",
-        params: {
-          questionId: questionId
-        },
+        path: `/admin/questions/${questionId}`,
         query: this.$route.query
       }).catch(() => {
       });

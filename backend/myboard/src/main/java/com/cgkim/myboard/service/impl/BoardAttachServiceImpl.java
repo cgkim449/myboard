@@ -12,14 +12,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class BoardAttachServiceImpl implements AttachService {
-    private final BoardAttachDao boardAttachDao;
+    private final BoardAttachDao attachDao;
 
     /**
      * 특정 게시물의 첨부파일 리스트
      */
     @Override
     public List<AttachVo> getList(Long boardId) {
-        return boardAttachDao.selectList(boardId);
+        return attachDao.selectList(boardId);
     }
 
     /**
@@ -27,7 +27,7 @@ public class BoardAttachServiceImpl implements AttachService {
      */
     @Override
     public AttachVo get(Long attachId) {
-        return boardAttachDao.selectOne(attachId);
+        return attachDao.selectOne(attachId);
     }
 
     /**
@@ -42,7 +42,7 @@ public class BoardAttachServiceImpl implements AttachService {
         List<AttachVo> attachVoList = new ArrayList<>();
 
         for (long attachId : attachIdArray) {
-            attachVoList.add(boardAttachDao.selectOne(attachId));
+            attachVoList.add(attachDao.selectOne(attachId));
         }
 
         return attachVoList;

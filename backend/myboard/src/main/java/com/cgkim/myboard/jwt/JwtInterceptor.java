@@ -33,10 +33,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             DecodedJWT jwt = jwtProvider.validate(token);
 
             String username = jwt.getClaim("username").asString();
-            boolean isAdmin = jwt.getClaim("isAdmin").asBoolean();
-
             request.setAttribute("username", username);
-            request.setAttribute("isAdmin", isAdmin);
         }
         return true;
     }

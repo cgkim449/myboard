@@ -53,7 +53,6 @@
 
             <template v-slot:item.title="{item}">
 
-<!--              1. 공개글이면 다보임-->
               <template v-if="isPublicQuestion(item)">
                 <span
                     @click="moveToQuestionDetail(item.questionId)"
@@ -64,9 +63,7 @@
                 </span>
               </template>
 
-<!--              TODO: computed로 -->
-<!--              2. 비밀글이고, 내가 쓴 글이면 보임-->
-              <template v-else-if="isMySecretQuestion(item)">
+              <template v-else-if="isSecretQuestion(item)">
                 <span
                     @click="moveToQuestionDetail(item.questionId)"
                     v-bind:style="{cursor: 'pointer'}"
@@ -76,27 +73,16 @@
                   {{item.title | formatBoardTitle}} <v-icon small>mdi-lock</v-icon>
                 </span>
               </template>
-
-<!--              3. 비밀글이고, 내가 쓴 글이 아니면 안보임-->
-              <template v-else>
-                <span
-                    v-if="isOthersSecretQuestion(item)"
-                    class="d-flex start"
-                >
-                  비공개 글 입니다. <v-icon small>mdi-lock</v-icon>
-                </span>
-              </template>
-
             </template>
 
             <template v-slot:item.memberNickname="{item}">
 <!--              TODO: 이름바꾸기-->
               <span v-if="item.memberNickname !== null">
-                {{ item.memberNickname | formatQuestionNickname }}
+                {{ item.memberNickname}}
               </span>
 
               <span v-if="item.adminNickname !== null">
-                {{ item.adminNickname | formatQuestionNickname }}
+                {{ item.adminNickname}}
               </span>
 
             </template>
@@ -136,26 +122,6 @@
                 >
                   <v-card outlined>
                     <v-img
-                        v-if="isMySecretQuestion(question)"
-                        @click="moveToQuestionDetail(question.questionId)"
-                        v-bind:style="{cursor: 'pointer'}"
-                        :src="question.thumbnailUri"
-                        class="white--text align-end"
-                        gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-                        height="200px"
-                    >
-                    </v-img>
-
-                    <v-img
-                        v-if="isOthersSecretQuestion(question)"
-                        class="white--text align-end"
-                        gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-                        height="200px"
-                    >
-                    </v-img>
-
-                    <v-img
-                        v-if="isPublicQuestion(question)"
                         @click="moveToQuestionDetail(question.questionId)"
                         v-bind:style="{cursor: 'pointer'}"
                         :src="question.thumbnailUri"
@@ -167,20 +133,18 @@
 
                     <v-card-actions>
                       <v-col cols="auto">
-                        <small class="font-weight-bold" v-if="isMySecretQuestion(question)">
+                        <small class="font-weight-bold" v-if="isSecretQuestion(question)">
                           [{{question.categoryName}}] {{question.title | formatBoardTitle}} <v-icon small>mdi-lock</v-icon>
                         </small>
 
-                        <small class="font-weight-bold" v-if="isOthersSecretQuestion(question)">
-                          [{{question.categoryName}}] 비공개 글 입니다. <v-icon small>mdi-lock</v-icon>
+                        <small class="font-weight-bold" v-if="isPublicQuestion(question)">
+                          [{{question.categoryName}}] {{ question.title }}
                         </small>
-
-                        <small class="font-weight-bold" v-if="isPublicQuestion(question)">[{{question.categoryName}}] {{ question.title }}</small>
 
                         <br>
 
-                        <small class="font-weight-bold" v-if="question.adminNickname !== null">{{question.adminNickname | formatQuestionNickname }}</small>
-                        <small class="font-weight-bold" v-if="question.memberNickname !== null">{{question.memberNickname | formatQuestionNickname }}</small><br>
+                        <small class="font-weight-bold" v-if="question.adminNickname !== null">{{question.adminNickname}}</small>
+                        <small class="font-weight-bold" v-if="question.memberNickname !== null">{{question.memberNickname}}</small><br>
 
                         <small>조회수: {{question.viewCount}}</small><br>
                         <small>{{question.registerDate | formatDate}}</small><br>
@@ -272,11 +236,8 @@ export default {
 
   },
   methods: {
-    isOthersSecretQuestion(question) {
-      return question.isSecret === 1 && question.memberNickname !== this.$store.state.nickname;
-    },
-    isMySecretQuestion(question) {
-      return question.isSecret === 1 && question.memberNickname === this.$store.state.nickname && this.$store.getters.loggedIn;
+    isSecretQuestion(question) {
+      return question.isSecret === 1;
     },
     isPublicQuestion(question) {
       return question.isSecret === 0;
@@ -289,7 +250,7 @@ export default {
     },
     moveToQuestionDetail(questionId) {
       this.$router.push({
-        path: `/questions/${questionId}`,
+        path: `/admin/questions/${questionId}`,
         query: this.$route.query
       }).catch(()=>{});
     },

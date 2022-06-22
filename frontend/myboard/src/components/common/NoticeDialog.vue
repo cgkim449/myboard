@@ -4,41 +4,39 @@
       width="600px"
   >
     <v-card>
-      <v-card-title class="text-h5">
-        공지사항
-      </v-card-title>
+      <v-container>
+        <v-card-title class="text-h5">
+          {{ fetchedNoticeDetail.title }}
+        </v-card-title>
 
-      <v-img
-          src="http://localhost:8080/upload/2022/06/e24a95e4-f763-4a4e-8d38-41590f13adb4.png"
-      >
 
-      </v-img>
+        <v-card-text>
+          {{ fetchedNoticeDetail.content }}
+        </v-card-text>
 
-      <v-card-text>
+        <a href="https://source.unsplash.com/user/c_v_r/100x100" >asdfafd</a>
+        <v-img src=""></v-img>
 
-        {{ fetchedNoticeDetail.content }}
+        <v-card-actions>
+          <v-btn
+              color="green darken-1"
+              text
+              @click="blockNoticeDialog"
+          >
+            하루동안 안보기
+          </v-btn>
 
-      </v-card-text>
+          <v-spacer></v-spacer>
 
-      <v-card-actions>
-        <v-btn
-            color="green darken-1"
-            text
-            @click="blockNoticeDialog"
-        >
-          하루동안 안보기
-        </v-btn>
-
-        <v-spacer></v-spacer>
-
-        <v-btn
-            color="green darken-1"
-            text
-            @click="closeNoticeDialog"
-        >
-          닫기
-        </v-btn>
-      </v-card-actions>
+          <v-btn
+              color="green darken-1"
+              text
+              @click="closeNoticeDialog"
+          >
+            닫기
+          </v-btn>
+        </v-card-actions>
+      </v-container>
     </v-card>
   </v-dialog>
 </template>

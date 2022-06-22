@@ -31,23 +31,24 @@
       <v-col
           cols="auto"
       >
-        <router-link v-bind:to="{
-                    name: 'QuestionWriteView',
-                    query: $route.query
-                  }">
-          <v-btn
-              color="primary"
-          >
-            질문하기
+        <v-btn
+            @click="moveToQuestionWrite"
+            color="secondary"
+        >
+          질문하기
 
-          </v-btn>
-        </router-link>
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col>
+
       </v-col>
     </v-row>
   </v-container>
 </template>
 
-<!--TODO: 자유게시판이랑 걍 똑같음. 근데 qna는 비밀글 등 더 추가할게 있는듯.-->
 <script>
 import PageTitle from "@/components/common/PageTitle";
 import SearchForm from "@/components/common/SearchForm";
@@ -170,6 +171,13 @@ export default {
           ...searchCondition
         }
       }).catch(()=>{});
+    },
+
+    moveToQuestionWrite() {
+      this.$router.push({
+        name: "QuestionWriteView"
+        , query: this.$route.query
+      });
     },
   },
 };

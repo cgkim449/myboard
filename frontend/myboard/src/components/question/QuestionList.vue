@@ -114,7 +114,7 @@
                 대기
               </span>
 
-              <span v-if="item.answerId !== null" class="blue--text">
+              <span v-if="item.answerId !== null" class="primary--text">
                 처리완료
               </span>
             </template>
@@ -184,7 +184,7 @@
 
                         <small>조회수: {{question.viewCount}}</small><br>
                         <small>{{question.registerDate | formatDate}}</small><br>
-                        <small class="font-weight-bold blue--text" v-if="question.answerId !== null">처리완료</small>
+                        <small class="font-weight-bold primary--text" v-if="question.answerId !== null">처리완료</small>
                         <small class="font-weight-bold" v-if="question.answerId === null">대기</small>
                       </v-col>
                     </v-card-actions>
@@ -273,7 +273,7 @@ export default {
   },
   methods: {
     isOthersSecretQuestion(question) {
-      return question.isSecret === 1 && question.memberNickname !== this.$store.state.nickname;
+      return question.isSecret === 1 && (question.memberNickname !== this.$store.state.nickname || !this.$store.getters.loggedIn);
     },
     isMySecretQuestion(question) {
       return question.isSecret === 1 && question.memberNickname === this.$store.state.nickname && this.$store.getters.loggedIn;

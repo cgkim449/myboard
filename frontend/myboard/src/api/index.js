@@ -25,6 +25,7 @@ export const commentsInstance = createInstanceWithToken("comments");
 export const questionsInstance = createInstanceWithToken("questions");
 export const questionAttachesInstance = createInstanceWithToken("question-attaches");
 export const answersInstance = createInstanceWithToken("answers");
+export const answerAttachesInstance = createInstanceWithToken("answer-attaches");
 
 export const faqsInstance = createInstanceWithToken("faqs");
 
