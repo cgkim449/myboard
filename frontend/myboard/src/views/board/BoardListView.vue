@@ -35,16 +35,18 @@
       <v-col
           cols="auto"
       >
-        <router-link v-bind:to="{
-                    name: 'BoardWriteView',
-                    query: $route.query
-                  }">
-          <v-btn
-              color="primary"
-          >
-            글쓰기
-          </v-btn>
-        </router-link>
+        <v-btn
+            color="secondary"
+            @click="moveToBoardWrite"
+        >
+          글쓰기
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col>
+
       </v-col>
     </v-row>
 
@@ -175,6 +177,13 @@ export default {
     movePage(page) {
       this.searchCondition.page = page;
       this.updateQueryParameter(this.listView, this.searchCondition);
+    },
+
+    moveToBoardWrite() {
+      this.$router.push({
+        name: "BoardWriteView",
+        query: this.$route.query,
+      });
     },
 
     updateQueryParameter(listView, searchCondition) {

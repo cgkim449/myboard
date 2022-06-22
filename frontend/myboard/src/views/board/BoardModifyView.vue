@@ -18,7 +18,7 @@
             <v-container fluid>
 
               <!--          TODO: computed 로 분리-->
-              <template v-if="!($store.state.username === boardDetail.memberUsername)">
+              <template v-if="boardDetail.guestNickname !== null">
                 <v-row>
                   <v-col>
                     <v-text-field
@@ -45,7 +45,7 @@
 
               <v-row>
                 <v-col
-                    cols="2"
+                    cols="3"
                 >
                   <v-select
                       disabled
@@ -60,7 +60,7 @@
                 </v-col>
 
                 <v-col
-                    cols="10"
+                    cols="9"
                 >
                   <v-text-field
                       label="제목"
@@ -71,6 +71,7 @@
 
                 <v-col cols="12">
                   <v-textarea
+                      outlined
                       v-model="form.content"
                       :rules="rules.content"
                       color="teal"
@@ -80,7 +81,7 @@
                 </v-col>
               </v-row>
 
-              <v-row>
+              <v-row v-if="!(boardDetail.attachList.length === 0 && form.multipartFiles.length === 0)">
                 <v-card-text>
                   <v-row>
                     <v-col>
@@ -109,11 +110,14 @@
 
 
               <v-row v-if="boardDetail.attachList.length + form.multipartFiles.length < 3">
-                <v-file-input
-                    v-on:change="addNewAttach" v-bind:key="fileInputKey"
-                    show-size
-                    label="첨부파일"
-                ></v-file-input>
+                <v-col>
+                  <v-file-input
+                      v-on:change="addNewAttach" v-bind:key="fileInputKey"
+                      show-size
+                      outlined
+                      label="첨부파일"
+                  ></v-file-input>
+                </v-col>
               </v-row>
 
 
@@ -122,7 +126,7 @@
                     cols="auto"
                 >
                   <v-btn
-                      @click="moveToBoardDetail"
+                      @click="moveToBoardDetail(boardDetail.boardId)"
                       outlined
                       text
                   >

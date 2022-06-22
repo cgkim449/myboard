@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cgkim.myboardadmin.dao.AdminDao">
+    <select id="selectByUsername" resultType="adminVo">
+        select admin_id,
+               username,
+               password,
+               nickname,
+               register_date,
+               update_date
+        from tbl_admin
+        where username = #{username}
+    </select>
+
+    <select id="selectAdminIdByUsername" resultType="java.lang.Long">
+        select admin_id
+        from tbl_admin
+        where username = #{username}
+    </select>
+</mapper>

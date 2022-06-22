@@ -8,7 +8,6 @@
         >
           <v-form
               ref="form"
-              @submit.prevent="submit"
           >
             <v-card-text class="text-center px-12 py-16">
               <div class="text-h4 font-weight-black mb-10">
@@ -18,19 +17,17 @@
                   v-model="username"
                   :rules="rules.username"
                   label="이메일"
-                  clearable
                   prepend-icon="mdi-email"
               ></v-text-field>
               <v-text-field
                   v-model="password"
-                  :append-icon="showPasswordText ? 'mdi-eye' : 'mdi-eye-off'"
+                  :rules="rules.password"
                   :type="showPasswordText ? 'text' : 'password'"
                   @click:append="showPasswordText = !showPasswordText"
-                  :rules="rules.password"
-                  label="비밀번호"
-                  clearable
-                  prepend-icon="mdi-lock-outline"
+                  :append-icon="showPasswordText ? 'mdi-eye' : 'mdi-eye-off'"
                   v-on:keyup.enter="login"
+                  label="비밀번호"
+                  prepend-icon="mdi-lock-outline"
               ></v-text-field>
               <v-btn
                   @click="login"
@@ -49,57 +46,54 @@
 
 <script>
 export default {
-  name: "LoginView",
+  name: "LoginPage",
   data() {
-    const defaultForm = Object.freeze({
-      username: "",
-      password: "",
-    })
     return {
-      toPath: "",
-      prevRoute: null,
       showPasswordText: false,
+
+      toPath: "",
+
       username: "",
       password: "",
+
       rules: {
         username: [val => (val || '').length > 0 || '이메일을 입력해주세요.'],
         password: [val => (val || '').length > 0 || '비밀번호를 입력해주세요.'],
       },
-      defaultForm,
     }
   },
   created() {
     this.username = this.$route.query.username;
-    this.toPath = this.$route.query.toPath
+    this.toPath = this.$route.query.toPath;
+
+    if(this.toPath === undefined) {
+      this.toPath = "/boards";
+    }
   },
   methods: {
-    validateForm() {
-      return this.$refs.form.validate()
-    },
-    resetForm() {
-      this.form = Object.assign({}, this.defaultForm)
-      this.$refs.form.reset()
-    },
-    submit() {
-      this.resetForm()
-    },
     async login() {
       if (this.validateForm()) {
-        const user = {
+
+        const member = {
           username: this.username,
           password: this.password,
         };
+
         try {
-          const { data } = await this.$store.dispatch("LOGIN", user);
+          await this.$store.dispatch("LOGIN", member);
 
           await this.$router.push({
-            path: this.toPath
-            , query: this.searchCondition
+            path: this.toPath,
+            query: this.searchCondition
           });
+
         } catch (error) {
           alert(error.response.data.errorMessage)
         }
       }
+    },
+    validateForm() {
+      return this.$refs.form.validate()
     },
   }
 }

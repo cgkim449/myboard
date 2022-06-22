@@ -29,14 +29,13 @@ public class JwtProvider {
     /**
      * 토큰 생성
      */
-    public String createToken(String username, boolean isAdmin) {
+    public String createToken(String username) {
         Date now = new Date();
         Date expires = new Date(now.getTime() + maxAge);
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         return JWT.create()
                 .withClaim("username", username)
-                .withClaim("isAdmin", isAdmin)
                 .withIssuedAt(now)
                 .withExpiresAt(expires)
                 .sign(algorithm);

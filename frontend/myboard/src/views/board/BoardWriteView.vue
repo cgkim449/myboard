@@ -77,6 +77,7 @@
 
                 <v-col cols="12">
                   <v-textarea
+                      outlined
                       v-model="form.content"
                       :rules="rules.content"
                       label="내용"
@@ -126,16 +127,12 @@
                 <v-col
                     cols="auto"
                 >
-                  <router-link v-bind:to="{
-                    path: `/boards`,
-                    query: $route.query
-                  }">
-                    <v-btn
-                        outlined
-                    >
-                      취소
-                    </v-btn>
-                  </router-link>
+                  <v-btn
+                      @click="moveToBoardList"
+                      outlined
+                  >
+                    취소
+                  </v-btn>
                 </v-col>
 
                 <v-spacer></v-spacer>
@@ -155,7 +152,7 @@
                     cols="auto"
                 >
                   <v-btn
-                      color="primary"
+                      color="secondary"
                       @click="writeBoard"
                   >
                     저장

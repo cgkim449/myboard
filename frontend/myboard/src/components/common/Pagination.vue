@@ -6,6 +6,7 @@
       <div class="text-center">
         <v-pagination
             v-model="page"
+            color="secondary"
             @input="clickPageBtn"
             :length="paginationLength"
             :total-visible="10"

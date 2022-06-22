@@ -11,7 +11,6 @@
           {{attach.name}}.{{attach.extension}}
           <a :href="attach.originalImageUri">
             <v-img
-                :href="attach.originalImageUri"
                 v-bind:style="{cursor: 'pointer'}"
                 :src="attach.thumbnailUri"
                 class="white--text align-end"
@@ -20,12 +19,16 @@
             >
             </v-img>
           </a>
+
         </template>
 
         <template v-else>
           <span v-on:click="downloadAttach(attach.attachId)" v-bind:style="{cursor: 'pointer'}">
             <v-icon>mdi-attachment</v-icon>
+
             {{attach.name}}.{{attach.extension}}
+
+            <v-icon>mdi-download</v-icon>
           </span>
         </template>
       </p>
@@ -45,6 +48,9 @@ export default {
       } else if(this.attachOf === "question") {
 
         this.$_QuestionService.downloadAttach(attachId);
+      } else if(this.attachOf === "answer") {
+
+        this.$_AnswerService.downloadAttach(attachId);
       }
     },
   },

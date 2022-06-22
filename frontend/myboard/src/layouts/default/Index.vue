@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar
         app
-        color="primary"
+        color="secondary"
         dark
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
@@ -28,11 +28,9 @@
 
         <v-divider vertical></v-divider>
 
-        <router-link v-bind:to="{path: `/signUp`}">
-          <v-btn text>
-            회원가입
-          </v-btn>
-        </router-link>
+        <v-btn text @click="moveToSignUpPage">
+          회원가입
+        </v-btn>
 
         <v-divider vertical></v-divider>
       </template>
@@ -107,13 +105,19 @@ export default {
     logout() {
       this.$store.dispatch('LOGOUT');
 
-      this.$router.go();
-
       alert("로그아웃 되셨습니다.");
     },
     moveToLoginPage() {
       this.$router.push({
         path: '/login'
+        , query: {
+          toPath: this.$route.path
+        }
+      });
+    },
+    moveToSignUpPage() {
+      this.$router.push({
+        path: '/signup'
         , query: {
           toPath: this.$route.path
         }

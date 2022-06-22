@@ -31,12 +31,15 @@
       <v-col
           cols="auto"
       >
-        <router-link v-bind:to="{
-                    name: 'QuestionWriteView',
-                    query: $route.query
-                  }">
+        <router-link
+            style="text-decoration: none;"
+            :to="{
+              name: 'QuestionWriteView',
+              query: this.$route.query
+            }"
+        >
           <v-btn
-              color="primary"
+              color="secondary"
           >
             질문하기
 
@@ -44,10 +47,15 @@
         </router-link>
       </v-col>
     </v-row>
+
+    <v-row>
+      <v-col>
+
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
-<!--TODO: 자유게시판이랑 걍 똑같음. 근데 qna는 비밀글 등 더 추가할게 있는듯.-->
 <script>
 import PageTitle from "@/components/common/PageTitle";
 import SearchForm from "@/components/common/SearchForm";

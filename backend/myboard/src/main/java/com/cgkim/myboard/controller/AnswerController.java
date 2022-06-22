@@ -26,19 +26,6 @@ import java.net.URI;
 public class AnswerController {
 
     private final AnswerService answerService;
-    private final AdminService adminService;
-
-    //TODO: 관리자 프로젝트로 이동
-    @PostMapping
-    public ResponseEntity<SuccessResponse> write(@LoginUser String username,
-                                                 @Valid AnswerSaveRequest answerSaveRequest
-    ) {
-
-        Long adminId = adminService.getAdminId(username);
-        Long answerId = answerService.write(adminId, answerSaveRequest);
-
-        return ResponseEntity.created(URI.create("/answers/" + answerId)).body(new SuccessResponse());
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<SuccessResponse> getDetail(@PathVariable Long id) {

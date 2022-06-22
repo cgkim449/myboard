@@ -33,6 +33,7 @@
           ></v-text-field>
         </template>
         <v-date-picker
+            color="secondary"
             v-model="searchCondition.fromDate"
             @input="showFromDatePicker = false"
         ></v-date-picker>
@@ -51,6 +52,7 @@
         cols="2"
     >
       <v-menu
+
           v-model="showToDatePicker"
           :close-on-content-click="false"
           :nudge-right="40"
@@ -71,6 +73,7 @@
           ></v-text-field>
         </template>
         <v-date-picker
+            color="secondary"
             v-model="searchCondition.toDate"
             @input="showToDatePicker = false"
         ></v-date-picker>
@@ -106,9 +109,8 @@
         cols="auto"
     >
       <v-btn
-          normal
-          class="mt-1"
-          color="primary"
+          height="40"
+          color="secondary"
           v-on:click="searchBtnClick"
       >
         검색

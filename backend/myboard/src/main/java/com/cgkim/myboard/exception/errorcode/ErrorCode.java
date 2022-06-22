@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
  */
 @Getter
 @RequiredArgsConstructor
-public enum ErrorCode { //TODO: properties 로 분리
+public enum ErrorCode { //TODO: 메시지를 properties 로 분리
 
     //Common
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "C001", "유효하지 않은 값입니다."),
@@ -35,7 +35,8 @@ public enum ErrorCode { //TODO: properties 로 분리
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "B002", "존재하지 않는 게시글입니다."),
 
     //Question
-    QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "B002", "존재하지 않는 게시글입니다."),
+    QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Q001", "존재하지 않는 게시글입니다."),
+    QUESTION_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Q002", "답변 작성에 실패했습니다."),
 
     //File
     ATTACH_NOT_FOUND(HttpStatus.NOT_FOUND, "F001", "해당 첨부파일이 없습니다."),

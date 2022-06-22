@@ -127,7 +127,7 @@
                     cols="auto"
                 >
                   <v-btn
-                      @click="moveToQuestionDetail"
+                      @click="moveToQuestionDetail(questionDetail.questionId)"
                       outlined
                       text
                   >

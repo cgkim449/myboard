@@ -12,14 +12,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class QuestionAttachServiceImpl implements AttachService {
-    private final QuestionAttachDao questionAttachDao;
+    private final QuestionAttachDao attachDao;
 
     /**
      * 특정 질문의 첨부파일 리스트
      */
     @Override
     public List<AttachVo> getList(Long questionId) {
-        return questionAttachDao.selectList(questionId);
+        return attachDao.selectList(questionId);
     }
 
     /**
@@ -27,7 +27,7 @@ public class QuestionAttachServiceImpl implements AttachService {
      */
     @Override
     public AttachVo get(Long attachId) {
-        return questionAttachDao.selectOne(attachId);
+        return attachDao.selectOne(attachId);
     }
 
     /**
@@ -42,7 +42,7 @@ public class QuestionAttachServiceImpl implements AttachService {
         List<AttachVo> attachVoList = new ArrayList<>();
 
         for (long attachId : attachIdArray) {
-            attachVoList.add(questionAttachDao.selectOne(attachId));
+            attachVoList.add(attachDao.selectOne(attachId));
         }
 
         return attachVoList;

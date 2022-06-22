@@ -34,7 +34,7 @@
                   class="mt-6"
                   block
                   x-large
-                  color="primary"
+                  color="secondary"
               >로그인</v-btn>
             </v-card-text>
           </v-form>

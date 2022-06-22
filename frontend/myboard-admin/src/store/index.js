@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate';
 import Cookies from "js-cookie";
-import {login} from "@/api/auth";
+import {adminLogin} from "@/api/auth";
 
 Vue.use(Vuex)
 
@@ -39,7 +39,7 @@ export default new Vuex.Store({
   },
   actions: {
     async LOGIN({ commit }, user) {
-      const { data } = await login(user);
+      const { data } = await adminLogin(user);
       commit("setToken", data.token);
       commit("setUsername", data.username);
       commit("setNickname", data.nickname);
@@ -59,7 +59,6 @@ export default new Vuex.Store({
         getItem: (key) => Cookies.get(key),
         setItem: (key, value) => Cookies.set(key, value),
         removeItem: (key) => Cookies.remove(key),
-        //TODO: 로그아웃시 쿠키 삭제
       }
     })
   ],

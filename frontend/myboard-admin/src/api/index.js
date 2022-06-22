@@ -18,6 +18,17 @@ function createInstanceWithoutToken() {
 
 export const instanceWithoutToken = createInstanceWithoutToken()
 
+export const adminInstance = createInstanceWithToken("admin");
+
 export const boardsInstance = createInstanceWithToken("boards");
+export const boardAttachesInstance = createInstanceWithToken("attaches");
 export const commentsInstance = createInstanceWithToken("comments");
-export const attachesInstance = createInstanceWithToken("attaches");
+
+export const questionsInstance = createInstanceWithToken("questions");
+export const questionAttachesInstance = createInstanceWithToken("question-attaches");
+export const answersInstance = createInstanceWithToken("answers");
+export const answerAttachesInstance = createInstanceWithToken("answer-attaches");
+
+export const faqsInstance = createInstanceWithToken("faqs");
+
+export const noticesInstance = createInstanceWithToken("notices");

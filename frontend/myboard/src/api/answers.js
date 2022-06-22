@@ -6,15 +6,7 @@ const getAnswerDetail = (id) => {
     );
 };
 
-const createAnswer = (formData) => {
-    return answersInstance.post(
-        "/",
-        formData,
-        {headers:{"Content-Type" : "multipart/form-data"}}
-    )
-}
 
 export {
-    getAnswerDetail,
-    createAnswer
+    getAnswerDetail
 }
