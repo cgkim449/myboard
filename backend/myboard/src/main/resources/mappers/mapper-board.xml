@@ -1,18 +1,153 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+<!--TODO: sql 컨벤션 수정-->
 <mapper namespace="com.cgkim.myboard.dao.BoardDao">
 
-    <select id="selectList" resultType="boardVo">
-        select board_id
-             , category_id
-             , board_title
-             , board_content
-             , board_writer
-             , board_view_count
-             , board_password
-             , board_register_date
-             , board_update_date
-          from board;
+    <select id="selectList" resultType="boardListResponse" parameterType="boardSearchRequest">
+        select b.board_id,
+               b.category_id,
+               b.title,
+               b.content,
+               b.view_count,
+               b.has_attach,
+               b.thumbnail_uri,
+               b.register_date,
+               b.update_date,
+               b.guest_nickname,
+               b.guest_password,
+               ct.name category_name,
+               m.nickname member_nickname,
+               a.nickname admin_nickname
+        from tbl_board as b
+            join tbl_category ct
+                on b.category_id = ct.category_id
+            left join tbl_member m
+                on b.member_id = m.member_id
+            left join tbl_admin a
+                on b.admin_id = a.admin_id
+        <include refid="boardSearchCondition"/>
+        order by b.register_date desc, b.board_id desc
+        limit #{offset}, #{limit}
     </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="boardSearchRequest">
+        select count(*)
+        from tbl_board as b
+            left join tbl_member m
+                on b.member_id = m.member_id
+            left join tbl_admin a
+                on b.admin_id = a.admin_id
+        <include refid="boardSearchCondition"/>
+    </select>
+
+
+    <sql id="boardSearchCondition">
+        <where>
+            <if test="fromDate != null">
+                b.register_date <![CDATA[>=]]> #{fromDate}
+            </if>
+            <if test="toDate != null">
+                and b.register_date <![CDATA[<=]]> #{toDate}
+            </if>
+            <if test = "categoryId != 0 and categoryId != null">
+                and b.category_id = #{categoryId}
+            </if>
+            <if test = "keyword != null">
+                and (
+                     b.title like concat('%',#{keyword},'%')
+                     or b.content like concat('%',#{keyword},'%')
+                     or b.guest_nickname like concat('%',#{keyword},'%')
+                     or a.nickname like concat('%',#{keyword},'%')
+                     or m.nickname like concat('%',#{keyword},'%')
+                    )
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectOne" resultType="boardDetailResponse" parameterType="long">
+        select b.board_id,
+               b.category_id,
+               b.title,
+               b.content,
+               b.view_count,
+               b.has_attach,
+               b.register_date,
+               b.update_date,
+               b.guest_nickname,
+               b.guest_password,
+               ct.name category_name,
+               m.username member_username,
+               m.nickname member_nickname,
+               a.nickname admin_nickname,
+               a.username admin_username
+        from tbl_board as b
+                 join tbl_category ct
+                      on b.category_id = ct.category_id
+                 left join tbl_member m
+                           on b.member_id = m.member_id
+                 left join tbl_admin a
+                           on b.admin_id = a.admin_id
+        where b.board_id = #{boardId}
+    </select>
+
+    <select id="selectOneByGuestPassword" resultType="long" parameterType="map">
+        select board_id
+        from tbl_board
+        where board_id = #{boardId} and guest_password = #{guestPassword}
+    </select>
+
+    <select id="selectMemberId" resultType="java.lang.Long" parameterType="long">
+        select member_id
+        from tbl_board
+        where board_id = #{boardId}
+    </select>
+
+    <update id="increaseViewCnt" parameterType="long">
+        UPDATE tbl_board
+        SET view_count = view_count + 1
+        WHERE board_id = #{boardId}
+    </update>
+
+    <update id="updateHasAttach" parameterType="map">
+        update tbl_board
+        set has_attach = #{hasAttach}
+        where board_id = #{boardId}
+    </update>
+
+    <update id="update" parameterType="BoardUpdateRequest">
+        update tbl_board
+        set title = #{title},
+            content = #{content},
+            update_date = now()
+        where board_id = #{boardId}
+    </update>
+
+    <update id="updateThumbnailUri" parameterType="map">
+        update tbl_board
+        set thumbnail_uri = #{thumbnailUri}
+        where board_id = #{boardId}
+    </update>
+
+    <insert id="insertGuestBoard" useGeneratedKeys="true" keyProperty="boardId">
+        insert
+        into tbl_board (category_id, title, content, guest_nickname, guest_password)
+        values(#{categoryId}, #{title}, #{content}, #{guestNickname}, #{guestPassword});
+    </insert>
+
+    <insert id="insertMemberBoard" useGeneratedKeys="true" keyProperty="boardId">
+        insert
+        into tbl_board (member_id, category_id, title, content)
+        values(#{memberId}, #{categoryId}, #{title}, #{content});
+    </insert>
+    <insert id="insertAdminBoard" useGeneratedKeys="true" keyProperty="boardId">
+        insert
+        into tbl_board (admin_id, category_id, title, content)
+        values(#{adminId}, #{categoryId}, #{title}, #{content});
+    </insert>
+
+    <delete id="delete" parameterType="long">
+        delete
+        from tbl_board
+        where board_id = #{boardId}
+    </delete>
 </mapper>
