@@ -30,7 +30,7 @@
           ></CommentList>
 
           <CommentWriteForm
-              v-on:saveCommentBtnClick="saveComment"
+              v-on:saveCommentBtnClick="writeComment"
               v-on:initCommentSaveResponseStatus="initCommentSaveResponseStatus"
               v-bind:commentSaveResponseStatus="commentSaveResponseStatus"
           ></CommentWriteForm>
@@ -44,16 +44,12 @@
               <v-col
                 cols="auto"
               >
-                <router-link v-bind:to="{
-                  name: 'BoardListView',
-                  query: $route.query
-                }">
-                  <v-btn
-                      color="primary"
-                  >
-                    목록
-                  </v-btn>
-                </router-link>
+                <v-btn
+                    @click="moveToBoardList"
+                    color="primary"
+                >
+                  목록
+                </v-btn>
               </v-col>
 
 <!--              1.(로그인 사용자)본인 글이면 수정 삭제 버튼 보임.-->
@@ -61,20 +57,13 @@
                 <v-col
                   cols="auto"
                 >
-                  <router-link v-bind:to="{
-                    name: 'BoardModifyView',
-                    params: {
-                      boardId: boardDetail.boardId
-                    },
-                    query: $route.query
-                  }">
-                    <v-btn
-                        outlined
-                        color="primary"
-                    >
-                      수정
-                    </v-btn>
-                  </router-link>
+                  <v-btn
+                      @click="moveToBoardModify"
+                      outlined
+                      color="primary"
+                  >
+                    수정
+                  </v-btn>
                 </v-col>
 
                 <v-col
@@ -304,16 +293,16 @@ export default {
       }
     },
 
-    async saveComment(commentSaveRequest) {
+    async writeComment(commentSaveRequest) {
       try {
         commentSaveRequest.boardId = this.boardDetail.boardId;
 
         let commentSaveResponse;
 
         if(this.$store.getters.loggedIn) {
-          commentSaveResponse = await this.$_BoardService.saveMemberComment(commentSaveRequest);
+          commentSaveResponse = await this.$_BoardService.writeMemberComment(commentSaveRequest);
         } else {
-          commentSaveResponse = await this.$_BoardService.saveGuestComment(commentSaveRequest)
+          commentSaveResponse = await this.$_BoardService.writeGuestComment(commentSaveRequest)
         }
 
         this.commentSaveResponseStatus = commentSaveResponse.status;

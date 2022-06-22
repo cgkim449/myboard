@@ -1,39 +1,36 @@
 import {commentsInstance} from "@/api/index";
 
 /**
- * 회원 댓글 작성 API
+ * 댓글 작성
  */
-const createMemberComment = (comment) => {
+const createComment = (comment) => {
     let form = new FormData();
     form.append('boardId', comment.boardId);
     form.append('content', comment.content);
 
     return commentsInstance.post(
-        "/member",
+        "/",
         form,
         {headers:{"Content-Type" : "multipart/form-data"}}
     )
 }
 
 /**
- * 댓글 목록 조회 API
+ * 댓글 목록 조회
  */
 const getCommentList = (boardId) => {
-    return commentsInstance.get(
-        "/", { params: {boardId: boardId} });
+    return commentsInstance.get("/", { params: {boardId: boardId} });
 }
 
 /**
- * 댓글 삭제 API
+ * 댓글 삭제
  */
-const deleteComment = (commentId) => {
-    return commentsInstance.delete(
-        `/${commentId}`,
-        );
+const deleteComment = (request) => {
+    return commentsInstance.delete(`/${request.commentId}`,);
 };
 
 export {
-    createMemberComment,
+    createComment,
     getCommentList,
     deleteComment
 }

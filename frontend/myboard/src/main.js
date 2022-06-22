@@ -11,12 +11,12 @@ import VueCookies from "vue-cookies";
 import AnswerServicePlugin from "@/plugins/services/AnswerServicePlugin";
 import FAQServicePlugin from "@/plugins/services/FAQServicePlugin";
 import {ValidationObserver, ValidationProvider} from 'vee-validate';
-import ItemFormValidator from "@/plugins/validators/ItemFormValidatorPlugin";
+import ItemFormValidatorPlugin from "@/plugins/validators/ItemFormValidatorPlugin";
 import NoticeServicePlugin from "@/plugins/services/NoticeServicePlugin";
 
 Vue.config.productionTip = false
 
-Vue.use(ItemFormValidator);
+Vue.use(ItemFormValidatorPlugin);
 
 Vue.use(BoardServicePlugin);
 Vue.use(QuestionServicePlugin);

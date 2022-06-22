@@ -19,7 +19,7 @@
                 style="height: 49px !important;"
                 label="닉네임"
                 outlined
-                v-model="saveCommentRequest.guestNickname"
+                v-model="commentSaveRequest.guestNickname"
             >
             </v-text-field>
 
@@ -29,7 +29,7 @@
                 type="password"
                 label="비밀번호"
                 outlined
-                v-model="saveCommentRequest.guestPassword"
+                v-model="commentSaveRequest.guestPassword"
             >
             </v-text-field>
           </template>
@@ -39,12 +39,12 @@
           <v-textarea
               counter
               dense
-              v-model="saveCommentRequest.content"
+              v-model="commentSaveRequest.content"
               outlined
               rows="3"
               label="댓글을 입력해주세요."
               v-on:keydown.enter.exact.prevent="clickSaveCommentBtn"
-              v-on:keydown.enter.shift.exact.prevent="saveCommentRequest.content += '\n'"
+              v-on:keydown.enter.shift.exact.prevent="commentSaveRequest.content += '\n'"
           ></v-textarea>
         </v-col>
 
@@ -72,7 +72,7 @@ export default {
   props: ["commentSaveResponseStatus"],
   data() {
     return {
-      saveCommentRequest: {
+      commentSaveRequest: {
         guestNickname: "",
         guestPassword: "",
         content: "",
@@ -89,15 +89,15 @@ export default {
   },
   methods: {
     clickSaveCommentBtn() {
-        this.$emit("saveCommentBtnClick", this.saveCommentRequest);
+        this.$emit("saveCommentBtnClick", this.commentSaveRequest);
     },
     validateForm() {
       return this.$refs.form.validate()
     },
     initComment() {
-      this.saveCommentRequest.content = "";
-      this.saveCommentRequest.guestNickname = "";
-      this.saveCommentRequest.guestPassword = "";
+      this.commentSaveRequest.content = "";
+      this.commentSaveRequest.guestNickname = "";
+      this.commentSaveRequest.guestPassword = "";
     },
   },
 }

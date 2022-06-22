@@ -1,209 +1,66 @@
 <template>
-  <v-container v-if="!isEmpty(boardDetail)">
+<!--  <v-container v-if="!isEmpty(boardDetail)">-->
+  <v-container>
+    <PageTitle>
+      <h2 slot="title" @click="moveToBoardList" v-bind:style="{ cursor: 'pointer' }">
+        자유게시판
+      </h2>
+    </PageTitle>
+
     <v-row justify="center">
       <v-col
-        cols="11"
+        cols="12"
       >
-        <v-card outlined min-height="400" class="pa-1">
-          <v-card-text class="mt-1">
-            <v-row algin="center">
-              <v-col
-                  cols="auto"
-              >
-                <template v-if="boardDetail.guestNickname === null">
-                  <span>{{ boardDetail.nickname }}</span>
-                </template>
-                <template v-else>
-                  <span>{{ boardDetail.guestNickname }}</span>
-                </template>
-              </v-col>
+        <ItemDetail
+            v-bind:fetchedItemDetail="boardDetail"
+        ></ItemDetail>
 
-              <v-spacer></v-spacer>
-
-              <v-col
-                  cols="auto"
-              >
-                <span>등록일시 {{boardDetail.registerDate | formatDate}}</span>
-                <v-divider
-                    class="mx-4"
-                    vertical
-                ></v-divider>
-                <span>수정일시 {{boardDetail.updateDate | formatDate}}</span>
-              </v-col>
-            </v-row>
-
-            <v-row algin="center">
-              <v-col
-                  cols="auto"
-              >
-                <strong>[{{boardDetail.categoryName}}]</strong>
-                <v-divider
-                    class="mx-4"
-                    vertical
-                ></v-divider>
-                <strong>{{boardDetail.title}}</strong>
-              </v-col>
-
-              <v-spacer></v-spacer>
-
-              <v-col
-                  cols="auto"
-              >
-                <span>조회수: {{boardDetail.viewCount}}</span>
-              </v-col>
-            </v-row>
-          </v-card-text>
-
-          <v-divider  class="mx-4"></v-divider>
-
-          <v-card-text class="fill-height">
-            <v-row>
-              <v-col>
-                <p>{{boardDetail.content}}</p>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-
-        <template v-if="boardDetail.hasAttach">
-          <v-card outlined class="px-1 pt-1 mt-3">
-            <v-card-title class="text-subtitle-1 grey--text">
-              첨부파일 {{ boardDetail.attachList.length }}개
-            </v-card-title>
-            <v-card-text>
-              <p v-for="attach in boardDetail.attachList">
-                <span v-on:click="$_BoardService.downloadAttach(attach.attachId)" v-bind:style="{cursor: 'pointer'}">
-                  <v-icon>mdi-attachment</v-icon>
-                  {{attach.name}}.{{attach.extension}}
-                </span>
-              </p>
-            </v-card-text>
-          </v-card>
-        </template>
+        <AttachList
+            v-if="boardDetail.hasAttach"
+            v-bind:fetchedAttachList="boardDetail.attachList"
+            v-bind:attachOf="attachOf"
+        ></AttachList>
 
         <v-card outlined class="px-1 pt-1 mt-3">
-          <v-card-title class="text-subtitle-1 grey--text">
-            댓글 {{ boardDetail.commentList.length }}개
-          </v-card-title>
-          <v-card-text v-for="comment in boardDetail.commentList">
-            <v-row dense>
-                <v-col
-                    cols="2"
-                >
-                  <template v-if="comment.guestNickname != null">
-                    {{comment.guestNickname}}
-                  </template>
-                  <template v-else-if="comment.Nickname != null">
-                    {{comment.nickname}}
-                  </template>
-                  <template v-else-if="comment.adminNickname != null">
-                    {{comment.adminNickname}}
-                  </template>
-                </v-col>
-              <v-col>
-                {{comment.content}}
-              </v-col>
+          <CommentList
+              v-on:deleteCommentBtnClick="deleteComment"
+              v-on:initCommentDeleteResponseStatus="initCommentDeleteResponseStatus"
+              v-bind:commentDeleteResponseStatus="commentDeleteResponseStatus"
+              v-bind:fetchedCommentList="boardDetail.commentList"
+          ></CommentList>
 
-              <v-col
-                cols="auto"
-              >
-                <v-btn
-                    icon
-                    x-small
-                    color="red lighten-2"
-                    class="mb-1"
-                    @click="removeComment(comment.commentId)"
-                >
-                  x
-                </v-btn>
-              </v-col>
-
-              <v-col
-                  cols="auto"
-              >
-                {{comment.registerDate}}
-              </v-col>
-            </v-row>
-            <v-divider></v-divider>
-          </v-card-text>
-
-
-          <v-form
-              ref="form"
-              @submit.prevent="submit"
-          >
-            <v-card-text>
-              <v-row dense>
-                <v-col
-                    cols="2"
-                >
-                  <v-text-field  disabled dense style="height: 48px !important; " outlined  v-model="$store.state.nickname">
-                  </v-text-field>
-                </v-col>
-                <v-col>
-                  <v-textarea
-                      dense
-                      v-model="comment.content"
-                      outlined
-                      rows="3"
-                      label="
-                          댓글을 입력해주세요.
-                          "
-                      v-on:keydown.enter.exact.prevent="writeComment"
-                      v-on:keydown.enter.shift.exact.prevent="comment.content += '\n'"
-                  ></v-textarea>
-                </v-col>
-                <v-col
-                    cols="auto"
-                >
-                  <v-btn
-                      outlined
-                      height="90"
-                      width="94"
-                      color="secondary"
-                      v-on:click="writeComment"
-                  >
-                    등록
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-card-text>
-          </v-form>
+          <CommentWriteForm
+              v-on:saveCommentBtnClick="writeComment"
+              v-on:initCommentSaveResponseStatus="initCommentSaveResponseStatus"
+              v-bind:commentSaveResponseStatus="commentSaveResponseStatus"
+          ></CommentWriteForm>
         </v-card>
+
 
         <v-card elevation="0">
           <v-card-text>
             <v-row justify="center">
               <v-col
                 cols="auto"
-
               >
-                <router-link v-bind:to="{
-                  path: `/boards`,
-                  query: this.searchCondition
-                }">
-                  <v-btn
-                      color="secondary"
-                  >
-                    목록
-                  </v-btn>
-                </router-link>
+                <v-btn
+                    @click="moveToBoardList"
+                    color="primary"
+                >
+                  목록
+                </v-btn>
               </v-col>
 
               <v-col
                 cols="auto"
               >
-                <router-link v-bind:to="{
-                  path: `/boards/${boardDetail.boardId}/modify`,
-                  query: this.searchCondition
-                }">
-                  <v-btn
-                      outlined
-                      color="secondary"
-                  >
-                    수정
-                  </v-btn>
-                </router-link>
+                <v-btn
+                    @click="moveToBoardModify"
+                    outlined
+                    color="primary"
+                >
+                  수정
+                </v-btn>
               </v-col>
 
               <v-col
@@ -211,8 +68,8 @@
               >
                   <v-btn
                       outlined
-                      color="secondary"
-                      @click="removeBoard"
+                      color="primary"
+                      @click="deleteBoard"
                   >
                     삭제
                   </v-btn>
@@ -222,96 +79,137 @@
         </v-card>
       </v-col>
     </v-row>
+
   </v-container>
 </template>
 
 <script>
+import AttachList from "@/components/common/AttachList";
+import CommentList from "@/components/board/CommentList";
+import CommentWriteForm from "@/components/board/CommentWriteForm";
+import ItemDetail from "@/components/common/ItemDetail";
+import PageTitle from "@/components/common/PageTitle";
+
 export default {
   name: "BoardDetailView",
+  components: {
+    PageTitle,
+    ItemDetail,
+    AttachList,
+    CommentList,
+    CommentWriteForm
+  },
   data() {
-    const defaultForm = Object.freeze({
-      content: '',
-    })
-
     return {
-      defaultForm,
       boardDetail: {},
-      comment: {
-        boardId: 0,
-        content: "",
-      },
-      searchCondition: {},
+      attachOf: "board",
+
+      commentSaveResponseStatus: 0,
+      commentDeleteResponseStatus: 0,
+
     }
   },
-
   computed: {},
-
   async created() {
-    this.searchCondition = {...this.$route.query};
-    let boardId = this.$route.params.id;
-    const response = await this.$_BoardService.fetchBoard(boardId);
-    this.boardDetail = response.data.boardDetail;
-    console.log(this.boardDetail);
-  },
 
+    let boardId = this.$route.params.boardId;
+
+    await this.fetchBoardDetail(boardId);
+  },
   methods: {
-    resetForm () {
-      this.form = Object.assign({}, this.defaultForm)
-      this.$refs.form.reset()
-    },
-    submit () {
-      this.resetForm()
-    },
     isEmpty(obj) {
       return Object.keys(obj).length === 0 && obj.constructor === Object;
     },
-    async writeComment() {
-      if(this.validateForm()) {
-        try {
-          this.comment.boardId = this.boardDetail.boardId;
-          //TODO: 메서드명 바꾸기
-          await this.$_BoardService.writeMemberComment(this.comment);
-          const response = await this.$_BoardService.fetchCommentList(this.boardDetail.boardId);
-          this.boardDetail.commentList = response.data.commentList;
-          this.initComment();
-        } catch (error) {
-          //TODO: 프론트에서 유효성 검증
-          alert(error.response.data.fieldErrorDetails[0].fieldErrorMessage)
+
+    async fetchBoardDetail(boardId) {
+        const {data} = await this.$_BoardService.fetchBoard(boardId);
+
+        this.boardDetail = data.boardDetail;
+    },
+
+    async fetchCommentList(boardId) {
+      const { data } = await this.$_BoardService.fetchCommentList(boardId);
+
+      this.boardDetail.commentList = data.commentList;
+    },
+
+    async deleteComment(deleteCommentRequest){
+      try {
+        const {status} = await this.$_BoardService.deleteComment(deleteCommentRequest);
+        this.commentDeleteResponseStatus = status;
+
+        alert('삭제되었습니다.');
+
+        await this.fetchCommentList(this.boardDetail.boardId);
+
+      } catch (error) {
+        alert(error.response.data.errorMessage);
+      }
+    },
+
+    async writeComment(commentSaveRequest) {
+      try {
+        commentSaveRequest.boardId = this.boardDetail.boardId;
+
+        let commentSaveResponse;
+
+        commentSaveResponse = await this.$_BoardService.writeComment(commentSaveRequest);
+
+        this.commentSaveResponseStatus = commentSaveResponse.status;
+
+        await this.fetchCommentList(this.boardDetail.boardId)
+
+      } catch (error) {
+        const firstErrorField = error.response.data.fieldErrorDetails[0].field;
+        const fieldErrorMessage = error.response.data.fieldErrorDetails[0].fieldErrorMessage;
+
+        //TODO: alert 말고 출력으로 바꾸기
+        if(firstErrorField === "content") {
+          alert(`댓글은 ${fieldErrorMessage}`)
+        } else if(firstErrorField === "guestPassword") {
+          alert(`${fieldErrorMessage}`)
+        } else if(firstErrorField === "guestNickname") {
+          alert(`닉네임은 ${fieldErrorMessage}`)
         }
       }
     },
-    validateForm() {
-      return this.$refs.form.validate()
+    initCommentDeleteResponseStatus() {
+      this.commentDeleteResponseStatus = 0;
     },
-    initComment() {
-      this.comment.content = "";
+    initCommentSaveResponseStatus() {
+      this.commentSaveResponseStatus = 0;
     },
-    async removeComment(commentId) {
+
+    async deleteBoard() {
       try {
-          await this.$_BoardService.removeComment(commentId);
+          await this.$_BoardService.removeBoard({
+            boardId: this.boardDetail.boardId
+          });
           alert('삭제되었습니다.');
-          const response = await this.$_BoardService.fetchCommentList(this.boardDetail.boardId);
-          this.boardDetail.commentList = response.data.commentList;
+
+          this.moveToBoardList();
       } catch (error) {
         alert(error.response.data.errorMessage);
       }
     },
-    async removeBoard() {
-      try {
-          await this.$_BoardService.removeBoard(this.boardDetail.boardId);
-          alert('삭제되었습니다.');
-          this.goToBoardList();
-      } catch (error) {
-        alert(error.response.data.errorMessage);
-      }
-    },
-    goToBoardList() {
+
+    moveToBoardList() {
       this.$router.push({
-        path: '/boards'
-        , query: this.searchCondition
+        name: "BoardListView",
+        query: this.$route.query
       });
     },
-  }
+
+    moveToBoardModify() {
+      this.$router.push({
+        name: "BoardModifyView",
+        params: {
+          boardId: this.boardDetail.boardId
+        },
+        query: this.$route.query,
+      });
+    },
+  },
 }
 </script>
 

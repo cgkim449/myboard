@@ -118,6 +118,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next)=>{
   console.log("from: ",from.path);
   console.log("to: ",to.path);
+
   if(to.meta.auth && !store.getters.loggedIn) {
     alert("로그인 후 이용이 가능합니다")
     next({path: '/login', query: {toPath: to.path}});

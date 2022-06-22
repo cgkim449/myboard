@@ -1,10 +1,10 @@
-import {attachesInstance} from "@/api/index";
+import {boardAttachesInstance} from "@/api/index";
 
 /**
- * 첨부파일 다운로드 API
+ * 첨부파일 다운로드
  */
 const downloadAttach = (attachId) => {
-    return attachesInstance.get(
+    return boardAttachesInstance.get(
         `/${attachId}`,
         {responseType: "blob"}
     );

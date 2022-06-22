@@ -109,11 +109,14 @@
 
 
               <v-row v-if="boardDetail.attachList.length + form.multipartFiles.length < 3">
-                <v-file-input
-                    v-on:change="addNewAttach" v-bind:key="fileInputKey"
-                    show-size
-                    label="첨부파일"
-                ></v-file-input>
+                <v-col>
+                  <v-file-input
+                      v-on:change="addNewAttach" v-bind:key="fileInputKey"
+                      show-size
+                      outlined
+                      label="첨부파일"
+                  ></v-file-input>
+                </v-col>
               </v-row>
 
 

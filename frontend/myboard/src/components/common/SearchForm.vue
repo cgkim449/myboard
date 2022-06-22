@@ -106,8 +106,7 @@
         cols="auto"
     >
       <v-btn
-          normal
-          class="mt-1"
+          height="40"
           color="primary"
           v-on:click="searchBtnClick"
       >

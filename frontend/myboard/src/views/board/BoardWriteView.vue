@@ -126,16 +126,12 @@
                 <v-col
                     cols="auto"
                 >
-                  <router-link v-bind:to="{
-                    path: `/boards`,
-                    query: $route.query
-                  }">
-                    <v-btn
-                        outlined
-                    >
-                      취소
-                    </v-btn>
-                  </router-link>
+                  <v-btn
+                      @click="moveToBoardList"
+                      outlined
+                  >
+                    취소
+                  </v-btn>
                 </v-col>
 
                 <v-spacer></v-spacer>

@@ -31,10 +31,10 @@ export const boardServicePlugin = {
     checkBoardPw(board) {
         return checkBoardPw(board);
     },
-    saveMemberComment(formData) {
+    writeMemberComment(formData) {
         return createMemberComment(formData);
     },
-    saveGuestComment(formData) {
+    writeGuestComment(formData) {
         return createGuestComment(formData);
     },
     fetchCommentList(boardId) {
