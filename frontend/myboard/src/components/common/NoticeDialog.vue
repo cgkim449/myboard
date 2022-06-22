@@ -17,7 +17,7 @@
       <v-card-text>
 
         {{ fetchedNoticeDetail.content }}
-        
+
       </v-card-text>
 
       <v-card-actions>

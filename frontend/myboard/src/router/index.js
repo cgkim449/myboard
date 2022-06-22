@@ -15,10 +15,16 @@ import QuestionDetailView from "@/views/question/QuestionDetailView";
 import FAQListView from "@/views/faq/FAQListView";
 import store from "@/store";
 import QuestionModifyView from "@/views/question/QuestionModifyView";
+import TestView from "@/views/TestView";
 
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: "/test",
+    name: "TestView",
+    component: TestView,
+  },
   {
     path: "/",
     redirect: {
