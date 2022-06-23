@@ -86,7 +86,7 @@ public class QuestionServiceImpl implements QuestionService {
             }
 
             return id; //등록한 게시물 번호 리턴
-        } catch (Exception e) { //게시물 등록 실패시 생성했던 파일 삭제하기 위해 TODO: question
+        } catch (Exception e) { //게시물 등록 실패시 생성했던 파일 삭제하기 위해
             throw new QuestionInsertFailedException(attachInsertList, ErrorCode.QUESTION_INSERT_FAILED);
         }
     }
@@ -101,69 +101,61 @@ public class QuestionServiceImpl implements QuestionService {
             throw new QuestionNotFoundException(ErrorCode.QUESTION_NOT_FOUND);
         }
 
-        //TODO: 리팩토링
         List<AttachVo> questionAttachList = questionAttachDao.selectList(id);
 
+        //TODO: 리팩토링
         for (AttachVo attachVo : questionAttachList) {
             if (attachVo.isImage()) {
-                attachVo.setThumbnailUri(
-                        hostUrl
-                                + "upload"
-                                + File.separator
-                                + attachVo.getUploadPath()
-                                + File.separator
-                                + attachVo.getUuid()
-                                + "_thumbnail"
-                                + "."
-                                + attachVo.getExtension());
-
-                attachVo.setOriginalImageUri(
-                        hostUrl
-                                + "upload"
-                                + File.separator
-                                + attachVo.getUploadPath()
-                                + File.separator
-                                + attachVo.getUuid()
-                                + "."
-                                + attachVo.getExtension());
+                setImageUriOf(attachVo);
             }
         }
-        questionDetailResponse.setAttachList(questionAttachList); //첨부파일 리스트
 
+        questionDetailResponse.setAttachList(questionAttachList); //첨부파일 리스트
         AnswerDetailResponse answerDetailResponse = answerDao.selectByQuestionId(id);
 
         if(answerDetailResponse != null) { //답변이 있으면
+
             List<AttachVo> answerAttachList = answerAttachDao.selectList(answerDetailResponse.getAnswerId());
+
             for (AttachVo attachVo : answerAttachList) {
                 if (attachVo.isImage()) {
-                    attachVo.setThumbnailUri(
-                            hostUrl
-                                    + "upload"
-                                    + File.separator
-                                    + attachVo.getUploadPath()
-                                    + File.separator
-                                    + attachVo.getUuid()
-                                    + "_thumbnail"
-                                    + "."
-                                    + attachVo.getExtension());
-
-                    attachVo.setOriginalImageUri(
-                            hostUrl
-                                    + "upload"
-                                    + File.separator
-                                    + attachVo.getUploadPath()
-                                    + File.separator
-                                    + attachVo.getUuid()
-                                    + "."
-                                    + attachVo.getExtension());
+                    setImageUriOf(attachVo);
                 }
             }
-            answerDetailResponse.setAttachList(answerAttachList);
 
+            answerDetailResponse.setAttachList(answerAttachList);
             questionDetailResponse.setAnswer(answerDetailResponse);
         }
 
         return questionDetailResponse;
+    }
+
+    private void setImageUriOf(AttachVo attachVo) {
+        attachVo.setThumbnailUri(makeThumbnailUriOf(attachVo));
+        attachVo.setOriginalImageUri(makeOriginalImageUriOf(attachVo));
+    }
+
+    private String makeOriginalImageUriOf(AttachVo attachVo) {
+        return hostUrl +
+                "upload" +
+                File.separator +
+                attachVo.getUploadPath() +
+                File.separator +
+                attachVo.getUuid() +
+                "." +
+                attachVo.getExtension();
+    }
+
+    private String makeThumbnailUriOf(AttachVo attachVo) {
+        return hostUrl +
+                "upload" +
+                File.separator +
+                attachVo.getUploadPath() +
+                File.separator +
+                attachVo.getUuid() +
+                "_thumbnail" +
+                "." +
+                attachVo.getExtension();
     }
 
     @Override

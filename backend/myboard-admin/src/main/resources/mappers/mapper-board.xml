@@ -90,18 +90,6 @@
         where b.board_id = #{boardId}
     </select>
 
-    <select id="selectOneByGuestPassword" resultType="long" parameterType="map">
-        select board_id
-        from tbl_board
-        where board_id = #{boardId} and guest_password = #{guestPassword}
-    </select>
-
-    <select id="selectMemberId" resultType="java.lang.Long" parameterType="long">
-        select member_id
-        from tbl_board
-        where board_id = #{boardId}
-    </select>
-
     <update id="increaseViewCnt" parameterType="long">
         UPDATE tbl_board
         SET view_count = view_count + 1

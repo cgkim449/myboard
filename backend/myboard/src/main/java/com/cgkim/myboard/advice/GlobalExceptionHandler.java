@@ -2,9 +2,9 @@ package com.cgkim.myboard.advice;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.cgkim.myboard.exception.AnswerInsertFailedException;
 import com.cgkim.myboard.exception.BoardInsertFailedException;
 import com.cgkim.myboard.exception.BusinessException;
+import com.cgkim.myboard.exception.InsertFailedException;
 import com.cgkim.myboard.exception.QuestionInsertFailedException;
 import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.exception.GuestSaveRequestInvalidException;
@@ -44,38 +44,11 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 게시물 DB에 insert 실패 시, 생성한 첨부파일이 있다면 그 파일을 삭제
+     * 게시물, 질문 DB에 insert 실패 시, 생성한 첨부파일이 있다면 그 파일을 삭제
      */
-    @ExceptionHandler(BoardInsertFailedException.class)
-    public ResponseEntity<ErrorResponse> boardInsertFailedExceptionHandler(BoardInsertFailedException exception) {
-        log.error("handleBoardInsertFailedException", exception);
-
-        fileHandler.deleteFiles(exception.getAttachSaveList()); // 생성했던 파일 삭제
-        return ResponseEntity
-                .status(exception.getErrorCode().getHttpStatus())
-                .body(buildErrorResponse(exception.getErrorCode()));
-    }
-
-
-    /**
-     * 질문 DB에 insert 실패 시, 생성한 첨부파일이 있다면 그 파일을 삭제
-     */
-    @ExceptionHandler(QuestionInsertFailedException.class)
-    public ResponseEntity<ErrorResponse> questionInsertFailedExceptionHandler(QuestionInsertFailedException exception) {
-        log.error("handleQuestionInsertFailedException", exception);
-
-        fileHandler.deleteFiles(exception.getAttachSaveList()); // 생성했던 파일 삭제
-        return ResponseEntity
-                .status(exception.getErrorCode().getHttpStatus())
-                .body(buildErrorResponse(exception.getErrorCode()));
-    }
-
-    /**
-     * 답변 DB에 insert 실패 시, 생성한 첨부파일이 있다면 그 파일을 삭제
-     */
-    @ExceptionHandler(AnswerInsertFailedException.class)
-    public ResponseEntity<ErrorResponse> answerInsertFailedExceptionHandler(AnswerInsertFailedException exception) {
-        log.error("handleAnswerInsertFailedException", exception);
+    @ExceptionHandler(InsertFailedException.class)
+    public ResponseEntity<ErrorResponse> insertFailedExceptionHandler(InsertFailedException exception) {
+        log.error("handleInsertFailedException", exception);
 
         fileHandler.deleteFiles(exception.getAttachSaveList()); // 생성했던 파일 삭제
         return ResponseEntity

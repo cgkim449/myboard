@@ -18,12 +18,8 @@ public interface BoardDao {
     void increaseViewCnt(Long boardId);
     BoardDetailResponse selectOne(Long boardId);
     void updateHasAttach(Map<String, Object> updateHasAttachMap);
-    Long selectOneByGuestPassword(Map<String, Object> map);
     void delete(Long boardId);
     int update(Map<String, Object> map);
     void insertBoard(BoardVo boardVo);
-    Long selectMemberId(Long boardId);
-
     int updateThumbnailUri(Map<String,Object> boardId);
-
 }

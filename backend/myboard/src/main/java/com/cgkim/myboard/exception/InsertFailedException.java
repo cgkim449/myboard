@@ -7,12 +7,12 @@ import lombok.Getter;
 
 import java.util.List;
 
-public class AnswerInsertFailedException extends BusinessException{
+public class InsertFailedException extends BusinessException{
 
     @Getter
     private final List<AttachVo> attachSaveList;
 
-    public AnswerInsertFailedException(List<AttachVo> attachSaveList, ErrorCode errorCode) {
+    public InsertFailedException(List<AttachVo> attachSaveList, ErrorCode errorCode) {
         super(errorCode);
         this.attachSaveList = attachSaveList;
     }

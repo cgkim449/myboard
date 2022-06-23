@@ -17,7 +17,7 @@ const getBoardDetail = (boardId) => {
 };
 
 /**
- * 관리자 게시글 작성
+ * 게시글 작성
  */
 const createBoard = (formData) => {
     return boardsInstance.post(
@@ -54,23 +54,9 @@ const patchBoard = (formData) => {
         });
 };
 
-/**
- * 게시글 익명 작성자 비밀번호 확인
- */
-const checkBoardPw = (board) => {
-    console.log(board.guestPassword)
-    //TODO: json stringify 로 바꾸기?
-    return boardsInstance.post(
-            `/${board.boardId}/password-check`,
-        {
-            'guestPassword': board.guestPassword
-        },
-    );
-}
 
 export {
     getBoardList,
-    checkBoardPw,
     deleteBoard,
     getBoardDetail,
     patchBoard,

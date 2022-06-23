@@ -17,6 +17,10 @@ import QuestionModifyView from "@/views/question/QuestionModifyView";
 import FAQListView from "@/views/faq/FAQListView";
 import {adminCheck} from "@/api/auth";
 import FAQWriteView from "@/views/faq/FAQWriteView";
+import NoticeListView from "@/views/notice/NoticeListView";
+import NoticeWriteView from "@/views/notice/NoticeWriteView";
+import NoticeDetailView from "@/views/notice/NoticeDetailView";
+import NoticeModifyView from "@/views/notice/NoticeModifyView";
 
 Vue.use(VueRouter)
 
@@ -90,6 +94,26 @@ const routes = [
         path: "faqs/new",
         name: "FAQWriteView",
         component: FAQWriteView,
+      },
+      {
+        path: "notices",
+        name: "NoticeListView",
+        component: NoticeListView,
+      },
+      {
+        path: "notices/new",
+        name: "NoticeWriteView",
+        component: NoticeWriteView,
+      },
+      {
+        path: "notices/:noticeId",
+        name: "NoticeDetailView",
+        component: NoticeDetailView,
+      },
+      {
+        path: "notices/:noticeId/modify",
+        name: "NoticeModifyView",
+        component: NoticeModifyView,
       },
     ],
   },

@@ -1,33 +1,29 @@
 <template>
   <v-container>
-    <NoticeDialog
-        v-on:blockNoticeCookieNotFound="fetchNotice"
-        v-bind:fetchedNoticeDetail="noticeDetail"
-    ></NoticeDialog>
-
     <PageTitle>
       <h2 slot="title" @click="initSearchCondition" v-bind:style="{ cursor: 'pointer' }">
-        자유게시판
+        공지사항
       </h2>
     </PageTitle>
 
+<!--    TODO: 카테고리 선택 없애야함-->
     <SearchForm
         v-on:searchBtnClick="search"
         v-bind:updatedSearchCondition="searchCondition"
     ></SearchForm>
 
-    <BoardList
+    <NoticeList
         v-on:ListViewBtnClick="switchToListView"
         v-on:GalleryViewBtnClick="switchToGalleryView"
-        v-bind:updatedBoardTotalCount="boardTotalCount"
+        v-bind:updatedNoticeTotalCount="noticeTotalCount"
         v-bind:updatedListView="listView"
-        v-bind:fetchedBoardList="boardList"
-    ></BoardList>
+        v-bind:fetchedNoticeList="noticeList"
+    ></NoticeList>
 
     <Pagination
         v-on:pageBtnClick="movePage"
         v-bind:updatedPage="searchCondition.page"
-        v-bind:itemTotalCount="boardTotalCount"
+        v-bind:itemTotalCount="noticeTotalCount"
     ></Pagination>
 
     <v-row>
@@ -36,10 +32,10 @@
           cols="auto"
       >
         <v-btn
-            @click="moveToBoardWrite"
+            @click="moveToNoticeWrite"
             color="secondary"
         >
-          글쓰기
+          공지사항 작성
         </v-btn>
       </v-col>
     </v-row>
@@ -58,14 +54,15 @@ import SearchForm from "@/components/common/SearchForm";
 import BoardList from "@/components/board/BoardList";
 import Pagination from "@/components/common/Pagination";
 import NoticeDialog from "@/components/common/NoticeDialog";
+import NoticeList from "@/components/notice/NoticeList";
 
 export default {
-  name: "BoardListView",
+  name: "NoticeListView",
   components: {
     NoticeDialog,
     PageTitle,
     SearchForm,
-    BoardList,
+    NoticeList,
     Pagination
   },
   data() {
@@ -82,15 +79,15 @@ export default {
 
       listView: true,
 
-      boardTotalCount: 0,
-      boardList: [],
+      noticeTotalCount: 0,
+      noticeList: [],
     };
   },
   async created() {
     this.updateSearchConditionByQuery();
     this.updateListViewByQuery();
 
-    await this.fetchBoardList(this.searchCondition);
+    await this.fetchNoticeList(this.searchCondition);
   },
   computed: {},
   watch: {
@@ -98,13 +95,13 @@ export default {
       this.updateSearchConditionByQuery();
       this.updateListViewByQuery();
 
-      await this.fetchBoardList(this.searchCondition);
+      await this.fetchNoticeList(this.searchCondition);
     },
   },
   methods: {
     async fetchNotice() {
       try {
-        const {data} = await this.$_NoticeService.fetchLatestNoticeDetail();
+        const {data} = await this.$_NoticeService.fetchNoticeDetail();
 
         this.noticeDetail = data.noticeDetail;
 
@@ -113,13 +110,13 @@ export default {
       }
     },
 
-    async fetchBoardList(searchCondition) {
+    async fetchNoticeList(searchCondition) {
       try {
 
-        const {data} = await this.$_BoardService.fetchBoardList(searchCondition);
+        const {data} = await this.$_NoticeService.fetchNoticeList(searchCondition);
 
-        this.boardList = data.boardList;
-        this.boardTotalCount= data.boardTotalCount;
+        this.noticeList = data.noticeList;
+        this.noticeTotalCount= data.noticeTotalCount;
 
       } catch (error) {
         console.log(error.response.data.errorMessages)
@@ -130,7 +127,7 @@ export default {
     async search(searchCondition) {
       this.updateQueryParameter(this.listView, searchCondition);
 
-      await this.fetchBoardList(searchCondition);
+      await this.fetchNoticeList(searchCondition);
     },
 
     initSearchCondition() {
@@ -178,16 +175,16 @@ export default {
       this.updateQueryParameter(this.listView, this.searchCondition);
     },
 
-    moveToBoardWrite() {
+    moveToNoticeWrite() {
       this.$router.push({
-        name: "BoardWriteView",
+        name: "NoticeWriteView",
         query: this.$route.query,
       });
     },
 
     updateQueryParameter(listView, searchCondition) {
       this.$router.push({
-        path: 'boards',
+        path: 'notices',
         query: {
           listView: listView,
           ...searchCondition

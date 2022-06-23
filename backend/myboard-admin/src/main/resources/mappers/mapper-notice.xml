@@ -1,13 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="com.cgkim.myboardadmin.dao.NoticeDao">
+
+    <select id="selectList" resultType="noticeListResponse" parameterType="noticeSearchRequest">
+        select n.notice_id,
+               n.title,
+               n.content,
+               n.has_attach,
+               n.thumbnail_uri,
+               n.register_date,
+               n.update_date,
+               a.nickname admin_nickname
+        from tbl_notice as n
+            left join tbl_admin a
+                on n.admin_id = a.admin_id
+        <include refid="noticeSearchCondition"/>
+        order by n.register_date desc, n.notice_id desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="noticeSearchRequest">
+        select count(*)
+        from tbl_notice as n
+            left join tbl_admin a
+                on n.admin_id = a.admin_id
+        <include refid="noticeSearchCondition"/>
+    </select>
+
+
+    <sql id="noticeSearchCondition">
+        <where>
+            <if test="fromDate != null">
+                n.register_date <![CDATA[>=]]> #{fromDate}
+            </if>
+            <if test="toDate != null">
+                and n.register_date <![CDATA[<=]]> #{toDate}
+            </if>
+            <if test = "keyword != null">
+                and (
+                     n.title like concat('%',#{keyword},'%')
+                     or n.content like concat('%',#{keyword},'%')
+                     or a.nickname like concat('%',#{keyword},'%')
+                    )
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectOne" resultType="noticeDetailResponse" parameterType="long">
+        select n.notice_id,
+               n.title,
+               n.content,
+               n.has_attach,
+               n.register_date,
+               n.update_date,
+               a.nickname admin_nickname,
+               a.username admin_username
+        from tbl_notice as n
+             left join tbl_admin a
+                   on n.admin_id = a.admin_id
+        where n.notice_id = #{noticeId}
+    </select>
+
     <select id="selectLatestOne" resultType="noticeDetailResponse">
         select n.notice_id,
                n.title,
                n.content,
+               n.has_attach,
                n.register_date,
-               n.update_date
+               n.update_date,
+               a.nickname admin_nickname,
+               a.username admin_username
         from tbl_notice as n
+            left join tbl_admin a
+                on n.admin_id = a.admin_id
+        order by n.register_date desc, n.notice_id desc
+        limit 1
     </select>
+
+    <update id="updateHasAttach" parameterType="map">
+        update tbl_notice
+        set has_attach = #{hasAttach}
+        where notice_id = #{noticeId}
+    </update>
+
+    <update id="update" parameterType="NoticeUpdateRequest">
+        update tbl_notice
+        set title = #{title},
+            content = #{content},
+            update_date = now()
+        where notice_id = #{noticeId}
+    </update>
+
+    <update id="updateThumbnailUri" parameterType="map">
+        update tbl_notice
+        set thumbnail_uri = #{thumbnailUri}
+        where notice_id = #{noticeId}
+    </update>
+
+    <insert id="insertNotice" useGeneratedKeys="true" keyProperty="noticeId">
+        insert
+        into tbl_notice (admin_id, title, content)
+        values(#{adminId}, #{title}, #{content});
+    </insert>
+
+    <delete id="delete" parameterType="long">
+        delete
+        from tbl_notice
+        where notice_id = #{noticeId}
+    </delete>
 </mapper>
