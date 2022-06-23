@@ -106,64 +106,55 @@ public class QuestionServiceImpl implements QuestionService {
 
         for (AttachVo attachVo : questionAttachList) {
             if (attachVo.isImage()) {
-                attachVo.setThumbnailUri(
-                        hostUrl
-                                + "upload"
-                                + File.separator
-                                + attachVo.getUploadPath()
-                                + File.separator
-                                + attachVo.getUuid()
-                                + "_thumbnail"
-                                + "."
-                                + attachVo.getExtension());
+                setImageUriOf(attachVo);
 
-                attachVo.setOriginalImageUri(
-                        hostUrl
-                                + "upload"
-                                + File.separator
-                                + attachVo.getUploadPath()
-                                + File.separator
-                                + attachVo.getUuid()
-                                + "."
-                                + attachVo.getExtension());
             }
         }
         questionDetailResponse.setAttachList(questionAttachList); //첨부파일 리스트
-
         AnswerDetailResponse answerDetailResponse = answerDao.selectByQuestionId(id);
 
         if(answerDetailResponse != null) { //답변이 있으면
             List<AttachVo> answerAttachList = answerAttachDao.selectList(answerDetailResponse.getAnswerId());
             for (AttachVo attachVo : answerAttachList) {
                 if (attachVo.isImage()) {
-                    attachVo.setThumbnailUri(
-                            hostUrl
-                                    + "upload"
-                                    + File.separator
-                                    + attachVo.getUploadPath()
-                                    + File.separator
-                                    + attachVo.getUuid()
-                                    + "_thumbnail"
-                                    + "."
-                                    + attachVo.getExtension());
+                    setImageUriOf(attachVo);
 
-                    attachVo.setOriginalImageUri(
-                            hostUrl
-                                    + "upload"
-                                    + File.separator
-                                    + attachVo.getUploadPath()
-                                    + File.separator
-                                    + attachVo.getUuid()
-                                    + "."
-                                    + attachVo.getExtension());
                 }
             }
-            answerDetailResponse.setAttachList(answerAttachList);
 
+            answerDetailResponse.setAttachList(answerAttachList);
             questionDetailResponse.setAnswer(answerDetailResponse);
         }
 
         return questionDetailResponse;
+    }
+
+    private void setImageUriOf(AttachVo attachVo) {
+        attachVo.setThumbnailUri(makeThumbnailUriOf(attachVo));
+        attachVo.setOriginalImageUri(makeOriginalImageUriOf(attachVo));
+    }
+
+    private String makeOriginalImageUriOf(AttachVo attachVo) {
+        return hostUrl +
+                "upload" +
+                File.separator +
+                attachVo.getUploadPath() +
+                File.separator +
+                attachVo.getUuid() +
+                "." +
+                attachVo.getExtension();
+    }
+
+    private String makeThumbnailUriOf(AttachVo attachVo) {
+        return hostUrl +
+                "upload" +
+                File.separator +
+                attachVo.getUploadPath() +
+                File.separator +
+                attachVo.getUuid() +
+                "_thumbnail" +
+                "." +
+                attachVo.getExtension();
     }
 
     @Override

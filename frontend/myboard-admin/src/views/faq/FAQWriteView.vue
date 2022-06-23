@@ -1,0 +1,230 @@
+<template>
+  <v-container>
+    <PageTitle>
+      <h2 slot="title" @click="moveToFAQList" v-bind:style="{ cursor: 'pointer' }">
+        FAQ
+      </h2>
+    </PageTitle>
+
+    <v-row>
+      <v-col
+          cols="12"
+      >
+        <v-card flat outlined class="px-8 py-8">
+          <v-form
+              ref="form"
+          >
+            <v-container fluid>
+              <v-row>
+                <v-col
+                    cols="2"
+                >
+                  <v-select
+                      v-model="form.categoryId"
+                      :items="categories"
+                      :rules="rules.categoryId"
+                      required
+                      item-text="categoryName"
+                      item-value="categoryId"
+                      label="카테고리"
+                      color="pink"
+                  ></v-select>
+                </v-col>
+                <v-col
+                    cols="10"
+                >
+                  <v-text-field
+                      label="제목"
+                      v-model="form.title"
+                      :rules="rules.title"
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12">
+                  <v-textarea
+                      outlined
+                      v-model="form.content"
+                      :rules="rules.content"
+                      label="내용"
+                      color="teal"
+                  >
+                  </v-textarea>
+                </v-col>
+              </v-row>
+
+              <v-row>
+                <v-col>
+                  <v-file-input
+                      v-model="form.multipartFiles"
+                      :rules="rules.multipartFiles"
+                      color="deep-purple accent-4"
+                      counter
+                      multiple
+                      label="첨부파일"
+                      placeholder="파일 찾기"
+                      prepend-icon="mdi-paperclip"
+                      outlined
+                      :show-size="1000"
+                  >
+                    <template v-slot:selection="{ index, text }">
+                      <v-chip
+                          v-if="index < 3"
+                          color="deep-purple accent-4"
+                          dark
+                          label
+                          small
+                      >
+                        {{ text }}
+                      </v-chip>
+
+                      <span
+                          v-else-if="index === 3"
+                          class="text-overline grey--text text--darken-3 mx-2"
+                      >
+                      +{{ form.multipartFiles.length - 3 }} File(s)
+                    </span>
+                    </template>
+                  </v-file-input>
+                </v-col>
+              </v-row>
+
+              <v-row>
+                <v-col
+                    cols="auto"
+                >
+                  <v-btn
+                      @click="moveToFAQList"
+                      outlined
+                  >
+                    취소
+                  </v-btn>
+                </v-col>
+
+                <v-spacer></v-spacer>
+
+                <v-col
+                    cols="auto"
+                >
+                  <v-btn
+                      outlined
+                      @click="resetForm"
+                  >
+                    초기화
+                  </v-btn>
+                </v-col>
+
+                <v-col
+                    cols="auto"
+                >
+                  <v-btn
+                      color="secondary"
+                      @click="writeFAQ"
+                  >
+                    저장
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-form>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+
+<script>
+import PageTitle from "@/components/common/PageTitle";
+
+export default {
+  name: "FAQWriteView",
+  components: {
+    PageTitle,
+  },
+  data: function () {
+    const defaultForm = Object.freeze({
+      categoryId: '',
+      title: '',
+      content: '',
+      multipartFiles: [],
+    })
+    return {
+      defaultForm,
+      form: Object.assign({}, defaultForm),
+
+      rules: {
+        categoryId: [value => this.$_ItemFormValidator.validateCategoryId(value),],
+        title: [value => this.$_ItemFormValidator.validateTitle(value),],
+        content: [value => this.$_ItemFormValidator.validateContent(value),],
+        multipartFiles: [value => this.$_ItemFormValidator.validateMultipartFiles(value),],
+      },
+
+      categories: [
+        {categoryName: 'Java', categoryId: "1"},
+        {categoryName: 'JavaScript', categoryId: "2"},
+        {categoryName: 'Database', categoryId: "3"},
+      ],
+    }
+  },
+  created() {},
+  computed: {},
+  methods: {
+    validateForm() {
+      return this.$refs.form.validate()
+    },
+
+    resetForm () {
+      this.form = Object.assign({}, this.defaultForm)
+      this.$refs.form.reset()
+    },
+
+    //TODO: 예외처리
+    async writeFAQ() {
+      if(this.validateForm()) {
+
+        let formData = this.prepareFormData();
+
+        let response;
+
+        response = await this.$_FAQService.writeFAQ(formData);
+
+        this.moveToFAQList();
+        // this.moveToFAQDetail(response.headers.location);
+      }
+    },
+
+    prepareFormData() {
+      let formData = new FormData();
+
+      formData.append("categoryId", this.form.categoryId);
+      formData.append("title", this.form.title);
+      formData.append("content", this.form.content);
+
+      if(this.form.multipartFiles.length > 0) {
+        for (const multipartFile of this.form.multipartFiles) {
+          formData.append("multipartFiles", multipartFile);
+        }
+      }
+
+      return formData;
+    },
+
+    moveToFAQDetail(location) {
+      this.$router.push({
+        path: `${location}`,
+        query: this.$route.query
+      }).catch(()=>{});
+    },
+
+    moveToFAQList() {
+      this.$router.push({
+        name: "FAQListView",
+        query: this.$route.query
+      });
+    },
+  },
+}
+</script>
+
+<style scoped>
+
+</style>

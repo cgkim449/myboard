@@ -32,3 +32,4 @@ export const answerAttachesInstance = createInstanceWithToken("answer-attaches")
 export const faqsInstance = createInstanceWithToken("faqs");
 
 export const noticesInstance = createInstanceWithToken("notices");
+export const noticeAttachesInstance = createInstanceWithToken("notice-attaches");

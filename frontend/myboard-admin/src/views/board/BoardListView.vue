@@ -104,7 +104,7 @@ export default {
   methods: {
     async fetchNotice() {
       try {
-        const {data} = await this.$_NoticeService.fetchNoticeDetail();
+        const {data} = await this.$_NoticeService.fetchLatestNoticeDetail();
 
         this.noticeDetail = data.noticeDetail;
 

@@ -97,6 +97,7 @@ export default {
         { title: '자유게시판', icon: 'mdi-format-list-bulleted', to: '/admin/boards'},
         { title: 'Q&A', icon: 'mdi-alpha-q-box', to: '/admin/questions'},
         { title: 'FAQ', icon: 'mdi-alpha-f-box', to: '/admin/faqs'},
+        { title: '공지사항', icon: 'mdi-bullhorn', to: '/admin/notices'},
       ],
     }
   },

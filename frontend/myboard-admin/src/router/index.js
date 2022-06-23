@@ -16,15 +16,16 @@ import QuestionDetailView from "@/views/question/QuestionDetailView";
 import QuestionModifyView from "@/views/question/QuestionModifyView";
 import FAQListView from "@/views/faq/FAQListView";
 import {adminCheck} from "@/api/auth";
+import FAQWriteView from "@/views/faq/FAQWriteView";
+import NoticeListView from "@/views/notice/NoticeListView";
+import NoticeWriteView from "@/views/notice/NoticeWriteView";
+import NoticeDetailView from "@/views/notice/NoticeDetailView";
+import NoticeModifyView from "@/views/notice/NoticeModifyView";
 
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: "/test",
-    name: "TestView",
-    component: TestView,
-  },
+
   {
     path: "/",
     redirect: {
@@ -89,6 +90,31 @@ const routes = [
         name: "FAQListView",
         component: FAQListView,
       },
+      {
+        path: "faqs/new",
+        name: "FAQWriteView",
+        component: FAQWriteView,
+      },
+      {
+        path: "notices",
+        name: "NoticeListView",
+        component: NoticeListView,
+      },
+      {
+        path: "notices/new",
+        name: "NoticeWriteView",
+        component: NoticeWriteView,
+      },
+      {
+        path: "notices/:noticeId",
+        name: "NoticeDetailView",
+        component: NoticeDetailView,
+      },
+      {
+        path: "notices/:noticeId/modify",
+        name: "NoticeModifyView",
+        component: NoticeModifyView,
+      },
     ],
   },
   {
@@ -110,6 +136,11 @@ const routes = [
       requiresAuth: true,
     },
   },
+  {
+    path: "/test",
+    name: "TestView",
+    component: TestView,
+  },
 ]
 
 const router = new VueRouter({
@@ -127,8 +158,10 @@ router.beforeEach(async (to, from, next)=>{
   try{
     const response = await adminCheck();
     status = response.status;
+    console.log(status)
   } catch(error) {
     status = error.response.data.status;
+    console.log(status)
   }
 
   if(to.matched.some(record  => record.meta.requiresAuth) && status !== 200) {

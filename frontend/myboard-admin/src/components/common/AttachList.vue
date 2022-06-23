@@ -41,16 +41,17 @@ export default {
   methods: {
     downloadAttach(attachId) {
       if(this.attachOf === "board") {
-
         this.$_BoardService.downloadAttach(attachId);
+
       } else if(this.attachOf === "question") {
-
         this.$_QuestionService.downloadAttach(attachId);
+
       } else if(this.attachOf === "answer") {
-
         this.$_AnswerService.downloadAttach(attachId);
-      }
 
+      } else if(this.attachOf === "notice") {
+        this.$_NoticeService.downloadAttach(attachId);
+      }
     },
   },
 }

@@ -88,26 +88,7 @@ public class BoardServiceImpl implements BoardService {
 
         for (AttachVo attachVo : attachVoList) {
             if(attachVo.isImage()) {
-                attachVo.setThumbnailUri(
-                        hostUrl
-                        + "upload"
-                        + File.separator
-                        + attachVo.getUploadPath()
-                        + File.separator
-                        + attachVo.getUuid()
-                        + "_thumbnail"
-                        + "."
-                        +attachVo.getExtension());
-
-                attachVo.setOriginalImageUri(
-                        hostUrl
-                        + "upload"
-                        + File.separator
-                        + attachVo.getUploadPath()
-                        + File.separator
-                        + attachVo.getUuid()
-                        + "."
-                        + attachVo.getExtension());
+                setImageUriOf(attachVo);
             }
         }
 
@@ -116,6 +97,34 @@ public class BoardServiceImpl implements BoardService {
         boardDetailResponse.setCommentList(commentDao.selectList(boardId)); //댓글 리스트
 
         return boardDetailResponse;
+    }
+
+    private void setImageUriOf(AttachVo attachVo) {
+        attachVo.setThumbnailUri(makeThumbnailUriOf(attachVo));
+        attachVo.setOriginalImageUri(makeOriginalImageUriOf(attachVo));
+    }
+
+    private String makeOriginalImageUriOf(AttachVo attachVo) {
+        return hostUrl +
+                "upload" +
+                File.separator +
+                attachVo.getUploadPath() +
+                File.separator +
+                attachVo.getUuid() +
+                "." +
+                attachVo.getExtension();
+    }
+
+    private String makeThumbnailUriOf(AttachVo attachVo) {
+        return hostUrl +
+                "upload" +
+                File.separator +
+                attachVo.getUploadPath() +
+                File.separator +
+                attachVo.getUuid() +
+                "_thumbnail" +
+                "." +
+                attachVo.getExtension();
     }
 
     /**

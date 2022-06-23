@@ -25,6 +25,7 @@ export const boardServicePlugin = {
     updateBoard(formData) {
         return patchBoard(formData);
     },
+
     writeComment(formData) {
         return createComment(formData);
     },
@@ -38,6 +39,7 @@ export const boardServicePlugin = {
     deleteComment(comment) {
         return deleteComment(comment);
     },
+
     async downloadAttach(attachId) {
         try {
             const response = await downloadAttach(attachId);

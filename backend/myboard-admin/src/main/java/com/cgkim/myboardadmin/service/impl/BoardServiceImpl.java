@@ -39,10 +39,8 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardDao boardDao;
     private final CommentDao commentDao;
-    private final MemberDao memberDao;
     private final AdminDao adminDao;
     private final BoardAttachDao boardAttachDao;
-    private final SHA256PasswordEncoder sha256PasswordEncoder;
 
     @Value("${host.url}")
     private String hostUrl;
@@ -90,26 +88,7 @@ public class BoardServiceImpl implements BoardService {
 
         for (AttachVo attachVo : attachVoList) {
             if(attachVo.isImage()) {
-                attachVo.setThumbnailUri(
-                        hostUrl
-                        + "upload"
-                        + File.separator
-                        + attachVo.getUploadPath()
-                        + File.separator
-                        + attachVo.getUuid()
-                        + "_thumbnail"
-                        + "."
-                        +attachVo.getExtension());
-
-                attachVo.setOriginalImageUri(
-                        hostUrl
-                        + "upload"
-                        + File.separator
-                        + attachVo.getUploadPath()
-                        + File.separator
-                        + attachVo.getUuid()
-                        + "."
-                        + attachVo.getExtension());
+                setImageUriOf(attachVo);
             }
         }
 
@@ -118,6 +97,34 @@ public class BoardServiceImpl implements BoardService {
         boardDetailResponse.setCommentList(commentDao.selectList(boardId)); //댓글 리스트
 
         return boardDetailResponse;
+    }
+
+    private void setImageUriOf(AttachVo attachVo) {
+        attachVo.setThumbnailUri(makeThumbnailUriOf(attachVo));
+        attachVo.setOriginalImageUri(makeOriginalImageUriOf(attachVo));
+    }
+
+    private String makeOriginalImageUriOf(AttachVo attachVo) {
+        return hostUrl +
+                "upload" +
+                File.separator +
+                attachVo.getUploadPath() +
+                File.separator +
+                attachVo.getUuid() +
+                "." +
+                attachVo.getExtension();
+    }
+
+    private String makeThumbnailUriOf(AttachVo attachVo) {
+        return hostUrl +
+                "upload" +
+                File.separator +
+                attachVo.getUploadPath() +
+                File.separator +
+                attachVo.getUuid() +
+                "_thumbnail" +
+                "." +
+                attachVo.getExtension();
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -165,102 +172,6 @@ public class BoardServiceImpl implements BoardService {
     }
 
     /**
-     * 게시물 수정
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void modify(Long boardId,
-                       String content,
-                       String title,
-                       List<AttachVo> attachInsertList,
-                       List<AttachVo> attachDeleteList
-    ) {
-        if(attachDeleteList != null && attachDeleteList.size() > 0) { //첨부파일 delete
-            deleteAttaches(attachDeleteList);
-        }
-
-        if(attachInsertList != null && attachInsertList.size() > 0) { //첨부파일 insert
-            insertAttaches(attachInsertList, boardId);
-        }
-
-        boardDao.update(
-                Map.of(
-                        "boardId", boardId,
-                        "title", title,
-                        "content", content
-                )
-        );  //게시물 update
-        updateHasAttach(boardId);  //첨부파일 유무 update
-        updateThumbnailUri(boardAttachDao.selectList(boardId), boardId);
-    }
-
-    @Override
-    public boolean isAnonymous(Long boardId) {
-        return boardDao.selectMemberId(boardId) == null;
-    }
-
-    @Override
-    public void checkOwner(Long boardId, String username, String guestPassword) throws NoSuchAlgorithmException {
-        //TODO: 관리자 글 체크 추가해야함
-        if(isAnonymous(boardId)) { //익명 글이면
-
-            validateGuestPassword(guestPassword); //비밀번호 유효성 검증
-            checkGuestPassword(boardId, guestPassword); //비밀번호 체크
-        } else { //회원 글이면
-
-            if(username == null) {
-                throw new LoginRequiredException(ErrorCode.LOGIN_REQUIRED);
-            }
-
-            Long verificationTargetMemberId = memberDao.selectMemberIdByUsername(username);
-
-            if(verificationTargetMemberId == null) {
-                throw new NoAuthorizationException(ErrorCode.NO_AUTHORIZATION);
-            }
-
-            Long realMemberId = boardDao.selectMemberId(boardId);
-
-            if(!verificationTargetMemberId.equals(realMemberId)) {
-                throw new NoAuthorizationException(ErrorCode.NO_AUTHORIZATION);
-            }
-        }
-    }
-
-    private void validateGuestPassword(String guestPassword) {
-        if(guestPassword == null || guestPassword.equals("")) {
-            throw new GuestPasswordInvalidException(ErrorCode.GUEST_PASSWORD_INVALID);
-        }
-    }
-
-    /**
-     * 게시물 삭제
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void delete(Long boardId) {
-        commentDao.deleteByBoardId(boardId);
-        boardAttachDao.deleteByBoardId(boardId);
-        boardDao.delete(boardId);
-    }
-
-    /**
-     * 익명 게시물 비밀번호 확인
-     */
-    @Override
-    public void checkGuestPassword(Long boardId, String guestPassword) throws NoSuchAlgorithmException {
-        Long result = boardDao.selectOneByGuestPassword(
-                Map.of(
-                        "boardId", boardId,
-                        "guestPassword", sha256PasswordEncoder.getHash(guestPassword)
-                )
-        );
-
-        if(result == null) {
-            throw new GuestPasswordMismatchException(ErrorCode.GUEST_PASSWORD_MISMATCH);
-        }
-    }
-
-    /**
      * 첨부파일 insert
      */
     private void insertAttaches(List<AttachVo> attachInsertList, Long boardId) {
@@ -293,4 +204,44 @@ public class BoardServiceImpl implements BoardService {
         );
     }
 
+    /**
+     * 게시물 수정
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void modify(Long boardId,
+                       String content,
+                       String title,
+                       List<AttachVo> attachInsertList,
+                       List<AttachVo> attachDeleteList
+    ) {
+        if(attachDeleteList != null && attachDeleteList.size() > 0) { //첨부파일 delete
+            deleteAttaches(attachDeleteList);
+        }
+
+        if(attachInsertList != null && attachInsertList.size() > 0) { //첨부파일 insert
+            insertAttaches(attachInsertList, boardId);
+        }
+
+        boardDao.update(
+                Map.of(
+                        "boardId", boardId,
+                        "title", title,
+                        "content", content
+                )
+        );  //게시물 update
+        updateHasAttach(boardId);  //첨부파일 유무 update
+        updateThumbnailUri(boardAttachDao.selectList(boardId), boardId);
+    }
+
+    /**
+     * 게시물 삭제
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(Long boardId) {
+        commentDao.deleteByBoardId(boardId);
+        boardAttachDao.deleteByBoardId(boardId);
+        boardDao.delete(boardId);
+    }
 }

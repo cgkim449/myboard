@@ -5,7 +5,10 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.cgkim.myboardadmin.exception.AnswerInsertFailedException;
 import com.cgkim.myboardadmin.exception.BoardInsertFailedException;
 import com.cgkim.myboardadmin.exception.BusinessException;
+import com.cgkim.myboardadmin.exception.FAQInsertFailedException;
 import com.cgkim.myboardadmin.exception.GuestSaveRequestInvalidException;
+import com.cgkim.myboardadmin.exception.InsertFailedException;
+import com.cgkim.myboardadmin.exception.NoticeInsertFailedException;
 import com.cgkim.myboardadmin.exception.QuestionInsertFailedException;
 import com.cgkim.myboardadmin.exception.errorcode.ErrorCode;
 import com.cgkim.myboardadmin.response.ErrorResponse;
@@ -44,38 +47,11 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 게시물 DB에 insert 실패 시, 생성한 첨부파일이 있다면 그 파일을 삭제
+     * 게시물, 질문, 답변, FAQ, 공지 DB에 insert 실패 시, 생성한 첨부파일이 있다면 그 파일을 삭제
      */
-    //TODO: 질문, 답변, faq, 공지 전부 한곳에서 처리
-    @ExceptionHandler(BoardInsertFailedException.class)
-    public ResponseEntity<ErrorResponse> boardInsertFailedExceptionHandler(BoardInsertFailedException exception) {
-        log.error("handleBoardInsertFailedException", exception);
-
-        fileHandler.deleteFiles(exception.getAttachSaveList()); // 생성했던 파일 삭제
-        return ResponseEntity
-                .status(exception.getErrorCode().getHttpStatus())
-                .body(buildErrorResponse(exception.getErrorCode()));
-    }
-
-    /**
-     * 질문 DB에 insert 실패 시, 생성한 첨부파일이 있다면 그 파일을 삭제
-     */
-    @ExceptionHandler(QuestionInsertFailedException.class)
-    public ResponseEntity<ErrorResponse> questionInsertFailedExceptionHandler(QuestionInsertFailedException exception) {
-        log.error("handleQuestionInsertFailedException", exception);
-
-        fileHandler.deleteFiles(exception.getAttachSaveList()); // 생성했던 파일 삭제
-        return ResponseEntity
-                .status(exception.getErrorCode().getHttpStatus())
-                .body(buildErrorResponse(exception.getErrorCode()));
-    }
-
-    /**
-     * 답변 DB에 insert 실패 시, 생성한 첨부파일이 있다면 그 파일을 삭제
-     */
-    @ExceptionHandler(AnswerInsertFailedException.class)
-    public ResponseEntity<ErrorResponse> answerInsertFailedExceptionHandler(AnswerInsertFailedException exception) {
-        log.error("handleAnswerInsertFailedException", exception);
+    @ExceptionHandler(InsertFailedException.class)
+    public ResponseEntity<ErrorResponse> insertFailedExceptionHandler(InsertFailedException exception) {
+        log.error("handleInsertFailedException", exception);
 
         fileHandler.deleteFiles(exception.getAttachSaveList()); // 생성했던 파일 삭제
         return ResponseEntity

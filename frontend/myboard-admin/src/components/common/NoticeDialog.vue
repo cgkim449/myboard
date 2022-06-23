@@ -12,6 +12,12 @@
         {{ fetchedNoticeDetail.content }}
       </v-card-text>
 
+      <AttachList
+          v-if="fetchedNoticeDetail.hasAttach"
+          v-bind:fetchedAttachList="fetchedNoticeDetail.attachList"
+          v-bind:attachOf="attachOf"
+      ></AttachList>
+
       <v-card-actions>
         <v-btn
             color="green darken-1"
@@ -32,16 +38,20 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+
   </v-dialog>
 </template>
 
 <script>
+
+import AttachList from "@/components/common/AttachList";
 export default {
   name: "NoticeDialog",
-
+  components: {AttachList},
   data() {
     return {
       showNoticeDialog: false,
+      attachOf: "notice",
     }
   },
 

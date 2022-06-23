@@ -7,13 +7,9 @@ import lombok.Getter;
 
 import java.util.List;
 
-public class BoardInsertFailedException extends BusinessException{
-
-    @Getter
-    private final List<AttachVo> attachSaveList;
+public class BoardInsertFailedException extends InsertFailedException{
 
     public BoardInsertFailedException(List<AttachVo> attachSaveList, ErrorCode errorCode) {
-        super(errorCode);
-        this.attachSaveList = attachSaveList;
+        super(attachSaveList, errorCode);
     }
 }

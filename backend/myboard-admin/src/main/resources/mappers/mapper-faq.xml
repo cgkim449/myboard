@@ -2,6 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.cgkim.myboardadmin.dao.FAQDao">
+
+    <insert id="insertFAQ" useGeneratedKeys="true" keyProperty="faqId">
+        insert
+        into tbl_faq (admin_id, category_id, title, content)
+        values(#{adminId}, #{categoryId}, #{title}, #{content});
+    </insert>
+
+    <update id="updateThumbnailUri" parameterType="map">
+        update tbl_faq
+        set thumbnail_uri = #{thumbnailUri}
+        where faq_id = #{faqId}
+    </update>
+
+    <update id="updateHasAttach" parameterType="map">
+        update tbl_faq
+        set has_attach = #{hasAttach}
+        where faq_id = #{faqId}
+    </update>
+
     <select id="selectList" resultType="faqListResponse" parameterType="java.lang.Integer">
         select f.faq_id,
                f.title,
@@ -16,5 +35,6 @@
         <if test = "categoryId != 0 and categoryId != null">
             where f.category_id = #{categoryId}
         </if>
+        order by f.register_date desc, f.faq_id desc
     </select>
 </mapper>

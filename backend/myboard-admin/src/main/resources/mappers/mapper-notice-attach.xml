@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cgkim.myboardadmin.dao.NoticeAttachDao">
+    <select id="selectList" resultType="attachVo" parameterType="long">
+        select attach_id,
+               notice_id,
+               upload_path,
+               uuid,
+               name,
+               extension,
+               is_image,
+               size
+        from tbl_notice_attach
+        where notice_id = #{noticeId};
+    </select>
+
+    <select id="selectOne" resultType="attachVo" parameterType="long">
+        select attach_id,
+               notice_id,
+               upload_path,
+               uuid,
+               name,
+               extension,
+               is_image,
+               size,
+               register_date,
+               update_date
+        from tbl_notice_attach
+        where attach_id = #{attachId};
+    </select>
+
+    <select id="selectCountByNoticeId" resultType="int" parameterType="long">
+        select count(*)
+        from tbl_notice_attach
+        where notice_id = #{noticeId};
+    </select>
+
+    <insert id="insert" parameterType="attachVo">
+        insert
+        into tbl_notice_attach (notice_id, upload_path, uuid, name, extension, is_image, size)
+        values (#{noticeId}, #{uploadPath}, #{uuid}, #{name}, #{extension}, #{isImage}, #{size});
+    </insert>
+
+    <delete id="deleteByNoticeId" parameterType="long" >
+        delete
+        from tbl_notice_attach
+        where notice_id = #{noticeId}
+    </delete>
+
+    <delete id="delete" parameterType="long">
+        delete
+        from tbl_notice_attach
+        where attach_id = #{attachId}
+    </delete>
+</mapper>
