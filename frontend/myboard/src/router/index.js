@@ -20,11 +20,7 @@ import TestView from "@/views/TestView";
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: "/test",
-    name: "TestView",
-    component: TestView,
-  },
+
   {
     path: "/",
     redirect: {
@@ -106,6 +102,11 @@ const routes = [
     path: "*",
     name: "PageNotFoundView",
     component: PageNotFoundView,
+  },
+  {
+    path: "/test",
+    name: "TestView",
+    component: TestView,
   },
 ]
 

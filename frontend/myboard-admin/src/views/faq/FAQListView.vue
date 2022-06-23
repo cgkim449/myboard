@@ -1,14 +1,10 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col
-          cols="auto"
-      >
-      <h2>
+    <PageTitle>
+      <h2 slot="title">
         FAQ
       </h2>
-      </v-col>
-    </v-row>
+    </PageTitle>
 
     <v-row>
       <v-col>
@@ -95,14 +91,38 @@
         </v-data-table>
       </v-col>
     </v-row>
+
+    <v-row>
+      <v-spacer></v-spacer>
+      <v-col
+          cols="auto"
+      >
+        <v-btn
+            @click="moveToFAQWrite"
+            color="secondary"
+        >
+          FAQ 작성
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col>
+
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import {formatDate} from "@/utils/filters";
+import PageTitle from "@/components/common/PageTitle";
 
 export default {
   name: "FAQListView",
+  components: {
+    PageTitle
+  },
   data () {
     return {
       expanded: [],
@@ -121,12 +141,20 @@ export default {
 
     }
   },
+
   methods: {
     async search(categoryId) {
       const {data} = await this.$_FAQService.fetchFAQList(categoryId);
       this.faqList = data.faqList;
     },
+    moveToFAQWrite() {
+      this.$router.push({
+        name: "FAQWriteView",
+        query: this.$route.query
+      });
+    },
   },
+
   async created() {
     const {data} = await this.$_FAQService.fetchFAQList(0);
     this.faqList = data.faqList;

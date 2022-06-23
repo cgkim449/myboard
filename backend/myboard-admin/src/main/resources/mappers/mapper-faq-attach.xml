@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cgkim.myboardadmin.dao.FAQAttachDao">
+    <select id="selectList" resultType="attachVo" parameterType="long">
+        select attach_id,
+               faq_id,
+               upload_path,
+               uuid,
+               name,
+               extension,
+               is_image,
+               size
+        from tbl_faq_attach
+        where faq_id = #{faqId};
+    </select>
+
+    <select id="selectOne" resultType="attachVo" parameterType="long">
+        select attach_id,
+               faq_id,
+               upload_path,
+               uuid,
+               name,
+               extension,
+               is_image,
+               size,
+               register_date,
+               update_date
+        from tbl_faq_attach
+        where attach_id = #{attachId};
+    </select>
+
+    <select id="selectCountByFAQId" resultType="int" parameterType="long">
+        select count(*)
+        from tbl_faq_attach
+        where faq_id = #{faqId};
+    </select>
+
+    <insert id="insert" parameterType="attachVo">
+        insert
+        into tbl_faq_attach (faq_id, upload_path, uuid, name, extension, is_image, size)
+        values (#{faqId}, #{uploadPath}, #{uuid}, #{name}, #{extension}, #{isImage}, #{size});
+    </insert>
+
+    <delete id="deleteByFAQId" parameterType="long" >
+        delete
+        from tbl_faq_attach
+        where faq_id = #{faqId}
+    </delete>
+
+    <delete id="delete" parameterType="long">
+        delete
+        from tbl_faq_attach
+        where attach_id = #{attachId}
+    </delete>
+</mapper>

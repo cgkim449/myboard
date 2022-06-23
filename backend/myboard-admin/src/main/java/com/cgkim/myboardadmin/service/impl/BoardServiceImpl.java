@@ -165,6 +165,39 @@ public class BoardServiceImpl implements BoardService {
     }
 
     /**
+     * 첨부파일 insert
+     */
+    private void insertAttaches(List<AttachVo> attachInsertList, Long boardId) {
+        for (AttachVo attach : attachInsertList) {
+            attach.setBoardId(boardId);
+            boardAttachDao.insert(attach);
+        }
+    }
+
+    /**
+     * 첨부파일 delete
+     */
+    private void deleteAttaches(List<AttachVo> attachDeleteList) {
+        for (AttachVo attachVo : attachDeleteList) {
+            boardAttachDao.delete(attachVo.getAttachId());
+        }
+    }
+
+    /**
+     * 첨부파일 유무 여부 update
+     */
+    private void updateHasAttach(long boardId) {
+        int attachCount = boardAttachDao.selectCountByBoardId(boardId);
+
+        boardDao.updateHasAttach(
+                Map.of(
+                        "boardId", boardId,
+                        "hasAttach", attachCount > 0
+                )
+        );
+    }
+
+    /**
      * 게시물 수정
      */
     @Override
@@ -260,37 +293,6 @@ public class BoardServiceImpl implements BoardService {
         }
     }
 
-    /**
-     * 첨부파일 insert
-     */
-    private void insertAttaches(List<AttachVo> attachInsertList, Long boardId) {
-        for (AttachVo attach : attachInsertList) {
-            attach.setBoardId(boardId);
-            boardAttachDao.insert(attach);
-        }
-    }
 
-    /**
-     * 첨부파일 delete
-     */
-    private void deleteAttaches(List<AttachVo> attachDeleteList) {
-        for (AttachVo attachVo : attachDeleteList) {
-            boardAttachDao.delete(attachVo.getAttachId());
-        }
-    }
-
-    /**
-     * 첨부파일 유무 여부 update
-     */
-    private void updateHasAttach(long boardId) {
-        int attachCount = boardAttachDao.selectCountByBoardId(boardId);
-
-        boardDao.updateHasAttach(
-                Map.of(
-                        "boardId", boardId,
-                        "hasAttach", attachCount > 0
-                )
-        );
-    }
 
 }

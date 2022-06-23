@@ -1,14 +1,10 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col
-          cols="auto"
-      >
-      <h2>
+    <PageTitle>
+      <h2 slot="title">
         FAQ
       </h2>
-      </v-col>
-    </v-row>
+    </PageTitle>
 
     <v-row>
       <v-col>
@@ -100,9 +96,13 @@
 
 <script>
 import {formatDate} from "@/utils/filters";
+import PageTitle from "@/components/common/PageTitle";
 
 export default {
   name: "FAQListView",
+  components: {
+    PageTitle
+  },
   data () {
     return {
       expanded: [],

@@ -30,25 +30,24 @@ public class JwtInterceptor implements HandlerInterceptor {
     ) {
         String token = extractTokenFrom(request);
 
-        if(token == null) {
-            throw new NoAuthorizationException(ErrorCode.NO_AUTHORIZATION);
+        if(token != null) {
+            DecodedJWT jwt = jwtProvider.validate(token);
+
+            String username = jwt.getClaim("username").asString();
+            Boolean isAdmin = jwt.getClaim("isAdmin").asBoolean();
+
+            if(username == null) {
+                throw new LoginRequiredException(ErrorCode.LOGIN_REQUIRED);
+            }
+
+            if(isAdmin == null) {
+                throw new NoAuthorizationException(ErrorCode.NO_AUTHORIZATION);
+            }
+
+            request.setAttribute("username", username);
+            request.setAttribute("isAdmin", true);
         }
 
-        DecodedJWT jwt = jwtProvider.validate(token);
-
-        String username = jwt.getClaim("username").asString();
-        Boolean isAdmin = jwt.getClaim("isAdmin").asBoolean();
-
-        if(username == null) {
-            throw new LoginRequiredException(ErrorCode.LOGIN_REQUIRED);
-        }
-
-        if(isAdmin == null) {
-            throw new NoAuthorizationException(ErrorCode.NO_AUTHORIZATION);
-        }
-
-        request.setAttribute("username", username);
-        request.setAttribute("isAdmin", true);
         return true;
     }
 

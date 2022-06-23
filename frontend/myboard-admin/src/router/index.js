@@ -16,15 +16,12 @@ import QuestionDetailView from "@/views/question/QuestionDetailView";
 import QuestionModifyView from "@/views/question/QuestionModifyView";
 import FAQListView from "@/views/faq/FAQListView";
 import {adminCheck} from "@/api/auth";
+import FAQWriteView from "@/views/faq/FAQWriteView";
 
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: "/test",
-    name: "TestView",
-    component: TestView,
-  },
+
   {
     path: "/",
     redirect: {
@@ -89,6 +86,11 @@ const routes = [
         name: "FAQListView",
         component: FAQListView,
       },
+      {
+        path: "faqs/new",
+        name: "FAQWriteView",
+        component: FAQWriteView,
+      },
     ],
   },
   {
@@ -110,6 +112,11 @@ const routes = [
       requiresAuth: true,
     },
   },
+  {
+    path: "/test",
+    name: "TestView",
+    component: TestView,
+  },
 ]
 
 const router = new VueRouter({
@@ -127,8 +134,10 @@ router.beforeEach(async (to, from, next)=>{
   try{
     const response = await adminCheck();
     status = response.status;
+    console.log(status)
   } catch(error) {
     status = error.response.data.status;
+    console.log(status)
   }
 
   if(to.matched.some(record  => record.meta.requiresAuth) && status !== 200) {

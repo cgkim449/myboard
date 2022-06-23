@@ -6,9 +6,7 @@ export function setInterceptors(axiosInstance) {
         function (config) {
             const token = store.state.token;
 
-            if(token !== null) { //로그인시에만 헤더에 토큰 넣어 요청
-                config.headers.Authorization = "Bearer " + token;
-            }
+            config.headers.Authorization = "Bearer " + token;
 
             return config;
         },
