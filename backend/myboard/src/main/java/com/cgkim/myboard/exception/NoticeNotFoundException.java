@@ -3,8 +3,8 @@ package com.cgkim.myboard.exception;
 
 import com.cgkim.myboard.exception.errorcode.ErrorCode;
 
-public class NicknameDuplicateException extends BusinessException {
-    public NicknameDuplicateException(ErrorCode errorCode) {
+public class NoticeNotFoundException extends BusinessException {
+    public NoticeNotFoundException(ErrorCode errorCode) {
         super(errorCode);
     }
 }

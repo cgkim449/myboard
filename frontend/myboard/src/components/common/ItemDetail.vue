@@ -35,9 +35,10 @@
         <v-col
             cols="auto"
         >
-          <strong v-if="itemType !== 'answer'">[{{fetchedItemDetail.categoryName}}]</strong>
+          <strong v-if="itemType !== 'answer' && itemType !== 'notice'">[{{fetchedItemDetail.categoryName}}]</strong>
           <strong v-if="itemType === 'answer'" class="blue--text">처리완료</strong>
           <v-divider
+              v-if="itemType !== 'notice'"
               class="mx-4"
               vertical
           ></v-divider>
@@ -48,7 +49,7 @@
 
         <v-col
             cols="auto"
-            v-if="itemType !== 'answer'"
+            v-if="itemType !== 'answer' && itemType !== 'notice'"
         >
           <span>조회수: {{fetchedItemDetail.viewCount}}</span>
         </v-col>

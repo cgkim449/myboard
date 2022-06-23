@@ -4,50 +4,54 @@
       width="600px"
   >
     <v-card>
-      <v-container>
-        <v-card-title class="text-h5">
-          {{ fetchedNoticeDetail.title }}
-        </v-card-title>
+      <v-card-title class="text-h5">
+        {{ fetchedNoticeDetail.title }}
+      </v-card-title>
 
+      <v-card-text>
+        {{ fetchedNoticeDetail.content }}
+      </v-card-text>
 
-        <v-card-text>
-          {{ fetchedNoticeDetail.content }}
-        </v-card-text>
+      <AttachList
+          v-if="fetchedNoticeDetail.hasAttach"
+          v-bind:fetchedAttachList="fetchedNoticeDetail.attachList"
+          v-bind:attachOf="attachOf"
+      ></AttachList>
 
-        <a href="https://source.unsplash.com/user/c_v_r/100x100" >asdfafd</a>
-        <v-img src=""></v-img>
+      <v-card-actions>
+        <v-btn
+            color="green darken-1"
+            text
+            @click="blockNoticeDialog"
+        >
+          하루동안 안보기
+        </v-btn>
 
-        <v-card-actions>
-          <v-btn
-              color="green darken-1"
-              text
-              @click="blockNoticeDialog"
-          >
-            하루동안 안보기
-          </v-btn>
+        <v-spacer></v-spacer>
 
-          <v-spacer></v-spacer>
-
-          <v-btn
-              color="green darken-1"
-              text
-              @click="closeNoticeDialog"
-          >
-            닫기
-          </v-btn>
-        </v-card-actions>
-      </v-container>
+        <v-btn
+            color="green darken-1"
+            text
+            @click="closeNoticeDialog"
+        >
+          닫기
+        </v-btn>
+      </v-card-actions>
     </v-card>
+
   </v-dialog>
 </template>
 
 <script>
+
+import AttachList from "@/components/common/AttachList";
 export default {
   name: "NoticeDialog",
-
+  components: {AttachList},
   data() {
     return {
       showNoticeDialog: false,
+      attachOf: "notice",
     }
   },
 

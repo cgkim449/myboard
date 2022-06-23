@@ -36,8 +36,8 @@
           cols="auto"
       >
         <v-btn
-            color="secondary"
             @click="moveToBoardWrite"
+            color="secondary"
         >
           글쓰기
         </v-btn>
@@ -49,7 +49,6 @@
 
       </v-col>
     </v-row>
-
   </v-container>
 </template>
 
@@ -105,7 +104,7 @@ export default {
   methods: {
     async fetchNotice() {
       try {
-        const {data} = await this.$_NoticeService.fetchNoticeDetail();
+        const {data} = await this.$_NoticeService.fetchLatestNoticeDetail();
 
         this.noticeDetail = data.noticeDetail;
 

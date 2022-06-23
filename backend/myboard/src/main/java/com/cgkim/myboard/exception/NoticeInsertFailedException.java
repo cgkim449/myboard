@@ -7,9 +7,9 @@ import com.cgkim.myboard.vo.attach.AttachVo;
 
 import java.util.List;
 
-public class QuestionInsertFailedException extends InsertFailedException{
+public class NoticeInsertFailedException extends InsertFailedException{
 
-    public QuestionInsertFailedException(List<AttachVo> attachSaveList, ErrorCode errorCode) {
+    public NoticeInsertFailedException(List<AttachVo> attachSaveList, ErrorCode errorCode) {
         super(attachSaveList, errorCode);
     }
 }

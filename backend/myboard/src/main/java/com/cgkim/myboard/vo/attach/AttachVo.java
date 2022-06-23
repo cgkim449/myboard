@@ -10,6 +10,9 @@ public class AttachVo {
     private Long attachId;
     private Long boardId;
     private Long questionId;
+    private Long answerId;
+    private Long faqId;
+    private Long noticeId;
     private String uploadPath;
     private String uuid;
     private String name;
