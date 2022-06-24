@@ -39,10 +39,10 @@
 	</tr>
 	<tr>
 		<td><strong>Frontend<strong></td>
-		<td>JavaScript(ES6), Vue.js 2</td>
+		<td>JavaScript ES6, Vue.js 2</td>
 	</tr>
 	<tr>
-		<td><strong>Server<strong></td>
+		<td><strong>Infra<strong></td>
 		<td>AWS EC2</td>
 	</tr>
 	<tr>
@@ -50,8 +50,8 @@
 		<td>Git</td>
 	</tr>
     <tr>
-		<td><strong>Repository<strong></td>
-		<td>Github</td>
+		<td><strong>Tools<strong></td>
+		<td>IntelliJ, WebStorm</td>
 	</tr>
 </table>
 
