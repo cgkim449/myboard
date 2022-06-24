@@ -1,4 +1,4 @@
-# 게시판
+# myboard
 > Special thanks to [eBrainSoft](https://www.ebrainsoft.com/)
 
 <br/>
