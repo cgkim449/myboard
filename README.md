@@ -1,5 +1,5 @@
 # 게시판
-> special thanks to eBrainSoft
+> Special thanks to eBrainSoft
 
 ## 서비스
 <table>
@@ -8,8 +8,8 @@
     <th>관리자 사이트</th>
 	<tr>
 		<td><strong>url<strong></td>
-		<td><a>http://</a></td>
-        <td><a>http://</a></td>
+		<td><a href="">http://</a></td>
+        <td><a href="">http://</a></td>
 	</tr>
 	<tr>
 		<td><strong>id<strong></td>
