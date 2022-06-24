@@ -42,6 +42,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Q&A 질문 컨트롤러
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -49,57 +52,12 @@ import java.util.List;
 public class QuestionController {
     private final QuestionService questionService;
     private final QuestionAttachServiceImpl attachService;
-    private final AnswerService answerService;
     private final FileHandler fileHandler;
-    private final QuestionSaveRequestValidator questionSaveRequestValidator;
-    private final QuestionUpdateRequestValidator questionUpdateRequestValidator;
-    private final FileSaveRequestValidator fileSaveRequestValidator;
-    private final GuestSaveRequestValidator guestSaveRequestValidator;
-
-    /**
-     * PropertyEditor, Validator 등록
-     */
-    @InitBinder
-    public void initBinder(WebDataBinder webDataBinder) {
-
-        addPropertyEditors(webDataBinder);
-        addValidators(webDataBinder);
-    }
-
-    /**
-     * PropertyEditor 등록
-     */
-    private void addPropertyEditors(WebDataBinder webDataBinder) {
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        webDataBinder.registerCustomEditor(Date.class, new CustomDateEditor(simpleDateFormat, true));
-    }
-
-    /**
-     * Validator 등록
-     */
-    private void addValidators(WebDataBinder webDataBinder) {
-
-        if (webDataBinder.getTarget() == null) {
-            return;
-        }
-
-        final List<Validator> validatorList = List.of(
-                questionSaveRequestValidator,
-                questionUpdateRequestValidator,
-                fileSaveRequestValidator,
-                guestSaveRequestValidator
-        );
-
-        for (Validator validator : validatorList) {
-            if (validator.supports(webDataBinder.getTarget().getClass())) {
-                webDataBinder.addValidators(validator);
-            }
-        }
-    }
 
     /**
      * 질문 목록 조회
+     * @param questionSearchRequest
+     * @return
      */
     //TODO: 비공개 글 검색 안되게
     @GetMapping
@@ -116,6 +74,8 @@ public class QuestionController {
 
     /**
      * 질문 상세 조회
+     * @param questionId
+     * @return
      */
     @GetMapping("/{questionId}")
     public ResponseEntity<SuccessResponse> getDetail(@PathVariable Long questionId) {
@@ -129,6 +89,11 @@ public class QuestionController {
 
     /**
      * 질문 작성(회원만 가능)
+     * @param username
+     * @param questionSaveRequest
+     * @param fileSaveRequest
+     * @return
+     * @throws IOException
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> write(@LoginUser String username,
@@ -149,6 +114,10 @@ public class QuestionController {
 
     /**
      * 질문 삭제
+     * @param username
+     * @param questionId
+     * @return
+     * @throws NoSuchAlgorithmException
      */
     @DeleteMapping("/{questionId}")
     public ResponseEntity<SuccessResponse> delete(@LoginUser String username,
@@ -170,7 +139,13 @@ public class QuestionController {
 
     /**
      * 질문 수정
-     * TODO: 질문 수정시 썸네일 업데이트 해야함.
+     * @param username
+     * @param questionId
+     * @param questionUpdateRequest
+     * @param fileSaveRequest
+     * @param attachDeleteRequest
+     * @return
+     * @throws IOException
      */
     @PatchMapping("/{questionId}")
     public ResponseEntity<SuccessResponse> updateQuestion(@LoginUser String username,

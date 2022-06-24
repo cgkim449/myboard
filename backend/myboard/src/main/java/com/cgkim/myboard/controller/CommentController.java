@@ -30,47 +30,19 @@ import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-
+/**
+ * 자유게시판 댓글 컨트롤러
+ */
 @RequiredArgsConstructor
 @RequestMapping("/comments")
 @RestController
 public class CommentController {
     private final CommentService commentService;
-    private final MemberService memberService;
-    private final CommentSaveRequestValidator commentSaveRequestValidator;
-    private final GuestSaveRequestValidator guestSaveRequestValidator;//TODO: 전역등록
-
-    /**
-     * Validator 등록
-     */
-    @InitBinder
-    public void initBinder(WebDataBinder webDataBinder) {
-        addValidators(webDataBinder);
-    }
-
-    /**
-     * Validator 등록
-     */
-    private void addValidators(WebDataBinder webDataBinder) {
-
-        if (webDataBinder.getTarget() == null) {
-            return;
-        }
-
-        final List<Validator> validatorList = List.of(
-                commentSaveRequestValidator,
-                guestSaveRequestValidator
-        );
-
-        for (Validator validator : validatorList) {
-            if (validator.supports(webDataBinder.getTarget().getClass())) {
-                webDataBinder.addValidators(validator);
-            }
-        }
-    }
 
     /**
      * 댓글 목록 조회
+     * @param boardId
+     * @return
      */
     @GetMapping
     public ResponseEntity<SuccessResponse> getCommentList(Long boardId) {
@@ -82,6 +54,9 @@ public class CommentController {
 
     /**
      * 회원 댓글 작성
+     * @param username
+     * @param commentSaveRequest
+     * @return
      */
     @PostMapping("/member")
     public ResponseEntity<SuccessResponse> writeMemberComment(@LoginUser String username,
@@ -99,6 +74,10 @@ public class CommentController {
 
     /**
      * 익명 댓글 작성
+     * @param guestSaveRequest
+     * @param commentSaveRequest
+     * @return
+     * @throws NoSuchAlgorithmException
      */
     @PostMapping("/guest")
     public ResponseEntity<SuccessResponse> writeGuestComment(@Valid GuestSaveRequest guestSaveRequest,
@@ -112,6 +91,11 @@ public class CommentController {
 
     /**
      * 댓글 삭제
+     * @param username
+     * @param commentId
+     * @param guestPasswordCheckRequest
+     * @return
+     * @throws NoSuchAlgorithmException
      */
     @DeleteMapping("/{commentId}")
     public ResponseEntity<SuccessResponse> deleteComment(@LoginUser String username,

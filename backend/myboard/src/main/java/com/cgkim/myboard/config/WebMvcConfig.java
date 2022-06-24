@@ -8,6 +8,9 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * WebMvcConfig
+ */
 @Slf4j
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
@@ -44,4 +47,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/upload/**")
                 .addResourceLocations("file:///"+ uploadLocation +"/");
     }
+
+
 }

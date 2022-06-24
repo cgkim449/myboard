@@ -36,36 +36,6 @@ public class FAQController {
 
     private final FAQService faqService;
     private final FileHandler fileHandler;
-    private final FAQSaveRequestValidator faqSaveRequestValidator;
-
-    /**
-     * PropertyEditor, Validator 등록
-     */
-    @InitBinder
-    public void initBinder(WebDataBinder webDataBinder) {
-
-        addValidators(webDataBinder);
-    }
-
-    /**
-     * Validator 등록
-     */
-    private void addValidators(WebDataBinder webDataBinder) {
-
-        if (webDataBinder.getTarget() == null) {
-            return;
-        }
-
-        final List<Validator> validatorList = List.of(
-                faqSaveRequestValidator
-        );
-
-        for (Validator validator : validatorList) {
-            if (validator.supports(webDataBinder.getTarget().getClass())) {
-                webDataBinder.addValidators(validator);
-            }
-        }
-    }
 
     /**
      * FAQ 목록 조회

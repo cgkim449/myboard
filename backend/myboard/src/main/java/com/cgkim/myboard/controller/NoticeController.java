@@ -37,64 +37,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 공지사항 컨트롤러
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/notices")
 public class NoticeController {
 
-    //TODO: 공지 첨부 이미지 썸네일?
     private final NoticeService noticeService;
-    private final FileHandler fileHandler;
-    private final NoticeSaveRequestValidator noticeSaveRequestValidator;
-    private final FileSaveRequestValidator fileSaveRequestValidator;
-    private final NoticeAttachServiceImpl attachService;
-    private final NoticeUpdateRequestValidator noticeUpdateRequestValidator;
 
     /**
-     * PropertyEditor, Validator 등록
-     */
-    @InitBinder
-    public void initBinder(WebDataBinder webDataBinder) {
-        addPropertyEditors(webDataBinder);
-        addValidators(webDataBinder);
-    }
-
-    /**
-     * PropertyEditor 등록
-     */
-    private void addPropertyEditors(WebDataBinder webDataBinder) {
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        webDataBinder.registerCustomEditor(Date.class, new CustomDateEditor(simpleDateFormat, true));
-    }
-
-    /**
-     * Validator 등록
-     */
-    private void addValidators(WebDataBinder webDataBinder) {
-
-        if (webDataBinder.getTarget() == null) {
-            return;
-        }
-
-        final List<Validator> validatorList = List.of(
-                noticeSaveRequestValidator,
-                fileSaveRequestValidator,
-                noticeUpdateRequestValidator
-        );
-
-        for (Validator validator : validatorList) {
-            if (validator.supports(webDataBinder.getTarget().getClass())) {
-                webDataBinder.addValidators(validator);
-            }
-        }
-    }
-
-
-
-    /**
-     * 공지 상세 조회
+     * 공지사항 상세 조회
+     * @param noticeId
+     * @return
      */
     @GetMapping("/{noticeId}")
     public ResponseEntity<SuccessResponse> getDetail(@PathVariable Long noticeId) {
@@ -107,7 +64,8 @@ public class NoticeController {
     }
 
     /**
-     * 가장 최근 공지 조회
+     * 가장 최근 공지사항 조회
+     * @return
      */
     @GetMapping("/latest")
     public ResponseEntity<SuccessResponse> getLatestNoticeDetail() {
@@ -120,7 +78,9 @@ public class NoticeController {
     }
 
     /**
-     * 공지 목록 조회
+     * 공지사항 목록 조회
+     * @param noticeSearchRequest
+     * @return
      */
     @GetMapping
     public ResponseEntity<SuccessResponse> getList(NoticeSearchRequest noticeSearchRequest){
@@ -132,60 +92,5 @@ public class NoticeController {
                 .ok(new SuccessResponse()
                         .put("noticeList", noticeList)
                         .put("noticeTotalCount", noticeTotalCount));
-    }
-
-    /**
-     * 공지 작성
-     */
-    @PostMapping
-    public ResponseEntity<SuccessResponse> writeBoard(@LoginUser String username,
-                                                      @Valid NoticeSaveRequest noticeSaveRequest,
-                                                      @Valid FileSaveRequest fileSaveRequest
-    ) throws IOException {
-
-        List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles()); //첨부파일 생성 (C://upload)
-        long noticeId = noticeService.write(username, noticeSaveRequest, attachInsertList); //글 작성
-
-        return ResponseEntity.created(URI.create("/admin/notices/" + noticeId)).body(new SuccessResponse());
-    }
-
-
-    /**
-     * 공지 삭제
-     */
-    @DeleteMapping("/{noticeId}")
-    public ResponseEntity<SuccessResponse> delete(@PathVariable Long noticeId) {
-
-        List<AttachVo> attachDeleteList = attachService.getList(noticeId); //첨부파일 삭제 리스트
-        noticeService.delete(noticeId); //게시물 삭제
-        fileHandler.deleteFiles(attachDeleteList); //첨부파일 삭제 (C://upload)
-
-        return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * 공지 수정
-     */
-    @PatchMapping("/{noticeId}")
-    public ResponseEntity<SuccessResponse> update(@PathVariable Long noticeId,
-                                                  @Valid NoticeUpdateRequest noticeUpdateRequest,
-                                                  @Valid FileSaveRequest fileSaveRequest,
-                                                  Long[] attachDeleteRequest
-    ) throws IOException {
-
-        List<AttachVo> attachDeleteList = attachService.getList(attachDeleteRequest); //첨부파일 삭제 리스트
-        List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles());//첨부파일 삽입 리스트
-
-        noticeService.modify( //공지 수정, 첨부파일 수정
-                noticeId,
-                noticeUpdateRequest.getContent(),
-                noticeUpdateRequest.getTitle(),
-                attachInsertList,
-                attachDeleteList
-        );
-
-        fileHandler.deleteFiles(attachDeleteList); //첨부파일 삭제 (C://upload)
-
-        return ResponseEntity.ok(new SuccessResponse());
     }
 }

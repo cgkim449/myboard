@@ -4,9 +4,12 @@ import store from "@/store";
 export function setInterceptors(axiosInstance) {
     axiosInstance.interceptors.request.use(
         function (config) {
+
             const token = store.state.token;
 
-            config.headers.Authorization = "Bearer " + token;
+            if(token != null) {
+                config.headers.Authorization = "Bearer " + token;
+            }
 
             return config;
         },

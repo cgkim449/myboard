@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Q&A 질문 첨부파일 컨트롤러
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -32,7 +35,9 @@ public class QuestionAttachController {
     String basePath;
 
     /**
-     * 파일 다운로드
+     * 질문 첨부파일 다운로드
+     * @param attachId
+     * @return
      */
     @GetMapping("/{attachId}")
     public ResponseEntity<Resource> downloadAttach(@PathVariable Long attachId) {
@@ -56,7 +61,9 @@ public class QuestionAttachController {
     }
 
     /**
-     * 파일 절대경로 리턴
+     * 첨부파일 절대경로 리턴
+     * @param attachVo
+     * @return
      */
     private String getAbsolutePathOf(AttachVo attachVo) {
 

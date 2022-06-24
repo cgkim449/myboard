@@ -51,52 +51,6 @@ public class QuestionController {
     private final AnswerService answerService;
     private final QuestionAttachServiceImpl attachService;
     private final FileHandler fileHandler;
-    private final QuestionSaveRequestValidator questionSaveRequestValidator;
-    private final QuestionUpdateRequestValidator questionUpdateRequestValidator;
-    private final FileSaveRequestValidator fileSaveRequestValidator;
-    private final GuestSaveRequestValidator guestSaveRequestValidator;
-
-    /**
-     * PropertyEditor, Validator 등록
-     */
-    @InitBinder
-    public void initBinder(WebDataBinder webDataBinder) {
-
-        addPropertyEditors(webDataBinder);
-        addValidators(webDataBinder);
-    }
-
-    /**
-     * PropertyEditor 등록
-     */
-    private void addPropertyEditors(WebDataBinder webDataBinder) {
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        webDataBinder.registerCustomEditor(Date.class, new CustomDateEditor(simpleDateFormat, true));
-    }
-
-    /**
-     * Validator 등록
-     */
-    private void addValidators(WebDataBinder webDataBinder) {
-
-        if (webDataBinder.getTarget() == null) {
-            return;
-        }
-
-        final List<Validator> validatorList = List.of(
-                questionSaveRequestValidator,
-                questionUpdateRequestValidator,
-                fileSaveRequestValidator,
-                guestSaveRequestValidator
-        );
-
-        for (Validator validator : validatorList) {
-            if (validator.supports(webDataBinder.getTarget().getClass())) {
-                webDataBinder.addValidators(validator);
-            }
-        }
-    }
 
     /**
      * 질문 목록 조회

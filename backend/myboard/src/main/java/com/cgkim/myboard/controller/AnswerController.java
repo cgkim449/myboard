@@ -19,6 +19,9 @@ import javax.validation.Valid;
 import java.net.URI;
 
 
+/**
+ * Q&A 답변 컨트롤러
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -27,6 +30,11 @@ public class AnswerController {
 
     private final AnswerService answerService;
 
+    /**
+     * 답변 상세 조회
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public ResponseEntity<SuccessResponse> getDetail(@PathVariable Long id) {
 

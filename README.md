@@ -1,5 +1,5 @@
 # myboard
-> Special thanks to [eBrainSoft](https://www.ebrainsoft.com/)
+> Special thanks to 윤상진(eBrainSoft)
 
 <br/>
 

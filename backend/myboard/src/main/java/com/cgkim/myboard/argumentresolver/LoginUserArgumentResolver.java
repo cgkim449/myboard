@@ -16,7 +16,6 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
 @Component
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
 
-
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         boolean hasLoginUserAnnotation = parameter.hasParameterAnnotation(LoginUser.class);

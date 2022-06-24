@@ -24,6 +24,9 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 모든 예외를 처리
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestControllerAdvice
@@ -34,43 +37,63 @@ public class GlobalExceptionHandler {
 
     /**
      * 최대한 여기서 모든 비즈니스 로직 예외처리
+     * @param exception
+     * @return
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> businessExceptionHandler(BusinessException exception) {
+
         log.error("handleBusinessException", exception);
+
         return ResponseEntity
                 .status(exception.getErrorCode().getHttpStatus())
                 .body(buildErrorResponse(exception.getErrorCode()));
     }
 
     /**
-     * 게시물, 질문 DB에 insert 실패 시, 생성한 첨부파일이 있다면 그 파일을 삭제
+     * 게시물, 질문 DB에 insert 실패 시 생성한 첨부파일이 있다면 그 파일을 삭제
+     * @param exception
+     * @return
      */
     @ExceptionHandler(InsertFailedException.class)
     public ResponseEntity<ErrorResponse> insertFailedExceptionHandler(InsertFailedException exception) {
+
         log.error("handleInsertFailedException", exception);
 
         fileHandler.deleteFiles(exception.getAttachSaveList()); // 생성했던 파일 삭제
+
         return ResponseEntity
                 .status(exception.getErrorCode().getHttpStatus())
                 .body(buildErrorResponse(exception.getErrorCode()));
     }
 
+    /**
+     * 무효한 익명 사용자 비밀번호
+     * @param exception
+     * @return
+     */
     @ExceptionHandler(GuestSaveRequestInvalidException.class)
     public ResponseEntity<ErrorResponse> GuestSaveRequestInvalidExceptionHandler(GuestSaveRequestInvalidException exception) {
+
         log.error("handleGuestSaveRequestInvalidException", exception);
+
         List<ErrorResponse.FieldErrorDetail> fieldErrorDetails = getFieldErrorDetails(exception.getBindingResult());
+
         return ResponseEntity
                 .status(exception.getErrorCode().getHttpStatus())
                 .body(buildErrorResponse(exception.getErrorCode(), fieldErrorDetails));
     }
 
     /**
-     * 민료된 토큰 = 로그아웃
+     * 만료된 토큰
+     * @param exception
+     * @return
      */
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<ErrorResponse> TokenExpiredExceptionHandler(TokenExpiredException exception) {
+
         log.error("TokenExpiredExceptionException", exception);
+
         return ResponseEntity
                 .status(ErrorCode.TOKEN_EXPIRED.getHttpStatus())
                 .body(buildErrorResponse(ErrorCode.TOKEN_EXPIRED));
@@ -78,10 +101,14 @@ public class GlobalExceptionHandler {
 
     /**
      * 유효하지 않은 토큰
+     * @param exception
+     * @return
      */
     @ExceptionHandler(JWTVerificationException.class)
     public ResponseEntity<ErrorResponse> JWTVerificationExceptionHandler(JWTVerificationException exception) {
+
         log.error("JWTVerificationExceptionException", exception);
+
         return ResponseEntity
                 .status(ErrorCode.TOKEN_INVALID.getHttpStatus())
                 .body(buildErrorResponse(ErrorCode.TOKEN_INVALID));
@@ -89,11 +116,17 @@ public class GlobalExceptionHandler {
 
     /**
      * 바인딩 예외 처리
+     * @param exception
+     * @param bindingResult
+     * @return
      */
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ErrorResponse> bindExceptionHandler(BindException exception, BindingResult bindingResult) {
+
         log.error("handleBindException", exception);
+
         List<ErrorResponse.FieldErrorDetail> fieldErrorDetails = getFieldErrorDetails(bindingResult);
+
         return ResponseEntity
                 .status(ErrorCode.INVALID_INPUT_VALUE.getHttpStatus())
                 .body(buildErrorResponse(ErrorCode.INVALID_INPUT_VALUE, fieldErrorDetails));
@@ -101,10 +134,14 @@ public class GlobalExceptionHandler {
 
     /**
      * 최대 업로드 크기 초과 예외 처리
+     * @param exception
+     * @return
      */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> maxUploadSizeExceededExceptionHandler(MaxUploadSizeExceededException exception) {
+
         log.error("handleMaxUploadSizeExceededException", exception);
+
         return ResponseEntity
                 .status(ErrorCode.MAX_UPLOAD_SIZE_EXCEEDED.getHttpStatus())
                 .body(buildErrorResponse(ErrorCode.MAX_UPLOAD_SIZE_EXCEEDED));
@@ -112,16 +149,21 @@ public class GlobalExceptionHandler {
 
     /**
      * 모든 예외를 처리
+     * @param exception
+     * @return
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> exceptionHandler(Exception exception) {
+
         log.error("handleException", exception);
+
         return ResponseEntity
                 .status(ErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus())
                 .body(buildErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 
     private ErrorResponse buildErrorResponse(ErrorCode errorCode) {
+
         return ErrorResponse.builder()
                 .errorCode(errorCode.getErrorCode())
                 .errorMessage(errorCode.getErrorMessage())
@@ -129,6 +171,7 @@ public class GlobalExceptionHandler {
     }
 
     private ErrorResponse buildErrorResponse(ErrorCode errorCode, List<ErrorResponse.FieldErrorDetail> fieldErrorDetails) {
+
         return ErrorResponse.builder()
                 .errorCode(errorCode.getErrorCode())
                 .errorMessage(errorCode.getErrorMessage())
@@ -137,6 +180,7 @@ public class GlobalExceptionHandler {
     }
 
     private List<ErrorResponse.FieldErrorDetail> getFieldErrorDetails(BindingResult bindingResult) {
+
         List<ErrorResponse.FieldErrorDetail> fieldErrorDetails = new ArrayList<>();
 
         for (FieldError fieldError : bindingResult.getFieldErrors()) {

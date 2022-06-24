@@ -9,13 +9,18 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Q&A 답변 Service
+ */
 @RequiredArgsConstructor
 @Service
 public class AnswerAttachServiceImpl implements AttachService {
     private final AnswerAttachDao attachDao;
 
     /**
-     * 특정 게시물의 첨부파일 리스트
+     * 특정 게시물의 첨부파일 목록
+     * @param boardId
+     * @return
      */
     @Override
     public List<AttachVo> getList(Long boardId) {
@@ -23,7 +28,9 @@ public class AnswerAttachServiceImpl implements AttachService {
     }
 
     /**
-     * 첨부파일 한개 select
+     * 특정 첨부파일 select
+     * @param attachId
+     * @return
      */
     @Override
     public AttachVo get(Long attachId) {
@@ -31,7 +38,9 @@ public class AnswerAttachServiceImpl implements AttachService {
     }
 
     /**
-     * 첨부파일 id로 첨부파일 select
+     * 첨부파일 리스트 select
+     * @param attachIdArray
+     * @return
      */
     @Override
     public List<AttachVo> getList(Long[] attachIdArray) {

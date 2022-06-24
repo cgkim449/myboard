@@ -47,6 +47,8 @@ public class BoardServiceImpl implements BoardService {
 
     /**
      * 검색조건에 해당하는 게시물 리스트
+     * @param boardSearchRequest
+     * @return
      */
     @Override
     public List<BoardListResponse> getBoardList(BoardSearchRequest boardSearchRequest) {
@@ -64,6 +66,8 @@ public class BoardServiceImpl implements BoardService {
 
     /**
      * 검색조건에 해당하는 게시물 총 갯수
+     * @param boardSearchRequest
+     * @return
      */
     @Override
     public int getTotalCount(BoardSearchRequest boardSearchRequest) {
@@ -71,7 +75,9 @@ public class BoardServiceImpl implements BoardService {
     }
 
     /**
-     * 게시물 상세 보기
+     * 게시물 상세 조회
+     * @param boardId
+     * @return
      */
     @Override
     public BoardDetailResponse viewBoardDetail(Long boardId) {
@@ -129,6 +135,10 @@ public class BoardServiceImpl implements BoardService {
 
     /**
      * 익명 게시물 등록
+     * @param guestSaveRequest
+     * @param boardSaveRequest
+     * @param attachInsertList
+     * @return
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -158,6 +168,13 @@ public class BoardServiceImpl implements BoardService {
         }
     }
 
+    /**
+     *
+     * @param username
+     * @param boardSaveRequest
+     * @param attachInsertList
+     * @return
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public long write(String username, BoardSaveRequest boardSaveRequest, List<AttachVo> attachInsertList) {

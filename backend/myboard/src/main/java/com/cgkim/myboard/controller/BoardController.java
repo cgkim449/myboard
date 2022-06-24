@@ -22,6 +22,7 @@ import com.cgkim.myboard.vo.member.GuestPasswordCheckRequest;
 import com.cgkim.myboard.vo.member.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.ru.INN;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Validator;
@@ -45,6 +46,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 자유게시판 컨트롤러
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -54,55 +58,11 @@ public class BoardController {
     private final BoardService boardService;
     private final BoardAttachServiceImpl attachService;
     private final FileHandler fileHandler;
-    private final BoardSaveRequestValidator boardSaveRequestValidator;
-    private final FileSaveRequestValidator fileSaveRequestValidator;
-    private final BoardUpdateRequestValidator boardUpdateRequestValidator;
-    private final GuestSaveRequestValidator guestSaveRequestValidator;
-
-    /**
-     * PropertyEditor, Validator 등록
-     */
-    @InitBinder
-    public void initBinder(WebDataBinder webDataBinder) {
-
-        addPropertyEditors(webDataBinder);
-        addValidators(webDataBinder);
-    }
-
-    /**
-     * PropertyEditor 등록
-     */
-    private void addPropertyEditors(WebDataBinder webDataBinder) {
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        webDataBinder.registerCustomEditor(Date.class, new CustomDateEditor(simpleDateFormat, true));
-    }
-
-    /**
-     * Validator 등록
-     */
-    private void addValidators(WebDataBinder webDataBinder) {
-
-        if (webDataBinder.getTarget() == null) {
-            return;
-        }
-
-        final List<Validator> validatorList = List.of(
-                boardSaveRequestValidator,
-                boardUpdateRequestValidator,
-                fileSaveRequestValidator,
-                guestSaveRequestValidator
-        );
-
-        for (Validator validator : validatorList) {
-            if (validator.supports(webDataBinder.getTarget().getClass())) {
-                webDataBinder.addValidators(validator);
-            }
-        }
-    }
 
     /**
      * 게시물 목록 조회
+     * @param boardSearchRequest
+     * @return ResponseEntity<SuccessResponse>
      */
     @GetMapping
     public ResponseEntity<SuccessResponse> getBoardList(BoardSearchRequest boardSearchRequest){
@@ -118,6 +78,8 @@ public class BoardController {
 
     /**
      * 게시물 상세 조회
+     * @param boardId
+     * @return ResponseEntity<SuccessResponse>
      */
     @GetMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> getBoardDetail(@PathVariable Long boardId) {
@@ -131,6 +93,11 @@ public class BoardController {
 
     /**
      * 회원 게시물 작성
+     * @param username
+     * @param boardSaveRequest
+     * @param fileSaveRequest
+     * @return ResponseEntity<SuccessResponse>
+     * @throws IOException
      */
     @PostMapping("/member")
     public ResponseEntity<SuccessResponse> writeBoard(@LoginUser String username,
@@ -150,6 +117,11 @@ public class BoardController {
 
     /**
      * 익명 게시물 작성
+     * @param guestSaveRequest
+     * @param boardSaveRequest
+     * @param fileSaveRequest
+     * @return ResponseEntity<SuccessResponse>
+     * @throws IOException
      */
     @PostMapping("/guest")
     public ResponseEntity<SuccessResponse> writeBoard(@Valid GuestSaveRequest guestSaveRequest,
@@ -165,8 +137,17 @@ public class BoardController {
 
     /**
      * 게시물 수정
-     * TODO: 게시물 수정시 썸네일 업데이트 해야함.
+     * @param username
+     * @param guestPassword
+     * @param boardId
+     * @param boardUpdateRequest
+     * @param fileSaveRequest
+     * @param attachDeleteRequest
+     * @return ResponseEntity<SuccessResponse>
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
      */
+    //TODO: 게시물 수정시 썸네일 업데이트 해야함.
     @PatchMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> updateBoard(@LoginUser String username,
                                                        @RequestParam(required = false) String guestPassword,
@@ -196,6 +177,11 @@ public class BoardController {
 
     /**
      * 게시물 삭제
+     * @param username
+     * @param guestPasswordCheckRequest
+     * @param boardId
+     * @return ResponseEntity<SuccessResponse>
+     * @throws NoSuchAlgorithmException
      */
     @DeleteMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> deleteBoard(@LoginUser String username,
@@ -221,6 +207,11 @@ public class BoardController {
 
     /**
      * 익명 글 비밀번호 체크
+     * @param username
+     * @param guestPasswordCheckRequest
+     * @param boardId
+     * @return ResponseEntity<SuccessResponse>
+     * @throws NoSuchAlgorithmException
      */
     @PostMapping("/{boardId}/password-check")
     public ResponseEntity<SuccessResponse> checkGuestPassword(@LoginUser String username,

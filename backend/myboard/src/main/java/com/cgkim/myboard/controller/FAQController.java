@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * FAQ 컨트롤러
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -21,6 +24,11 @@ public class FAQController {
 
     private final FAQService faqService;
 
+    /**
+     * FAQ 목록 조회
+     * @param categoryId
+     * @return
+     */
     @GetMapping
     public ResponseEntity<SuccessResponse> getList(Integer categoryId){
 

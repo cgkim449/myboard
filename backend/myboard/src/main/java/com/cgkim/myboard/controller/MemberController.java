@@ -24,45 +24,23 @@ import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+/**
+ * 회원 컨트롤러
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/members")
 public class MemberController {
     private final MemberService memberService;
-    private final SignUpRequestValidator signUpRequestValidator;
-    private final LoginRequestValidator loginRequestValidator;
 
     private final JwtProvider jwtProvider;
 
     /**
-     * Validator 등록
-     */
-    @InitBinder
-    public void initBinder(WebDataBinder webDataBinder) {
-        addValidators(webDataBinder);
-    }
-
-    /**
-     * Validator 등록
-     */
-    private void addValidators(WebDataBinder webDataBinder) {
-        if (webDataBinder.getTarget() == null) {
-            return;
-        }
-        final List<Validator> validatorList = List.of(
-                signUpRequestValidator,
-                loginRequestValidator
-        );
-        for (Validator validator : validatorList) {
-            if (validator.supports(webDataBinder.getTarget().getClass())) {
-                webDataBinder.addValidators(validator);
-            }
-        }
-    }
-
-    /**
      * 회원가입
+     * @param signUpRequest
+     * @return
+     * @throws NoSuchAlgorithmException
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) throws NoSuchAlgorithmException {
@@ -74,6 +52,9 @@ public class MemberController {
 
     /**
      * 로그인
+     * @param loginRequest
+     * @return
+     * @throws NoSuchAlgorithmException
      */
     @PostMapping("/login")
     public ResponseEntity<SuccessResponse> login(@RequestBody @Valid LoginRequest loginRequest) throws NoSuchAlgorithmException {

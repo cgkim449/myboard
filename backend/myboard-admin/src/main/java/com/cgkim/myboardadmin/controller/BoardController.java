@@ -56,50 +56,6 @@ public class BoardController {
     private final BoardService boardService;
     private final BoardAttachServiceImpl attachService;
     private final FileHandler fileHandler;
-    private final BoardSaveRequestValidator boardSaveRequestValidator;
-    private final FileSaveRequestValidator fileSaveRequestValidator;
-    private final BoardUpdateRequestValidator boardUpdateRequestValidator;
-
-    /**
-     * PropertyEditor, Validator 등록
-     */
-    @InitBinder
-    public void initBinder(WebDataBinder webDataBinder) {
-
-        addPropertyEditors(webDataBinder);
-        addValidators(webDataBinder);
-    }
-
-    /**
-     * PropertyEditor 등록
-     */
-    private void addPropertyEditors(WebDataBinder webDataBinder) {
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        webDataBinder.registerCustomEditor(Date.class, new CustomDateEditor(simpleDateFormat, true));
-    }
-
-    /**
-     * Validator 등록
-     */
-    private void addValidators(WebDataBinder webDataBinder) {
-
-        if (webDataBinder.getTarget() == null) {
-            return;
-        }
-
-        final List<Validator> validatorList = List.of(
-                boardSaveRequestValidator,
-                boardUpdateRequestValidator,
-                fileSaveRequestValidator
-        );
-
-        for (Validator validator : validatorList) {
-            if (validator.supports(webDataBinder.getTarget().getClass())) {
-                webDataBinder.addValidators(validator);
-            }
-        }
-    }
 
     /**
      * 게시물 목록 조회

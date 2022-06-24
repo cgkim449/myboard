@@ -36,38 +36,6 @@ import java.util.List;
 @RestController
 public class CommentController {
     private final CommentService commentService;
-    private final MemberService memberService;
-    private final CommentSaveRequestValidator commentSaveRequestValidator;
-    private final GuestSaveRequestValidator guestSaveRequestValidator;//TODO: 전역등록
-
-    /**
-     * Validator 등록
-     */
-    @InitBinder
-    public void initBinder(WebDataBinder webDataBinder) {
-        addValidators(webDataBinder);
-    }
-
-    /**
-     * Validator 등록
-     */
-    private void addValidators(WebDataBinder webDataBinder) {
-
-        if (webDataBinder.getTarget() == null) {
-            return;
-        }
-
-        final List<Validator> validatorList = List.of(
-                commentSaveRequestValidator,
-                guestSaveRequestValidator
-        );
-
-        for (Validator validator : validatorList) {
-            if (validator.supports(webDataBinder.getTarget().getClass())) {
-                webDataBinder.addValidators(validator);
-            }
-        }
-    }
 
     /**
      * 댓글 목록 조회

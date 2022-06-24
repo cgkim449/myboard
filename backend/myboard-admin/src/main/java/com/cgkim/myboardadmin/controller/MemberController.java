@@ -30,36 +30,7 @@ import java.util.List;
 @RequestMapping("/admin/members")
 public class MemberController {
     private final MemberService memberService;
-    private final SignUpRequestValidator signUpRequestValidator;
-    private final LoginRequestValidator loginRequestValidator;
-
     private final JwtProvider jwtProvider;
-
-    /**
-     * Validator 등록
-     */
-    @InitBinder
-    public void initBinder(WebDataBinder webDataBinder) {
-        addValidators(webDataBinder);
-    }
-
-    /**
-     * Validator 등록
-     */
-    private void addValidators(WebDataBinder webDataBinder) {
-        if (webDataBinder.getTarget() == null) {
-            return;
-        }
-        final List<Validator> validatorList = List.of(
-                signUpRequestValidator,
-                loginRequestValidator
-        );
-        for (Validator validator : validatorList) {
-            if (validator.supports(webDataBinder.getTarget().getClass())) {
-                webDataBinder.addValidators(validator);
-            }
-        }
-    }
 
     /**
      * 회원가입
