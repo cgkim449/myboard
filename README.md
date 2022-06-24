@@ -1,6 +1,8 @@
 # 게시판
 > Special thanks to [eBrainSoft](https://www.ebrainsoft.com/)
 
+<br/>
+
 ## 서비스
 <table>
     <th></th>
@@ -22,6 +24,8 @@
         <td>1a@@</td>
 	</tr>
 </table>
+
+<br/>
 
 ## 기술 스택
 <table>
@@ -50,6 +54,8 @@
 		<td>Github</td>
 	</tr>
 </table>
+
+<br/>
 
 ## DB 설계
 ![myboard](https://user-images.githubusercontent.com/68311318/175452981-3b0d3fd8-5b18-443d-b1d0-45d2b0ea85bb.png)
