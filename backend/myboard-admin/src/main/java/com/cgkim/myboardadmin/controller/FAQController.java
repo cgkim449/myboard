@@ -31,7 +31,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/faqs")
+@RequestMapping("/admin/faqs")
 public class FAQController {
 
     private final FAQService faqService;

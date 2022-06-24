@@ -27,7 +27,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/members")
+@RequestMapping("/admin/members")
 public class MemberController {
     private final MemberService memberService;
     private final SignUpRequestValidator signUpRequestValidator;

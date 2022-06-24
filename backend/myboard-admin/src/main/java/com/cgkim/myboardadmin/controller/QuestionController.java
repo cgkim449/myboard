@@ -45,7 +45,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/questions")
+@RequestMapping("/admin/questions")
 public class QuestionController {
     private final QuestionService questionService;
     private final AnswerService answerService;

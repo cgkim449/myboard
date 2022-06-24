@@ -20,16 +20,16 @@ export const instanceWithoutToken = createInstanceWithoutToken()
 
 export const adminInstance = createInstanceWithToken("admin");
 
-export const boardsInstance = createInstanceWithToken("boards");
-export const boardAttachesInstance = createInstanceWithToken("attaches");
-export const commentsInstance = createInstanceWithToken("comments");
+export const boardsInstance = createInstanceWithToken("admin/boards");
+export const boardAttachesInstance = createInstanceWithToken("admin/attaches");
+export const commentsInstance = createInstanceWithToken("admin/comments");
 
-export const questionsInstance = createInstanceWithToken("questions");
-export const questionAttachesInstance = createInstanceWithToken("question-attaches");
-export const answersInstance = createInstanceWithToken("answers");
-export const answerAttachesInstance = createInstanceWithToken("answer-attaches");
+export const questionsInstance = createInstanceWithToken("admin/questions");
+export const questionAttachesInstance = createInstanceWithToken("admin/question-attaches");
+export const answersInstance = createInstanceWithToken("admin/answers");
+export const answerAttachesInstance = createInstanceWithToken("admin/answer-attaches");
 
-export const faqsInstance = createInstanceWithToken("faqs");
+export const faqsInstance = createInstanceWithToken("admin/faqs");
 
-export const noticesInstance = createInstanceWithToken("notices");
-export const noticeAttachesInstance = createInstanceWithToken("notice-attaches");
+export const noticesInstance = createInstanceWithToken("admin/notices");
+export const noticeAttachesInstance = createInstanceWithToken("admin/notice-attaches");

@@ -50,7 +50,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/boards")
+@RequestMapping("/admin/boards")
 public class BoardController {
 
     private final BoardService boardService;

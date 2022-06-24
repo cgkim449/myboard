@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/answer-attaches")
+@RequestMapping("/admin/answer-attaches")
 public class AnswerAttachController {
 
     private final AnswerAttachServiceImpl attachService;

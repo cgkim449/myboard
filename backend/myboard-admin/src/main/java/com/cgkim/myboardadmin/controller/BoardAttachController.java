@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/attaches")
+@RequestMapping("/admin/attaches")
 public class BoardAttachController {
 
     private final BoardAttachServiceImpl attachService;

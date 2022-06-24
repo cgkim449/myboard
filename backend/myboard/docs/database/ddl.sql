@@ -15,7 +15,7 @@ create table tbl_admin
     constraint admin_username_uindex
         unique (username)
 )
-    comment '관리자';
+    comment '관리자' engine = InnoDB;
 
 create table tbl_category
 (
@@ -25,31 +25,33 @@ create table tbl_category
     register_date timestamp default current_timestamp() null comment '등록일',
     update_date   timestamp default current_timestamp() null comment '수정일'
 )
-    comment '카테고리';
+    comment '카테고리' engine = InnoDB;
 
 create table tbl_faq
 (
     faq_id        int auto_increment comment 'FAQ ID'
         primary key,
-    admin_id      int                                   not null comment '관리자 ID',
-    category_id   int                                   not null comment '카테고리 ID',
-    title         varchar(100)                          not null comment '제목',
-    content       text                                  not null comment '내용',
-    view_count    int       default 0                   null comment '조회수',
-    register_date timestamp default current_timestamp() null comment '등록일',
-    update_date   timestamp default current_timestamp() null comment '수정일',
+    admin_id      int                                    not null comment '관리자 ID',
+    category_id   int                                    not null comment '카테고리 ID',
+    title         varchar(100)                           not null comment '제목',
+    content       text                                   not null comment '내용',
+    view_count    int        default 0                   null comment '조회수',
+    has_attach    tinyint(1) default 0                   null comment '첨부파일 유무',
+    thumbnail_uri varchar(100)                           null comment '썸네일 URI',
+    register_date timestamp  default current_timestamp() null comment '등록일',
+    update_date   timestamp  default current_timestamp() null comment '수정일',
     constraint faq_admin_admin_id_fk
         foreign key (admin_id) references tbl_admin (admin_id),
     constraint faq_category_category_id_fk
         foreign key (category_id) references tbl_category (category_id)
 )
-    comment 'FAQ';
+    comment 'FAQ' engine = InnoDB;
 
 create table tbl_faq_attach
 (
     attach_id     int auto_increment comment '첨부파일 ID'
         primary key,
-    faq_id      int                                    not null comment 'faq ID',
+    faq_id        int                                    not null comment 'faq ID',
     upload_path   varchar(200)                           not null comment '저장 경로',
     uuid          varchar(100)                           not null comment 'UUID',
     name          varchar(100)                           not null comment '이름',
@@ -61,7 +63,7 @@ create table tbl_faq_attach
     constraint faq_attach_faq_faq_id_fk
         foreign key (faq_id) references tbl_faq (faq_id)
 )
-    comment 'faq 첨부파일';
+    comment 'faq 첨부파일' engine = InnoDB;
 
 create table tbl_member
 (
@@ -77,7 +79,7 @@ create table tbl_member
     constraint member_username_uindex
         unique (username)
 )
-    comment '회원';
+    comment '회원' engine = InnoDB;
 
 create table tbl_board
 (
@@ -102,7 +104,7 @@ create table tbl_board
     constraint board_member_member_id_fk
         foreign key (member_id) references tbl_member (member_id)
 )
-    comment '자유게시판';
+    comment '자유게시판' engine = InnoDB;
 
 create table tbl_board_attach
 (
@@ -120,7 +122,7 @@ create table tbl_board_attach
     constraint board_attach_board_board_id_fk
         foreign key (board_id) references tbl_board (board_id)
 )
-    comment '자유게시판 첨부파일';
+    comment '자유게시판 첨부파일' engine = InnoDB;
 
 create table tbl_comment
 (
@@ -141,27 +143,29 @@ create table tbl_comment
     constraint comment_member_member_id_fk
         foreign key (member_id) references tbl_member (member_id)
 )
-    comment '자유게시판 댓글';
+    comment '자유게시판 댓글' engine = InnoDB;
 
 create table tbl_notice
 (
     notice_id     int auto_increment comment '공지사항 ID'
         primary key,
-    admin_id      int                                   not null comment '관리자 ID',
-    title         varchar(100)                          not null comment '제목',
-    content       text                                  not null comment '내용',
-    register_date timestamp default current_timestamp() null comment '등록일',
-    update_date   timestamp default current_timestamp() null comment '수정일',
+    admin_id      int                                    not null comment '관리자 ID',
+    title         varchar(100)                           not null comment '제목',
+    content       text                                   not null comment '내용',
+    has_attach    tinyint(1) default 0                   null comment '첨부파일 유무',
+    thumbnail_uri varchar(100)                           null comment '썸네일 URI',
+    register_date timestamp  default current_timestamp() null comment '등록일',
+    update_date   timestamp  default current_timestamp() null comment '수정일',
     constraint notice_admin_admin_id_fk
         foreign key (admin_id) references tbl_admin (admin_id)
 )
-    comment '공지사항';
+    comment '공지사항' engine = InnoDB;
 
 create table tbl_notice_attach
 (
     attach_id     int auto_increment comment '첨부파일 ID'
         primary key,
-    notice_id      int                                    not null comment '공지사항 ID',
+    notice_id     int                                    not null comment '공지사항 ID',
     upload_path   varchar(200)                           not null comment '저장 경로',
     uuid          varchar(100)                           not null comment 'UUID',
     name          varchar(100)                           not null comment '이름',
@@ -173,7 +177,7 @@ create table tbl_notice_attach
     constraint notice_attach_notice_notice_id_fk
         foreign key (notice_id) references tbl_notice (notice_id)
 )
-    comment '공지사항 첨부파일';
+    comment '공지사항 첨부파일' engine = InnoDB;
 
 create table tbl_question
 (
@@ -197,7 +201,7 @@ create table tbl_question
     constraint question_member_member_id_fk
         foreign key (member_id) references tbl_member (member_id)
 )
-    comment 'Q&A 질문';
+    comment 'Q&A 질문' engine = InnoDB;
 
 create table tbl_answer
 (
@@ -217,13 +221,13 @@ create table tbl_answer
     constraint answer_question_question_id_fk
         foreign key (question_id) references tbl_question (question_id)
 )
-    comment 'Q&A 답변';
+    comment 'Q&A 답변' engine = InnoDB;
 
 create table tbl_answer_attach
 (
     attach_id     int auto_increment comment '첨부파일 ID'
         primary key,
-    answer_id      int                                    not null comment '답변 ID',
+    answer_id     int                                    not null comment '답변 ID',
     upload_path   varchar(200)                           not null comment '저장 경로',
     uuid          varchar(100)                           not null comment 'UUID',
     name          varchar(100)                           not null comment '이름',
@@ -235,7 +239,7 @@ create table tbl_answer_attach
     constraint answer_attach_answer_answer_id_fk
         foreign key (answer_id) references tbl_answer (answer_id)
 )
-    comment '답변 첨부파일';
+    comment '답변 첨부파일' engine = InnoDB;
 
 create table tbl_question_attach
 (
@@ -253,5 +257,5 @@ create table tbl_question_attach
     constraint question_attach_question_question_id_fk
         foreign key (question_id) references tbl_question (question_id)
 )
-    comment 'Q&A 질문 첨부파일';
+    comment 'Q&A 질문 첨부파일' engine = InnoDB;
 

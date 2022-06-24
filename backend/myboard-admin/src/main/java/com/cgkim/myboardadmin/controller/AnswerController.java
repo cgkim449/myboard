@@ -32,7 +32,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/answers")
+@RequestMapping("/admin/answers")
 public class AnswerController {
 
     private final AnswerService answerService;

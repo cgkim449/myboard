@@ -41,7 +41,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/notices")
+@RequestMapping("/admin/notices")
 public class NoticeController {
 
     //TODO: 공지 첨부 이미지 썸네일?
