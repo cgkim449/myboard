@@ -42,10 +42,6 @@
 		<td>JavaScript ES6, Vue.js 2</td>
 	</tr>
 	<tr>
-		<td><strong>Infra<strong></td>
-		<td>AWS EC2</td>
-	</tr>
-	<tr>
 		<td><strong>Version Control<strong></td>
 		<td>Git</td>
 	</tr>
