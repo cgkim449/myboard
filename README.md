@@ -1,5 +1,5 @@
 # 게시판
-> Special thanks to eBrainSoft
+> Special thanks to [eBrainSoft](https://www.ebrainsoft.com/)
 
 ## 서비스
 <table>
