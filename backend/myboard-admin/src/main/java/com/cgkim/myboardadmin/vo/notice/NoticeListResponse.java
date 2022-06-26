@@ -6,15 +6,23 @@ import lombok.Setter;
 
 import java.util.Date;
 
+/**
+ * 공지 목록 응답
+ */
 @Getter
 @Setter
 public class NoticeListResponse {
+
     private Long noticeId;
+
     private String title;
+
     private int hasAttach;
-    @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
+
+    @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date registerDate;
-    @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
+
+    @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date updateDate;
 
     private String adminNickname;

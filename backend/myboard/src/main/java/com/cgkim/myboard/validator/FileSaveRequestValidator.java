@@ -1,6 +1,6 @@
 package com.cgkim.myboard.validator;
 
-import com.cgkim.myboard.vo.attach.FileSaveRequest;
+import com.cgkim.myboard.vo.common.FileSaveRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -11,13 +11,26 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Component
 public class FileSaveRequestValidator implements Validator {
+
+    /**
+     * 검증 대상 확인
+     * @param clazz
+     * @return boolean
+     */
     @Override
     public boolean supports(Class<?> clazz) {
         return FileSaveRequest.class.isAssignableFrom(clazz);
     }
 
+    /**
+     * 검증
+     *
+     * @param target
+     * @param errors
+     */
     @Override
     public void validate(Object target, Errors errors) {
+
         FileSaveRequest fileSaveRequest = (FileSaveRequest) target;
 
         MultipartFile[] multipartFiles = fileSaveRequest.getMultipartFiles();
@@ -41,16 +54,23 @@ public class FileSaveRequestValidator implements Validator {
 
     /**
      * 파일 업로드 확장자 제한 : jsp, jspx, jsw, jsv, jspf, htm, html
+     *
+     * @param multipartFile
+     * @return boolean
      */
     private boolean isValid(MultipartFile multipartFile) {
+
         String contentType = multipartFile.getContentType();
 
         if(contentType == null
                 || contentType.startsWith("application")
                 || contentType.endsWith("html")
                 || contentType.endsWith("htm")) {
+
             return false;
+
         } else {
+
             return true;
         }
     }

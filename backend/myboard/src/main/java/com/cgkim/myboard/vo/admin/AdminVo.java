@@ -6,15 +6,24 @@ import lombok.Setter;
 
 import java.util.Date;
 
+/**
+ * 관리자 VO
+ */
 @Getter
 @Setter
 public class AdminVo {
+
     private Long adminId;
+
     private String username;
+
     private String password;
+
     private String nickname;
-    @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
+
+    @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date registerDate;
-    @JsonFormat(pattern="yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
+
+    @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date updateDate;
 }

@@ -32,7 +32,8 @@
     </select>
 
     <insert id="insertComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
-        insert into tbl_comment(board_id, admin_id, content)
+        insert
+        into tbl_comment(board_id, admin_id, content)
         values(#{boardId}, #{adminId}, #{content})
     </insert>
 

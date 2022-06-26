@@ -1,5 +1,5 @@
 <template>
-<!--  <v-container v-if="!isEmpty(boardDetail)">-->
+  <!--  <v-container v-if="!isEmpty(boardDetail)">-->
   <v-container>
     <PageTitle>
       <h2 slot="title" @click="moveToBoardList" v-bind:style="{ cursor: 'pointer' }">
@@ -9,7 +9,7 @@
 
     <v-row justify="center">
       <v-col
-        cols="12"
+          cols="12"
       >
         <ItemDetail
             v-bind:fetchedItemDetail="boardDetail"
@@ -37,12 +37,12 @@
         </v-card>
 
 
-<!--        TODO: 컴포넌트로 분리-->
+        <!--        TODO: 컴포넌트로 분리-->
         <v-card elevation="0">
           <v-card-text>
             <v-row justify="center">
               <v-col
-                cols="auto"
+                  cols="auto"
               >
                 <v-btn
                     @click="moveToBoardList"
@@ -52,10 +52,11 @@
                 </v-btn>
               </v-col>
 
-<!--              1.(로그인 사용자)본인 글이면 수정 삭제 버튼 보임.-->
-              <template v-if="boardDetail.memberNickname !== null && $store.state.username === boardDetail.memberUsername">
+              <!--              1.(로그인 사용자)본인 글이면 수정 삭제 버튼 보임.-->
+              <template
+                  v-if="boardDetail.memberNickname !== null && $store.state.username === boardDetail.memberUsername">
                 <v-col
-                  cols="auto"
+                    cols="auto"
                 >
                   <v-btn
                       @click="moveToBoardModify"
@@ -67,19 +68,19 @@
                 </v-col>
 
                 <v-col
-                  cols="auto"
+                    cols="auto"
                 >
-                    <v-btn
-                        outlined
-                        color="primary"
-                        @click="deleteMyBoard"
-                    >
-                      삭제
-                    </v-btn>
+                  <v-btn
+                      outlined
+                      color="primary"
+                      @click="deleteMyBoard"
+                  >
+                    삭제
+                  </v-btn>
                 </v-col>
               </template>
 
-<!--                2. 익명 글이면 누구나 수정 삭제 버튼 눌렀을시 모달 뜸-->
+              <!--                2. 익명 글이면 누구나 수정 삭제 버튼 눌렀을시 모달 뜸-->
               <template v-else-if="boardDetail.guestNickname !== null">
 
                 <v-col
@@ -256,6 +257,19 @@ export default {
     }
   },
   computed: {},
+  //TODO: coumputed 로 변경
+  watch: {
+    showModifyGuestBoardDialog() {
+      if(this.showModifyGuestBoardDialog === false) {
+        this.guestPasswordCheckRequest.guestPassword = "";
+      }
+    },
+    showDeleteGuestBoardDialog() {
+      if(this.showDeleteGuestBoardDialog === false) {
+        this.guestPasswordCheckRequest.guestPassword = "";
+      }
+    }
+  },
   async created() {
 
     let boardId = this.$route.params.boardId;
@@ -268,18 +282,18 @@ export default {
     },
 
     async fetchBoardDetail(boardId) {
-        const {data} = await this.$_BoardService.fetchBoard(boardId);
+      const {data} = await this.$_BoardService.fetchBoard(boardId);
 
-        this.boardDetail = data.boardDetail;
+      this.boardDetail = data.boardDetail;
     },
 
     async fetchCommentList(boardId) {
-      const { data } = await this.$_BoardService.fetchCommentList(boardId);
+      const {data} = await this.$_BoardService.fetchCommentList(boardId);
 
       this.boardDetail.commentList = data.commentList;
     },
 
-    async deleteComment(deleteCommentRequest){
+    async deleteComment(deleteCommentRequest) {
       try {
         const {status} = await this.$_BoardService.deleteComment(deleteCommentRequest);
         this.commentDeleteResponseStatus = status;
@@ -299,7 +313,7 @@ export default {
 
         let commentSaveResponse;
 
-        if(this.$store.getters.loggedIn) {
+        if (this.$store.getters.loggedIn) {
           commentSaveResponse = await this.$_BoardService.writeMemberComment(commentSaveRequest);
         } else {
           commentSaveResponse = await this.$_BoardService.writeGuestComment(commentSaveRequest)
@@ -310,17 +324,28 @@ export default {
         await this.fetchCommentList(this.boardDetail.boardId)
 
       } catch (error) {
-        const firstErrorField = error.response.data.fieldErrorDetails[0].field;
-        const fieldErrorMessage = error.response.data.fieldErrorDetails[0].fieldErrorMessage;
+        const errorCode = error.response.data.errorCode;
+        const errorMessage = error.response.data.errorMessage;
 
-        //TODO: alert 말고 출력으로 바꾸기
-        if(firstErrorField === "content") {
-          alert(`댓글은 ${fieldErrorMessage}`)
-        } else if(firstErrorField === "guestPassword") {
-          alert(`${fieldErrorMessage}`)
-        } else if(firstErrorField === "guestNickname") {
-          alert(`닉네임은 ${fieldErrorMessage}`)
+        //TODO: enum 만들기
+        if (errorCode === "M002") {
+          alert(errorMessage);
         }
+
+        if (errorCode === "C002") {
+          const firstErrorField = error.response.data.fieldErrorDetails[0].field;
+          const fieldErrorMessage = error.response.data.fieldErrorDetails[0].fieldErrorMessage;
+
+          //TODO: alert 말고 출력으로 바꾸기
+          if (firstErrorField === "content") {
+            alert(`댓글은 ${fieldErrorMessage}`)
+          } else if (firstErrorField === "guestPassword") {
+            alert(`${fieldErrorMessage}`)
+          } else if (firstErrorField === "guestNickname") {
+            alert(`닉네임은 ${fieldErrorMessage}`)
+          }
+        }
+
       }
     },
     initCommentDeleteResponseStatus() {
@@ -332,12 +357,12 @@ export default {
 
     async deleteMyBoard() {
       try {
-          await this.$_BoardService.removeBoard({
-            boardId: this.boardDetail.boardId
-          });
-          alert('삭제되었습니다.');
+        await this.$_BoardService.removeBoard({
+          boardId: this.boardDetail.boardId
+        });
+        alert('삭제되었습니다.');
 
-          this.moveToBoardList();
+        this.moveToBoardList();
       } catch (error) {
         alert(error.response.data.errorMessage);
       }
@@ -347,13 +372,15 @@ export default {
       this.guestPasswordCheckRequest.boardId = this.boardDetail.boardId;
 
       try {
-        if(action === 'delete') {
+
+        if (action === 'delete') {
 
           await this.$_BoardService.removeBoard(this.guestPasswordCheckRequest);
           alert('삭제되었습니다.');
 
           this.moveToBoardList();
-        } else if(action === 'modify') {
+
+        } else if (action === 'modify') {
 
           await this.$_BoardService.checkBoardPw(this.guestPasswordCheckRequest);
 
@@ -361,6 +388,8 @@ export default {
         }
       } catch (error) {
         alert(error.response.data.errorMessage);
+
+        this.guestPasswordCheckRequest.guestPassword = "";
       }
     },
 
@@ -388,9 +417,11 @@ export default {
 .v-text-field >>> input {
   font-size: 0.875em;
 }
+
 .v-text-field >>> label {
   font-size: 0.875em;
 }
+
 .v-text-field >>> button {
   font-size: 0.875em;
 }

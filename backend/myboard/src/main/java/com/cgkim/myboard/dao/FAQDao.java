@@ -11,8 +11,18 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * FAQ DAO
+ */
 @Mapper
 @Repository
 public interface FAQDao {
+
+    /**
+     * 카테고리에 해당하는 FAQ 조회
+     *
+     * @param categoryId
+     * @return List<FAQListResponse>
+     */
     List<FAQListResponse> selectList(Integer categoryId);
 }

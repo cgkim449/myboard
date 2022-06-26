@@ -30,23 +30,11 @@
         where attach_id = #{attachId};
     </select>
 
-    <select id="selectCountByAnswerId" resultType="int" parameterType="long">
-        select count(*)
-        from tbl_answer_attach
-        where answer_id = #{answerId};
-    </select>
-
     <insert id="insert" parameterType="attachVo">
         insert
         into tbl_answer_attach (answer_id, upload_path, uuid, name, extension, is_image, size)
         values (#{answerId}, #{uploadPath}, #{uuid}, #{name}, #{extension}, #{isImage}, #{size});
     </insert>
-
-    <delete id="deleteByAnswerId" parameterType="long" >
-        delete
-        from tbl_answer_attach
-        where answer_id = #{answerId}
-    </delete>
 
     <delete id="delete" parameterType="long">
         delete

@@ -7,17 +7,30 @@ import org.springframework.validation.Validator;
 
 /**
  * 게시글 등록시 유효성 검증
- *
  */
 @Component
 public class BoardSaveRequestValidator implements Validator {
+
+    /**
+     * 검증 대상 확인
+     *
+     * @param clazz
+     * @return boolean
+     */
     @Override
     public boolean supports(Class<?> clazz) {
         return BoardSaveRequest.class.isAssignableFrom(clazz);
     }
 
+    /**
+     * 검증
+     *
+     * @param target the object that is to be validated
+     * @param errors contextual state about the validation process
+     */
     @Override
     public void validate(Object target, Errors errors) {
+
         BoardSaveRequest boardSaveRequest = (BoardSaveRequest) target;
 
         Integer categoryId = boardSaveRequest.getCategoryId();

@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
+/**
+ * 토큰 검증
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -20,35 +23,44 @@ public class JwtInterceptor implements HandlerInterceptor {
     private final JwtProvider jwtProvider;
 
     /**
-     * 인증이 필요한 요청에 대해 토큰 검증
+     * 토큰 검증
+     *
+     * @param request
+     * @param response
+     * @param handler
+     * @return boolean
      */
     @Override
-    public boolean preHandle(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Object handler
+    public boolean preHandle(HttpServletRequest request,
+                             HttpServletResponse response,
+                             Object handler
     ) {
+
         String token = extractTokenFrom(request);
-        if(token != null) {
+
+        if (token != null) {
+
             DecodedJWT jwt = jwtProvider.validate(token);
 
             String username = jwt.getClaim("username").asString();
+
             request.setAttribute("username", username);
         }
+
         return true;
     }
 
     private static final String HEADER = "Authorization";
     private static final String SCHEMA = "Bearer";
 
-    /**
-     * 헤더에서 토큰 추출
-     */
     private String extractTokenFrom(HttpServletRequest request) {
+
         String headerValue = request.getHeader(HEADER);
-        if(headerValue == null) {
+
+        if (headerValue == null) {
             return null;
         }
+
         return headerValue.replace(SCHEMA + " ", "");
     }
 }

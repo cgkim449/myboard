@@ -16,7 +16,7 @@
                 on m.member_id = c.member_id
             left join tbl_admin a
                 on a.admin_id = c.admin_id
-        where board_id=#{boardId};
+        where board_id = #{boardId};
     </select>
 
     <select id="selectMemberId" resultType="java.lang.Long" parameterType="long">
@@ -25,34 +25,47 @@
         where comment_id = #{commentId}
     </select>
 
+    <select id="selectGuestNickname" resultType="String">
+        select guest_nickname
+        from tbl_comment
+        where comment_id = #{commentId}
+    </select>
+
+    <select id="selectAdminId" resultType="java.lang.Long">
+        select admin_id
+        from tbl_comment
+        where comment_id = #{commentId}
+    </select>
+
     <select id="selectOneByGuestPassword" resultType="java.lang.Long" parameterType="map">
         select comment_id
         from tbl_comment
-        where comment_id = #{commentId} and guest_password = #{guestPassword}
+        where comment_id = #{commentId}
+            and guest_password = #{guestPassword}
     </select>
 
     <insert id="insertMemberComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
         insert into tbl_comment(board_id, member_id, content)
-        values(#{boardId}, #{memberId}, #{content})
+        values (#{boardId}, #{memberId}, #{content})
     </insert>
 
     <insert id="insertAdminComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
         insert into tbl_comment(board_id, admin_id, content)
-        values(#{boardId}, #{adminId}, #{content})
+        values (#{boardId}, #{adminId}, #{content})
     </insert>
 
     <insert id="insertGuestComment" parameterType="commentVo" useGeneratedKeys="true" keyProperty="commentId">
         insert into tbl_comment(board_id, guest_nickname, guest_password, content)
-        values(#{boardId}, #{guestNickname}, #{guestPassword}, #{content})
+        values (#{boardId}, #{guestNickname}, #{guestPassword}, #{content})
     </insert>
 
-    <delete id="deleteByBoardId" parameterType="long" >
+    <delete id="deleteByBoardId" parameterType="long">
         delete
         from tbl_comment
         where board_id = #{boardId}
     </delete>
 
-    <delete id="deleteByCommentId" parameterType="long" >
+    <delete id="deleteByCommentId" parameterType="long">
         delete
         from tbl_comment
         where comment_id = #{commentId}

@@ -12,15 +12,34 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Q&A 답변 DAO
+ */
 @Mapper
 @Repository
 public interface AnswerDao {
 
-    AnswerDetailResponse selectByQuestionId(Long id);
+    /**
+     * 질문에 달린 답변을 select
+     *
+     * @param questionId
+     * @return AnswerDetailResponse
+     */
+    AnswerDetailResponse selectByQuestionId(Long questionId);
 
-    void insert(AnswerVo answerVo);
+    /**
+     * 답변 한 개를 select
+     *
+     * @param answerId
+     * @return AnswerDetailResponse
+     */
+    AnswerDetailResponse selectOne(Long answerId);
 
-    AnswerDetailResponse selectOne(Long id);
-
+    /**
+     * 질문에 달린 답변의 id 를 select
+     *
+     * @param questionId
+     * @return Long
+     */
     Long selectAnswerIdByQuestionId(Long questionId);
 }

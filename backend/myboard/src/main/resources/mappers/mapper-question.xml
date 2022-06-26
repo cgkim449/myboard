@@ -28,8 +28,8 @@
             left join tbl_answer an
                 on q.question_id = an.question_id
         <include refid="searchCondition"/>
-      order by q.register_date desc, q.question_id desc
-         limit #{offset}, #{limit}
+        order by q.register_date desc, q.question_id desc
+        limit #{offset}, #{limit}
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer" parameterType="questionSearchRequest">
@@ -72,13 +72,13 @@
     <update id="updateThumbnailUri" parameterType="map">
         update tbl_question
         set thumbnail_uri = #{thumbnailUri}
-        where question_id = #{id}
+        where question_id = #{questionId}
     </update>
 
     <update id="updateHasAttach" parameterType="map">
         update tbl_question
         set has_attach = #{hasAttach}
-        where question_id = #{id}
+        where question_id = #{questionId}
     </update>
 
     <select id="selectOne" resultType="questionDetailResponse" parameterType="long">
@@ -102,12 +102,18 @@
             left join tbl_member m
                 on q.member_id = m.member_id
             left join tbl_admin a
-                      on q.admin_id = a.admin_id
+                on q.admin_id = a.admin_id
         where q.question_id = #{questionId}
     </select>
 
     <select id="selectMemberId" resultType="java.lang.Long" parameterType="Long">
         select member_id
+        from tbl_question
+        where question_id = #{questionId}
+    </select>
+
+    <select id="selectAdminId" resultType="java.lang.Long">
+        select admin_id
         from tbl_question
         where question_id = #{questionId}
     </select>
@@ -118,7 +124,7 @@
         where question_id = #{questionId}
     </update>
 
-    <update id="update" parameterType="map">
+    <update id="update" parameterType="questionUpdateRequest">
         update tbl_question
         set title = #{title},
             content = #{content},

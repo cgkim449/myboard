@@ -1,11 +1,28 @@
 package com.cgkim.myboard.service;
 
+import com.cgkim.myboard.dao.FAQDao;
 import com.cgkim.myboard.vo.faq.FAQListResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public interface FAQService {
-    List<FAQListResponse> getList(Integer categoryId);
+/**
+ * FAQ Service
+ */
+@RequiredArgsConstructor
+@Service
+public class FAQService {
+    private final FAQDao faqDao;
 
-    int getTotalCounts(Integer categoryId);
+    /**
+     * FAQ 리스트 조회
+     *
+     * @param categoryId
+     * @return List<FAQListResponse>
+     */
+    public List<FAQListResponse> getList(Integer categoryId) {
+        List<FAQListResponse> faqList = faqDao.selectList(categoryId);
+        return faqList;
+    }
 }

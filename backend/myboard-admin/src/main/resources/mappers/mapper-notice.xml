@@ -56,8 +56,8 @@
                a.nickname admin_nickname,
                a.username admin_username
         from tbl_notice as n
-             left join tbl_admin a
-                   on n.admin_id = a.admin_id
+            left join tbl_admin a
+                on n.admin_id = a.admin_id
         where n.notice_id = #{noticeId}
     </select>
 

@@ -3,7 +3,6 @@ package com.cgkim.myboard.controller;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.FAQService;
 import com.cgkim.myboard.vo.faq.FAQListResponse;
-import com.cgkim.myboard.vo.faq.FAQSearchRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,11 +25,12 @@ public class FAQController {
 
     /**
      * FAQ 목록 조회
+     *
      * @param categoryId
-     * @return
+     * @return ResponseEntity<SuccessResponse>
      */
     @GetMapping
-    public ResponseEntity<SuccessResponse> getList(Integer categoryId){
+    public ResponseEntity<SuccessResponse> getList(Integer categoryId) {
 
         List<FAQListResponse> faqList = faqService.getList(categoryId);
 

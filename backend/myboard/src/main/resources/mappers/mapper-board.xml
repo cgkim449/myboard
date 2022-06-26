@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<!--TODO: sql 컨벤션 수정-->
 <mapper namespace="com.cgkim.myboard.dao.BoardDao">
 
     <select id="selectList" resultType="boardListResponse" parameterType="boardSearchRequest">
@@ -81,16 +80,16 @@
                a.nickname admin_nickname,
                a.username admin_username
         from tbl_board as b
-                 join tbl_category ct
-                      on b.category_id = ct.category_id
-                 left join tbl_member m
-                           on b.member_id = m.member_id
-                 left join tbl_admin a
-                           on b.admin_id = a.admin_id
+            join tbl_category ct
+                on b.category_id = ct.category_id
+            left join tbl_member m
+                on b.member_id = m.member_id
+            left join tbl_admin a
+                on b.admin_id = a.admin_id
         where b.board_id = #{boardId}
     </select>
 
-    <select id="selectOneByGuestPassword" resultType="long" parameterType="map">
+    <select id="selectBoardIdByGuestPassword" resultType="long" parameterType="map">
         select board_id
         from tbl_board
         where board_id = #{boardId} and guest_password = #{guestPassword}
@@ -98,6 +97,18 @@
 
     <select id="selectMemberId" resultType="java.lang.Long" parameterType="long">
         select member_id
+        from tbl_board
+        where board_id = #{boardId}
+    </select>
+
+    <select id="selectGuestNickname" resultType="String">
+        select guest_nickname
+        from tbl_board
+        where board_id = #{boardId}
+    </select>
+
+    <select id="selectAdminId" resultType="java.lang.Long">
+        select admin_id
         from tbl_board
         where board_id = #{boardId}
     </select>
@@ -145,7 +156,7 @@
         values(#{adminId}, #{categoryId}, #{title}, #{content});
     </insert>
 
-    <delete id="delete" parameterType="long">
+    <delete id="deleteByBoardId" parameterType="long">
         delete
         from tbl_board
         where board_id = #{boardId}

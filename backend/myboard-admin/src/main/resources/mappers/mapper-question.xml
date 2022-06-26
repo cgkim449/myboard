@@ -65,20 +65,21 @@
     </sql>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="questionId">
-        insert into tbl_question (admin_id, category_id, title, content, is_secret)
+        insert
+        into tbl_question (admin_id, category_id, title, content, is_secret)
         values(#{adminId}, #{categoryId}, #{title}, #{content}, #{isSecret});
     </insert>
 
     <update id="updateThumbnailUri" parameterType="map">
         update tbl_question
         set thumbnail_uri = #{thumbnailUri}
-        where question_id = #{id}
+        where question_id = #{questionId}
     </update>
 
     <update id="updateHasAttach" parameterType="map">
         update tbl_question
         set has_attach = #{hasAttach}
-        where question_id = #{id}
+        where question_id = #{questionId}
     </update>
 
     <select id="selectOne" resultType="questionDetailResponse" parameterType="long">
@@ -102,7 +103,7 @@
             left join tbl_member m
                 on q.member_id = m.member_id
             left join tbl_admin a
-                      on q.admin_id = a.admin_id
+                on q.admin_id = a.admin_id
         where q.question_id = #{questionId}
     </select>
 
@@ -118,7 +119,7 @@
         where question_id = #{questionId}
     </update>
 
-    <update id="update" parameterType="map">
+    <update id="update" parameterType="questionUpdateRequest">
         update tbl_question
         set title = #{title},
             content = #{content},

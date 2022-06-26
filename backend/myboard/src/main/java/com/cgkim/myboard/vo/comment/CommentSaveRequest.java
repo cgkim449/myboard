@@ -3,10 +3,14 @@ package com.cgkim.myboard.vo.comment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 댓글 등록 요청
+ */
 @AllArgsConstructor
 @Getter
 public class CommentSaveRequest {
-    private Long boardId;
-    private String content;
 
+    private Long boardId;
+
+    private String content;
 }

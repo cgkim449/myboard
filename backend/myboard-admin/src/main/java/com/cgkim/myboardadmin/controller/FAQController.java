@@ -4,19 +4,14 @@ import com.cgkim.myboardadmin.argumentresolver.LoginUser;
 import com.cgkim.myboardadmin.response.SuccessResponse;
 import com.cgkim.myboardadmin.service.FAQService;
 import com.cgkim.myboardadmin.util.FileHandler;
-import com.cgkim.myboardadmin.validator.FAQSaveRequestValidator;
 import com.cgkim.myboardadmin.vo.attach.AttachVo;
-import com.cgkim.myboardadmin.vo.attach.FileSaveRequest;
+import com.cgkim.myboardadmin.vo.common.FileSaveRequest;
 import com.cgkim.myboardadmin.vo.faq.FAQListResponse;
 import com.cgkim.myboardadmin.vo.faq.FAQSaveRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Validator;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,10 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
+/**
+ * FAQ 컨트롤러
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -35,13 +31,17 @@ import java.util.List;
 public class FAQController {
 
     private final FAQService faqService;
+
     private final FileHandler fileHandler;
 
     /**
      * FAQ 목록 조회
+     *
+     * @param categoryId
+     * @return
      */
     @GetMapping
-    public ResponseEntity<SuccessResponse> getList(Integer categoryId){
+    public ResponseEntity<SuccessResponse> getList(Integer categoryId) {
 
         List<FAQListResponse> faqList = faqService.getList(categoryId);
 
@@ -52,6 +52,12 @@ public class FAQController {
 
     /**
      * FAQ 작성
+     *
+     * @param username
+     * @param faqSaveRequest
+     * @param fileSaveRequest
+     * @return
+     * @throws IOException
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> write(@LoginUser String username,
@@ -60,7 +66,7 @@ public class FAQController {
     ) throws IOException {
 
         List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles()); //첨부파일 생성 (C://upload)
-        long faqId = faqService.write(username, faqSaveRequest, attachInsertList); //글 작성
+        Long faqId = faqService.write(username, faqSaveRequest, attachInsertList); //글 작성
 
         return ResponseEntity.created(URI.create("/admin/faqs/" + faqId)).body(new SuccessResponse());
     }

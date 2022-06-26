@@ -4,17 +4,29 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 첨부파일 VO
+ */
 @Data
 @NoArgsConstructor
 public class AttachVo {
+
     private Long attachId;
+
     private Long boardId;
+
     private Long questionId;
+
     private Long answerId;
+
     private Long faqId;
+
     private Long noticeId;
+
     private String uploadPath;
+
     private String uuid;
+
     private String name;
     private String extension; // 확장자
 
@@ -22,10 +34,20 @@ public class AttachVo {
 
     private long size;
 
+    /**
+     * 이미지 여부
+     *
+     * @return boolean
+     */
     public boolean getIsImage() {
         return isImage;
     }
 
+    /**
+     * 이미지 여부
+     *
+     * @return boolean
+     */
     public boolean isImage() {
         return isImage;
     }
@@ -33,6 +55,16 @@ public class AttachVo {
     private String thumbnailUri;
     private String originalImageUri;
 
+    /**
+     * 주입
+     *
+     * @param uploadPath
+     * @param uuid
+     * @param name
+     * @param extension
+     * @param isImage
+     * @param size
+     */
     @Builder
     public AttachVo(String uploadPath, String uuid, String name, String extension, boolean isImage, long size) {
         this.uploadPath = uploadPath;
@@ -44,6 +76,11 @@ public class AttachVo {
     }
 
 
+    /**
+     * 첨부파일 이름 + 확장자 리턴
+     *
+     * @return String
+     */
     public String getFullName() {
         return getName() + '.' + getExtension();
     }

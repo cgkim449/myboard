@@ -42,7 +42,7 @@
         values (#{boardId}, #{uploadPath}, #{uuid}, #{name}, #{extension}, #{isImage}, #{size});
     </insert>
 
-    <delete id="deleteByBoardId" parameterType="long" >
+    <delete id="deleteByBoardId" parameterType="long">
         delete
         from tbl_board_attach
         where board_id = #{boardId}

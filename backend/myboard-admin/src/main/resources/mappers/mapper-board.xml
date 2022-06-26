@@ -81,19 +81,19 @@
                a.nickname admin_nickname,
                a.username admin_username
         from tbl_board as b
-                 join tbl_category ct
-                      on b.category_id = ct.category_id
-                 left join tbl_member m
-                           on b.member_id = m.member_id
-                 left join tbl_admin a
-                           on b.admin_id = a.admin_id
+            join tbl_category ct
+                on b.category_id = ct.category_id
+            left join tbl_member m
+                on b.member_id = m.member_id
+            left join tbl_admin a
+                on b.admin_id = a.admin_id
         where b.board_id = #{boardId}
     </select>
 
     <update id="increaseViewCnt" parameterType="long">
-        UPDATE tbl_board
-        SET view_count = view_count + 1
-        WHERE board_id = #{boardId}
+        update tbl_board
+        set view_count = view_count + 1
+        where board_id = #{boardId}
     </update>
 
     <update id="updateHasAttach" parameterType="map">

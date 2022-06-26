@@ -22,34 +22,46 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 전역 Validator, PropertyEditor 등록
+ * 전역 Validator, PropertyEditor 등록하는 역할
  */
 @Slf4j
 @RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalInitBinder {
+
     private final BoardSaveRequestValidator boardSaveRequestValidator;
+
     private final BoardUpdateRequestValidator boardUpdateRequestValidator;
+
     private final CommentSaveRequestValidator commentSaveRequestValidator;
+
     private final QuestionSaveRequestValidator questionSaveRequestValidator;
+
     private final QuestionUpdateRequestValidator questionUpdateRequestValidator;
+
     private final FileSaveRequestValidator fileSaveRequestValidator;
+
     private final GuestSaveRequestValidator guestSaveRequestValidator;
+
     private final SignUpRequestValidator signUpRequestValidator;
+
     private final LoginRequestValidator loginRequestValidator;
 
     /**
      * Validator, PropertyEditor 등록
+     *
      * @param binder
      */
     @InitBinder
     public void initBinder(WebDataBinder binder) {
+
         addPropertyEditors(binder);
         addValidators(binder);
     }
 
     /**
      * PropertyEditor 등록
+     *
      * @param binder
      */
     private void addPropertyEditors(WebDataBinder binder) {
@@ -60,6 +72,7 @@ public class GlobalInitBinder {
 
     /**
      * Validator 등록
+     *
      * @param binder
      */
     private void addValidators(WebDataBinder binder) {
@@ -81,7 +94,9 @@ public class GlobalInitBinder {
         );
 
         for (Validator validator : validatorList) {
+
             if (validator.supports(binder.getTarget().getClass())) {
+
                 binder.addValidators(validator);
             }
         }

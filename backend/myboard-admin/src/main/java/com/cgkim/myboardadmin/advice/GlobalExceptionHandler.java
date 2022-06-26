@@ -2,14 +2,8 @@ package com.cgkim.myboardadmin.advice;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.cgkim.myboardadmin.exception.AnswerInsertFailedException;
-import com.cgkim.myboardadmin.exception.BoardInsertFailedException;
 import com.cgkim.myboardadmin.exception.BusinessException;
-import com.cgkim.myboardadmin.exception.FAQInsertFailedException;
-import com.cgkim.myboardadmin.exception.GuestSaveRequestInvalidException;
 import com.cgkim.myboardadmin.exception.InsertFailedException;
-import com.cgkim.myboardadmin.exception.NoticeInsertFailedException;
-import com.cgkim.myboardadmin.exception.QuestionInsertFailedException;
 import com.cgkim.myboardadmin.exception.errorcode.ErrorCode;
 import com.cgkim.myboardadmin.response.ErrorResponse;
 import com.cgkim.myboardadmin.util.FileHandler;
@@ -27,53 +21,64 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 모든 예외를 처리하는 역할
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private final MessageSource messageSource;
+
     private final FileHandler fileHandler;
 
     /**
-     * 최대한 여기서 모든 비즈니스 로직 예외처리
+     * - 최대한 여기서 모든 비즈니스 로직 예외처리
+     * - 목적: 비즈니스 로직과 예외 처리 코드를 분리
+     *
+     * @param exception
+     * @return ResponseEntity<ErrorResponse>
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> businessExceptionHandler(BusinessException exception) {
+
         log.error("handleBusinessException", exception);
+
         return ResponseEntity
                 .status(exception.getErrorCode().getHttpStatus())
                 .body(buildErrorResponse(exception.getErrorCode()));
     }
 
     /**
-     * 게시물, 질문, 답변, FAQ, 공지 DB에 insert 실패 시, 생성한 첨부파일이 있다면 그 파일을 삭제
+     * 게시물/질문/답변/FAQ/공지 DB에 insert 실패한 경우, 생성한 물리적 파일이 있었다면 그 파일을 삭제
+     *
+     * @param exception
+     * @return ResponseEntity<ErrorResponse>
      */
     @ExceptionHandler(InsertFailedException.class)
     public ResponseEntity<ErrorResponse> insertFailedExceptionHandler(InsertFailedException exception) {
+
         log.error("handleInsertFailedException", exception);
 
-        fileHandler.deleteFiles(exception.getAttachSaveList()); // 생성했던 파일 삭제
+        fileHandler.deleteFiles(exception.getAttachSaveList()); //생성했던 파일 삭제
+
         return ResponseEntity
                 .status(exception.getErrorCode().getHttpStatus())
                 .body(buildErrorResponse(exception.getErrorCode()));
     }
 
-    @ExceptionHandler(GuestSaveRequestInvalidException.class)
-    public ResponseEntity<ErrorResponse> GuestSaveRequestInvalidExceptionHandler(GuestSaveRequestInvalidException exception) {
-        log.error("handleGuestSaveRequestInvalidException", exception);
-        List<ErrorResponse.FieldErrorDetail> fieldErrorDetails = getFieldErrorDetails(exception.getBindingResult());
-        return ResponseEntity
-                .status(exception.getErrorCode().getHttpStatus())
-                .body(buildErrorResponse(exception.getErrorCode(), fieldErrorDetails));
-    }
-
     /**
-     * 민료된 토큰 = 로그아웃
+     * 만료된 토큰
+     *
+     * @param exception
+     * @return ResponseEntity<ErrorResponse>
      */
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<ErrorResponse> TokenExpiredExceptionHandler(TokenExpiredException exception) {
+
         log.error("TokenExpiredExceptionException", exception);
+
         return ResponseEntity
                 .status(ErrorCode.TOKEN_EXPIRED.getHttpStatus())
                 .body(buildErrorResponse(ErrorCode.TOKEN_EXPIRED));
@@ -81,10 +86,15 @@ public class GlobalExceptionHandler {
 
     /**
      * 유효하지 않은 토큰
+     *
+     * @param exception
+     * @return ResponseEntity<ErrorResponse>
      */
     @ExceptionHandler(JWTVerificationException.class)
     public ResponseEntity<ErrorResponse> JWTVerificationExceptionHandler(JWTVerificationException exception) {
+
         log.error("JWTVerificationExceptionException", exception);
+
         return ResponseEntity
                 .status(ErrorCode.TOKEN_INVALID.getHttpStatus())
                 .body(buildErrorResponse(ErrorCode.TOKEN_INVALID));
@@ -92,11 +102,18 @@ public class GlobalExceptionHandler {
 
     /**
      * 바인딩 예외 처리
+     *
+     * @param exception
+     * @param bindingResult
+     * @return ResponseEntity<ErrorResponse>
      */
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ErrorResponse> bindExceptionHandler(BindException exception, BindingResult bindingResult) {
+
         log.error("handleBindException", exception);
+
         List<ErrorResponse.FieldErrorDetail> fieldErrorDetails = getFieldErrorDetails(bindingResult);
+
         return ResponseEntity
                 .status(ErrorCode.INVALID_INPUT_VALUE.getHttpStatus())
                 .body(buildErrorResponse(ErrorCode.INVALID_INPUT_VALUE, fieldErrorDetails));
@@ -104,27 +121,38 @@ public class GlobalExceptionHandler {
 
     /**
      * 최대 업로드 크기 초과 예외 처리
+     *
+     * @param exception
+     * @return ResponseEntity<ErrorResponse>
      */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> maxUploadSizeExceededExceptionHandler(MaxUploadSizeExceededException exception) {
+
         log.error("handleMaxUploadSizeExceededException", exception);
+
         return ResponseEntity
                 .status(ErrorCode.MAX_UPLOAD_SIZE_EXCEEDED.getHttpStatus())
                 .body(buildErrorResponse(ErrorCode.MAX_UPLOAD_SIZE_EXCEEDED));
     }
 
     /**
-     * 모든 예외를 처리
+     * 그 외 모든 예외를 처리
+     *
+     * @param exception
+     * @return ResponseEntity<ErrorResponse>
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> exceptionHandler(Exception exception) {
+
         log.error("handleException", exception);
+
         return ResponseEntity
                 .status(ErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus())
                 .body(buildErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 
     private ErrorResponse buildErrorResponse(ErrorCode errorCode) {
+
         return ErrorResponse.builder()
                 .errorCode(errorCode.getErrorCode())
                 .errorMessage(errorCode.getErrorMessage())
@@ -132,6 +160,7 @@ public class GlobalExceptionHandler {
     }
 
     private ErrorResponse buildErrorResponse(ErrorCode errorCode, List<ErrorResponse.FieldErrorDetail> fieldErrorDetails) {
+
         return ErrorResponse.builder()
                 .errorCode(errorCode.getErrorCode())
                 .errorMessage(errorCode.getErrorMessage())
@@ -140,6 +169,7 @@ public class GlobalExceptionHandler {
     }
 
     private List<ErrorResponse.FieldErrorDetail> getFieldErrorDetails(BindingResult bindingResult) {
+
         List<ErrorResponse.FieldErrorDetail> fieldErrorDetails = new ArrayList<>();
 
         for (FieldError fieldError : bindingResult.getFieldErrors()) {

@@ -30,6 +30,8 @@ public enum ErrorCode { //TODO: properties 로 분리
     USERNAME_DUPLICATE(HttpStatus.BAD_REQUEST, "M001", "이미 가입된 이메일입니다."),
     NICKNAME_DUPLICATE(HttpStatus.BAD_REQUEST, "M002", "이미 사용된 사용자 이름입니다."),
 
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "M002", "존재하지 않는 회원입니다."),
+
     //Board
     BOARD_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "B001", "게시물 작성에 실패했습니다."),
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "B002", "존재하지 않는 게시글입니다."),
@@ -43,6 +45,7 @@ public enum ErrorCode { //TODO: properties 로 분리
 
     //Answer
     ANSWER_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AN001", "답변 작성에 실패했습니다."),
+    ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "AN002", "해당 질문이 없습니다."),
 
     //FAQ
     FAQ_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FA001", "FAQ 작성에 실패했습니다."),

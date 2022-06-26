@@ -35,22 +35,4 @@
         from tbl_notice_attach
         where notice_id = #{noticeId};
     </select>
-
-    <insert id="insert" parameterType="attachVo">
-        insert
-        into tbl_notice_attach (notice_id, upload_path, uuid, name, extension, is_image, size)
-        values (#{noticeId}, #{uploadPath}, #{uuid}, #{name}, #{extension}, #{isImage}, #{size});
-    </insert>
-
-    <delete id="deleteByNoticeId" parameterType="long" >
-        delete
-        from tbl_notice_attach
-        where notice_id = #{noticeId}
-    </delete>
-
-    <delete id="delete" parameterType="long">
-        delete
-        from tbl_notice_attach
-        where attach_id = #{attachId}
-    </delete>
 </mapper>

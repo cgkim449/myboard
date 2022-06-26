@@ -4,15 +4,31 @@ import lombok.Getter;
 
 import java.util.Date;
 
-//TODO: searchRequest 중복됨
+/**
+ * FAQ 검색 요청
+ */
 @Getter
 public class FAQSearchRequest {
-    private Integer page; // 페이지
-    private String keyword; // 검색어
-    private Integer categoryId; // 카테고리
-    private Date fromDate; // 검색 시작 날짜
-    private Date toDate;  // 검색 끝 날짜
 
+    private final Integer page; // 페이지
+
+    private final String keyword; // 검색어
+
+    private final Integer categoryId; // 카테고리
+
+    private final Date fromDate; // 검색 시작 날짜
+
+    private final Date toDate;  // 검색 끝 날짜
+
+    /**
+     * 주입
+     *
+     * @param page
+     * @param keyword
+     * @param categoryId
+     * @param fromDate
+     * @param toDate
+     */
     public FAQSearchRequest(Integer page, String keyword, Integer categoryId, Date fromDate, Date toDate) {
         this.page = (page == null || page < 1) ? 1 : page;
         this.keyword = keyword;
@@ -23,6 +39,11 @@ public class FAQSearchRequest {
 
     public final int limit = 10; // 한 페이지에 표시할 게시물 수
 
+    /**
+     * 페이지 offset
+     *
+     * @return int
+     */
     public int getOffset() {
         return (page - 1) * limit;
     }

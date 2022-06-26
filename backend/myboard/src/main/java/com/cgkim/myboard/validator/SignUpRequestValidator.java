@@ -7,17 +7,30 @@ import org.springframework.validation.Validator;
 
 /**
  * 회원가입시 유효성 검증
- *
  */
 @Component
 public class SignUpRequestValidator implements Validator {
+
+    /**
+     * 검증 대상 확인
+     *
+     * @param clazz
+     * @return boolean
+     */
     @Override
     public boolean supports(Class<?> clazz) {
         return SignUpRequest.class.isAssignableFrom(clazz);
     }
 
+    /**
+     * 검증
+     *
+     * @param target
+     * @param errors
+     */
     @Override
     public void validate(Object target, Errors errors) {
+
         SignUpRequest signUpRequest = (SignUpRequest) target;
 
         String username = signUpRequest.getUsername();
@@ -30,7 +43,7 @@ public class SignUpRequestValidator implements Validator {
         }
 
         if (password == null || !isValid(password)) {
-            errors.rejectValue("password", "pw", new Object[] {4, 16}, null);
+            errors.rejectValue("password", "pw", new Object[]{4, 16}, null);
         } else {
             if (!(password.equals(passwordConfirm))) {
                 errors.rejectValue("passwordConfirm", "pwConfirm");
@@ -38,7 +51,7 @@ public class SignUpRequestValidator implements Validator {
         }
 
         if (nickname == null || !(3 <= nickname.length() && nickname.length() < 5)) {
-            errors.rejectValue("nickname", "length", new Object[] {3, 5}, null);
+            errors.rejectValue("nickname", "length", new Object[]{3, 5}, null);
         }
     }
 
@@ -46,10 +59,10 @@ public class SignUpRequestValidator implements Validator {
      * 회원가입시 비밀번호 검증
      *
      * @param password
-     * @return
+     * @return boolean
      */
-    //TODO: 게시글 비밀번호 검증이랑 코드 중복됨
     private boolean isValid(String password) {
+
         if (!(4 <= password.length() && password.length() < 16)) {
             return false;
         }
@@ -58,14 +71,19 @@ public class SignUpRequestValidator implements Validator {
         int specialSymbol = 0;
 
         for (char c : password.toCharArray()) {
+
             if (!('!' <= c && c <= '~')) {
                 return false;
+
             } else if (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z')) {
                 alphabet++;
+
             } else if ('0' <= c && c <= '9') {
                 number++;
+
             } else {
                 specialSymbol++;
+
             }
         }
 

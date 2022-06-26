@@ -7,17 +7,29 @@ import org.springframework.validation.Validator;
 
 /**
  * 댓글 등록시 유효성 검증
- *
  */
 @Component
 public class CommentSaveRequestValidator implements Validator {
+
+    /**
+     * 검증 대상 확인
+     * @param clazz
+     * @return boolean
+     */
     @Override
     public boolean supports(Class<?> clazz) {
         return CommentSaveRequest.class.isAssignableFrom(clazz);
     }
 
+    /**
+     * 검증
+     *
+     * @param target
+     * @param errors
+     */
     @Override
     public void validate(Object target, Errors errors) {
+
         CommentSaveRequest commentSaveRequest = (CommentSaveRequest) target;
 
         String content = commentSaveRequest.getContent();

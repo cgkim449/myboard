@@ -3,14 +3,6 @@
 
 <mapper namespace="com.cgkim.myboard.dao.MemberDao">
 
-    <select id="selectByMemberId" resultType="memberVo">
-        select member_id,
-               username,
-               nickname
-        from tbl_member
-        where member_id = #{memberId}
-    </select>
-
     <select id="selectByUsername" resultType="memberVo">
         select member_id,
                username,
@@ -41,7 +33,8 @@
     </select>
 
     <insert id="insert" parameterType="signUpRequest" useGeneratedKeys="true" keyProperty="memberId">
-        insert into tbl_member (username, password, nickname)
+        insert
+        into tbl_member (username, password, nickname)
         values (#{username}, #{password}, #{nickname})
     </insert>
 </mapper>

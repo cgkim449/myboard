@@ -1,52 +1,36 @@
 package com.cgkim.myboardadmin.controller;
 
-import com.cgkim.myboardadmin.argumentresolver.IsAdmin;
 import com.cgkim.myboardadmin.argumentresolver.LoginUser;
-import com.cgkim.myboardadmin.exception.LoginRequiredException;
-import com.cgkim.myboardadmin.exception.NoAuthorizationException;
-import com.cgkim.myboardadmin.exception.errorcode.ErrorCode;
 import com.cgkim.myboardadmin.response.SuccessResponse;
+import com.cgkim.myboardadmin.service.BoardAttachService;
 import com.cgkim.myboardadmin.service.BoardService;
-import com.cgkim.myboardadmin.service.impl.BoardAttachServiceImpl;
 import com.cgkim.myboardadmin.util.FileHandler;
-import com.cgkim.myboardadmin.validator.BoardSaveRequestValidator;
-import com.cgkim.myboardadmin.validator.BoardUpdateRequestValidator;
-import com.cgkim.myboardadmin.validator.FileSaveRequestValidator;
-import com.cgkim.myboardadmin.validator.GuestSaveRequestValidator;
 import com.cgkim.myboardadmin.vo.attach.AttachVo;
-import com.cgkim.myboardadmin.vo.attach.FileSaveRequest;
+import com.cgkim.myboardadmin.vo.common.FileSaveRequest;
 import com.cgkim.myboardadmin.vo.board.BoardDetailResponse;
 import com.cgkim.myboardadmin.vo.board.BoardListResponse;
 import com.cgkim.myboardadmin.vo.board.BoardSaveRequest;
 import com.cgkim.myboardadmin.vo.board.BoardSearchRequest;
 import com.cgkim.myboardadmin.vo.board.BoardUpdateRequest;
-import com.cgkim.myboardadmin.vo.member.GuestPasswordCheckRequest;
-import com.cgkim.myboardadmin.vo.member.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Validator;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
-import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
+/**
+ * 자유게시판 컨트롤러
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -54,14 +38,19 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final BoardAttachServiceImpl attachService;
+
+    private final BoardAttachService attachService;
+
     private final FileHandler fileHandler;
 
     /**
      * 게시물 목록 조회
+     *
+     * @param boardSearchRequest
+     * @return ResponseEntity<SuccessResponse>
      */
     @GetMapping
-    public ResponseEntity<SuccessResponse> getBoardList(BoardSearchRequest boardSearchRequest){
+    public ResponseEntity<SuccessResponse> getBoardList(BoardSearchRequest boardSearchRequest) {
 
         List<BoardListResponse> boardList = boardService.getBoardList(boardSearchRequest);
         int boardTotalCount = boardService.getTotalCount(boardSearchRequest);
@@ -74,6 +63,9 @@ public class BoardController {
 
     /**
      * 게시물 상세 조회
+     *
+     * @param boardId
+     * @return ResponseEntity<SuccessResponse>
      */
     @GetMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> getBoardDetail(@PathVariable Long boardId) {
@@ -87,6 +79,12 @@ public class BoardController {
 
     /**
      * 게시물 작성
+     *
+     * @param username
+     * @param boardSaveRequest
+     * @param fileSaveRequest
+     * @return ResponseEntity<SuccessResponse>
+     * @throws IOException
      */
     @PostMapping
     public ResponseEntity<SuccessResponse> writeBoard(@LoginUser String username,
@@ -94,28 +92,39 @@ public class BoardController {
                                                       @Valid FileSaveRequest fileSaveRequest
     ) throws IOException {
 
-        List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles()); //첨부파일 생성 (C://upload)
-        long boardId = boardService.write(username, boardSaveRequest, attachInsertList); //글 작성
+        List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles());
+
+        Long boardId = boardService.write(username, boardSaveRequest, attachInsertList);
 
         return ResponseEntity.created(URI.create("/admin/boards/" + boardId)).body(new SuccessResponse());
     }
 
     /**
      * 게시물 삭제
+     *
+     * @param boardId
+     * @return ResponseEntity<SuccessResponse>
      */
     @DeleteMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> deleteBoard(@PathVariable Long boardId) {
 
-        List<AttachVo> attachDeleteList = attachService.getList(boardId); //첨부파일 삭제 리스트
-        boardService.delete(boardId); //게시물 삭제
-        fileHandler.deleteFiles(attachDeleteList); //첨부파일 삭제 (C://upload)
+        List<AttachVo> attachDeleteList = attachService.getList(boardId);
+
+        boardService.delete(boardId);
+        fileHandler.deleteFiles(attachDeleteList);
 
         return ResponseEntity.noContent().build();
     }
 
     /**
      * 게시물 수정
-     * TODO: 게시물 수정시 썸네일 업데이트 해야함.
+     *
+     * @param boardId
+     * @param boardUpdateRequest
+     * @param fileSaveRequest
+     * @param attachDeleteRequest
+     * @return ResponseEntity<SuccessResponse>
+     * @throws IOException
      */
     @PatchMapping("/{boardId}")
     public ResponseEntity<SuccessResponse> updateBoard(@PathVariable Long boardId,
@@ -124,18 +133,12 @@ public class BoardController {
                                                        Long[] attachDeleteRequest
     ) throws IOException {
 
-        List<AttachVo> attachDeleteList = attachService.getList(attachDeleteRequest); //첨부파일 삭제 리스트
-        List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles());//첨부파일 삽입 리스트
+        List<AttachVo> attachDeleteList = attachService.getList(attachDeleteRequest);
+        List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles());
 
-        boardService.modify( //게시글 수정, 첨부파일 수정
-                boardId,
-                boardUpdateRequest.getContent(),
-                boardUpdateRequest.getTitle(),
-                attachInsertList,
-                attachDeleteList
-        );
+        boardService.modify(boardId, boardUpdateRequest, attachInsertList, attachDeleteList);
 
-        fileHandler.deleteFiles(attachDeleteList); //첨부파일 삭제 (C://upload)
+        fileHandler.deleteFiles(attachDeleteList);
 
         return ResponseEntity.ok(new SuccessResponse());
     }

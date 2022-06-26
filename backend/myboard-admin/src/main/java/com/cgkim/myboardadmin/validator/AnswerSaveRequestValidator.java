@@ -13,13 +13,28 @@ import org.springframework.validation.Validator;
  */
 @Component
 public class AnswerSaveRequestValidator implements Validator {
+
+    /**
+     * 검증 대상 확인
+     *
+     * @param clazz
+     * @return boolean
+     */
     @Override
     public boolean supports(Class<?> clazz) {
         return AnswerSaveRequest.class.isAssignableFrom(clazz);
     }
 
+
+    /**
+     * 검증
+     *
+     * @param target the object that is to be validated
+     * @param errors contextual state about the validation process
+     */
     @Override
     public void validate(Object target, Errors errors) {
+
         AnswerSaveRequest answerSaveRequest = (AnswerSaveRequest) target;
 
         String title = answerSaveRequest.getTitle();

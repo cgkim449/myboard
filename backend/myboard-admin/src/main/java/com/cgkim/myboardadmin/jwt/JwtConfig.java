@@ -10,6 +10,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
+/**
+ * jwtInterceptor, loginUserArgumentResolver 등록
+ */
 @RequiredArgsConstructor
 @Configuration
 public class JwtConfig implements WebMvcConfigurer {
@@ -19,20 +22,22 @@ public class JwtConfig implements WebMvcConfigurer {
     private final IsAdminArgumentResolver isAdminArgumentResolver;
 
     /**
-     * Interceptor 등록
+     * jwtInterceptor 등록
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/members/login", "/members/signUp");
     }
 
     /**
-     * ArgumentResolver 등록
+     * loginUserArgumentResolver 등록
      */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+
         resolvers.add(loginUserArgumentResolver);
         resolvers.add(isAdminArgumentResolver);
     }

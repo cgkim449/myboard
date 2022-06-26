@@ -43,6 +43,7 @@ public enum ErrorCode { //TODO: properties 로 분리
 
     //Answer
     ANSWER_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AN001", "답변 작성에 실패했습니다."),
+    ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "AN002", "해당 질문이 없습니다."),
 
     //FAQ
     FAQ_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FA001", "FAQ 작성에 실패했습니다."),

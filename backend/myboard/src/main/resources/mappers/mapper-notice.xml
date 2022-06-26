@@ -56,8 +56,8 @@
                a.nickname admin_nickname,
                a.username admin_username
         from tbl_notice as n
-             left join tbl_admin a
-                   on n.admin_id = a.admin_id
+            left join tbl_admin a
+                on n.admin_id = a.admin_id
         where n.notice_id = #{noticeId}
     </select>
 
@@ -76,36 +76,4 @@
         order by n.register_date desc, n.notice_id desc
         limit 1
     </select>
-
-    <update id="updateHasAttach" parameterType="map">
-        update tbl_notice
-        set has_attach = #{hasAttach}
-        where notice_id = #{noticeId}
-    </update>
-
-    <update id="update" parameterType="NoticeUpdateRequest">
-        update tbl_notice
-        set title = #{title},
-            content = #{content},
-            update_date = now()
-        where notice_id = #{noticeId}
-    </update>
-
-    <update id="updateThumbnailUri" parameterType="map">
-        update tbl_notice
-        set thumbnail_uri = #{thumbnailUri}
-        where notice_id = #{noticeId}
-    </update>
-
-    <insert id="insertNotice" useGeneratedKeys="true" keyProperty="noticeId">
-        insert
-        into tbl_notice (admin_id, title, content)
-        values(#{adminId}, #{title}, #{content});
-    </insert>
-
-    <delete id="delete" parameterType="long">
-        delete
-        from tbl_notice
-        where notice_id = #{noticeId}
-    </delete>
 </mapper>
