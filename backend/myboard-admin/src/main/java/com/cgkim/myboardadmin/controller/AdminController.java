@@ -53,7 +53,7 @@ public class AdminController {
 
 
     /**
-     * 사용자가 관리자인지 아닌지 검증하는 것이 목적(preHandler 에서 토큰으로 검증함)
+     * 사용자가 관리자인지 아닌지 검증하는 것이 목적(preHandle 에서 토큰으로 검증함)
      *
      * @return ResponseEntity<SuccessResponse>
      */
