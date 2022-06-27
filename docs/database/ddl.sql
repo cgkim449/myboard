@@ -258,4 +258,3 @@ create table tbl_question_attach
         foreign key (question_id) references tbl_question (question_id)
 )
     comment 'Q&A 질문 첨부파일' engine = InnoDB;
-
