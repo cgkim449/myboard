@@ -27,7 +27,7 @@ public class JwtConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/members/login", "/members/signUp");
+                .excludePathPatterns("/login", "/signup");
     }
 
     /**

@@ -1,33 +1,22 @@
 import axios from "axios";
 import {setInterceptors} from "@/api/common/interceptors";
 
-/**
- * 토큰을 전송하는 axios 인스턴스 생성
- */
-function createInstanceWithToken(url) {
+function createInstanceWith(url) {
     return setInterceptors(axios.create({baseURL: `${process.env.VUE_APP_API_URL}${url}`,}));
 }
 
-/**
- * 토큰을 전송하지 않는 axios 인스턴스 생성
- */
-//TODO: 할필요없음
-function createInstanceWithoutToken() {
-    return axios.create({baseURL: process.env.VUE_APP_API_URL,});
-}
+export const instance = createInstanceWith("");
 
-export const instanceWithoutToken = createInstanceWithoutToken()
+export const boardsInstance = createInstanceWith("boards");
+export const boardAttachesInstance = createInstanceWith("board-attaches");
+export const commentsInstance = createInstanceWith("comments");
 
-export const boardsInstance = createInstanceWithToken("boards");
-export const boardAttachesInstance = createInstanceWithToken("attaches");
-export const commentsInstance = createInstanceWithToken("comments");
+export const questionsInstance = createInstanceWith("questions");
+export const questionAttachesInstance = createInstanceWith("question-attaches");
+export const answersInstance = createInstanceWith("answers");
+export const answerAttachesInstance = createInstanceWith("answer-attaches");
 
-export const questionsInstance = createInstanceWithToken("questions");
-export const questionAttachesInstance = createInstanceWithToken("question-attaches");
-export const answersInstance = createInstanceWithToken("answers");
-export const answerAttachesInstance = createInstanceWithToken("answer-attaches");
+export const faqsInstance = createInstanceWith("faqs");
 
-export const faqsInstance = createInstanceWithToken("faqs");
-
-export const noticesInstance = createInstanceWithToken("notices");
-export const noticeAttachesInstance = createInstanceWithToken("notice-attaches");
+export const noticesInstance = createInstanceWith("notices");
+export const noticeAttachesInstance = createInstanceWith("notice-attaches");

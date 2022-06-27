@@ -6,6 +6,7 @@ import com.cgkim.myboardadmin.exception.NoAuthorizationException;
 import com.cgkim.myboardadmin.exception.errorcode.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -19,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
+
+    private static final HttpMethod ALLOW_HTTP_METHOD = HttpMethod.OPTIONS;
 
     private final JwtProvider jwtProvider;
 
@@ -36,26 +39,22 @@ public class JwtInterceptor implements HandlerInterceptor {
                              Object handler
     ) {
 
-        String token = extractTokenFrom(request);
-
-        if(token != null) {
-
-            DecodedJWT jwt = jwtProvider.validate(token);
-
-            String username = jwt.getClaim("username").asString();
-            Boolean isAdmin = jwt.getClaim("isAdmin").asBoolean();
-
-            if(username == null) {
-                throw new LoginRequiredException(ErrorCode.LOGIN_REQUIRED);
-            }
-
-            if(isAdmin == null) {
-                throw new NoAuthorizationException(ErrorCode.NO_AUTHORIZATION);
-            }
-
-            request.setAttribute("username", username);
-            request.setAttribute("isAdmin", true);
+        if (ALLOW_HTTP_METHOD.matches(request.getMethod())) {
+            return true;
         }
+
+        String token = extractTokenFrom(request);
+        DecodedJWT jwt = jwtProvider.validate(token);
+
+        String username = jwt.getClaim("username").asString();
+        Boolean isAdmin = jwt.getClaim("isAdmin").asBoolean();
+
+        if(username == null || isAdmin == null) {
+            throw new NoAuthorizationException(ErrorCode.NO_AUTHORIZATION);
+        }
+
+        request.setAttribute("username", username);
+        request.setAttribute("isAdmin", true);
 
         return true;
     }
@@ -71,7 +70,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         String headerValue = request.getHeader(HEADER);
 
         if(headerValue == null) {
-            return null;
+            throw new NoAuthorizationException(ErrorCode.NO_AUTHORIZATION);
         }
 
         return headerValue.replace(SCHEMA + " ", "");

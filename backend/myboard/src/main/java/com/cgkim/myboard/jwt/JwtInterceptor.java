@@ -4,6 +4,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -20,6 +21,8 @@ import java.lang.reflect.Method;
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
 
+    private static final HttpMethod ALLOW_HTTP_METHOD = HttpMethod.OPTIONS;
+
     private final JwtProvider jwtProvider;
 
     /**
@@ -35,6 +38,10 @@ public class JwtInterceptor implements HandlerInterceptor {
                              HttpServletResponse response,
                              Object handler
     ) {
+
+        if (ALLOW_HTTP_METHOD.matches(request.getMethod())) {
+            return true;
+        }
 
         String token = extractTokenFrom(request);
 

@@ -430,9 +430,9 @@ export default {
       answerWriteForm: Object.assign({}, defaultAnswerWriteForm),
 
       answerWriteRules: {
-        title: [value => this.$_ItemFormValidator.validateTitle(value),],
-        content: [value => this.$_ItemFormValidator.validateContent(value),],
-        multipartFiles: [value => this.$_ItemFormValidator.validateMultipartFiles(value),],
+        title: [value => this.$_CommonFormValidator.validateTitle(value),],
+        content: [value => this.$_CommonFormValidator.validateContent(value),],
+        multipartFiles: [value => this.$_CommonFormValidator.validateMultipartFiles(value),],
       },
 
       answerModifyForm: {
@@ -440,8 +440,8 @@ export default {
         deleteAttaches: [],
       },
       answerModifyRules: {
-        title: [value => this.$_ItemFormValidator.validateTitle(value),],
-        content: [value => this.$_ItemFormValidator.validateContent(value)],
+        title: [value => this.$_CommonFormValidator.validateTitle(value),],
+        content: [value => this.$_CommonFormValidator.validateContent(value)],
       },
       fileInputKey: 0,
     }
@@ -486,7 +486,7 @@ export default {
 
     async modifyAnswer() {
       if(this.validateAnswerModifyForm()) {
-        const validationResult = this.$_ItemFormValidator.validateMultipartFiles(this.answerModifyForm.multipartFiles);
+        const validationResult = this.$_CommonFormValidator.validateMultipartFiles(this.answerModifyForm.multipartFiles);
 
         if(validationResult !== true) {
           alert(validationResult);

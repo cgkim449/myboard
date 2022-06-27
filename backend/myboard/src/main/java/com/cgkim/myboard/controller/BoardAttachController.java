@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/attaches")
+@RequestMapping("/board-attaches")
 public class BoardAttachController {
 
     private final BoardAttachService attachService;
@@ -29,7 +29,7 @@ public class BoardAttachController {
      * 첨부파일 다운로드
      *
      * @param attachId
-     * @return
+     * @return ResponseEntity<Resource>
      */
     @GetMapping("/{attachId}")
     public ResponseEntity<Resource> downloadAttach(@PathVariable Long attachId) {

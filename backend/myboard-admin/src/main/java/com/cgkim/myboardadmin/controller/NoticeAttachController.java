@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/notice-attaches")
+@RequestMapping("/admin/notice-attaches")
 public class NoticeAttachController {
 
     private final NoticeAttachService attachService;

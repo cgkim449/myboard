@@ -47,7 +47,9 @@ public enum ErrorCode { //TODO: properties 로 분리
 
     //FAQ
     FAQ_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FA001", "FAQ 작성에 실패했습니다."),
+    FAQ_NOT_FOUND(HttpStatus.NOT_FOUND, "FA001", "해당 FAQ 가 없습니다."),
 
+    //Notice
     NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "N001", "해당 공지가 없습니다."),
     NOTICE_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "N002", "공지 작성에 실패했습니다."),
 

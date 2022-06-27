@@ -16,12 +16,10 @@ import com.cgkim.myboardadmin.vo.board.BoardSearchRequest;
 import com.cgkim.myboardadmin.vo.board.BoardUpdateRequest;
 import com.cgkim.myboardadmin.vo.board.BoardVo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -96,9 +94,9 @@ public class BoardService {
 
         boardDao.increaseViewCnt(boardId);
 
-        BoardDetailResponse boardDetailResponse = boardDao.selectOne(boardId);
+        BoardDetailResponse BoardDetailResponse = boardDao.selectOne(boardId);
 
-        if(boardDetailResponse == null) {
+        if(BoardDetailResponse == null) {
             throw new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND);
         }
 
@@ -106,10 +104,10 @@ public class BoardService {
 
         attachURIProvider.setImageURIsOf(boardAttachList);
 
-        boardDetailResponse.setAttachList(boardAttachList);
-        boardDetailResponse.setCommentList(commentDao.selectList(boardId));
+        BoardDetailResponse.setAttachList(boardAttachList);
+        BoardDetailResponse.setCommentList(commentDao.selectList(boardId));
 
-        return boardDetailResponse;
+        return BoardDetailResponse;
     }
 
     /**

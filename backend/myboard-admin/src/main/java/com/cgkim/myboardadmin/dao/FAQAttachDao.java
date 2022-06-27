@@ -57,5 +57,4 @@ public interface FAQAttachDao {
      * @param attachId
      */
     void delete(Long attachId);
-
 }

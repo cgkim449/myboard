@@ -152,10 +152,10 @@ export default {
       form: Object.assign({}, defaultForm),
 
       rules: {
-        categoryId: [value => this.$_ItemFormValidator.validateCategoryId(value),],
-        title: [value => this.$_ItemFormValidator.validateTitle(value),],
-        content: [value => this.$_ItemFormValidator.validateContent(value),],
-        multipartFiles: [value => this.$_ItemFormValidator.validateMultipartFiles(value),],
+        categoryId: [value => this.$_CommonFormValidator.validateCategoryId(value),],
+        title: [value => this.$_CommonFormValidator.validateTitle(value),],
+        content: [value => this.$_CommonFormValidator.validateContent(value),],
+        multipartFiles: [value => this.$_CommonFormValidator.validateMultipartFiles(value),],
       },
 
       categories: [

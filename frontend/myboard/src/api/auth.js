@@ -1,17 +1,17 @@
-import {instanceWithoutToken} from "@/api/index";
+import {instance} from "@/api/index";
 
 /**
  * 회원가입 API
  */
 const createMember = (member) => {
-    return instanceWithoutToken.post("members", member);
+    return instance.post("signup", member);
 }
 
 /**
  * 회원 로그인 API
  */
 const memberLogin = (member) => {
-    return instanceWithoutToken.post("members/login", member);
+    return instance.post("login", member);
 }
 
 export {

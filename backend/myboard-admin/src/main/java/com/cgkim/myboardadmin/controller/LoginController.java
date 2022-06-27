@@ -18,13 +18,13 @@ import javax.validation.Valid;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * 관리자 컨트롤러
+ * 로그인 컨트롤러
  */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/admin")
-public class AdminController {
+public class LoginController {
 
     private final AdminService adminService;
 
@@ -49,18 +49,5 @@ public class AdminController {
                         .put("username", loginAdmin.getUsername())
                         .put("nickname", loginAdmin.getNickname())
                         .put("token", token));
-    }
-
-
-    /**
-     * 사용자가 관리자인지 아닌지 검증하는 것이 목적(preHandle 에서 토큰으로 검증함)
-     *
-     * @return ResponseEntity<SuccessResponse>
-     */
-    //TODO: 메서드, uri 이름 바꾸기
-    @GetMapping("/check")
-    public ResponseEntity<SuccessResponse> check() {
-
-        return ResponseEntity.ok(new SuccessResponse());
     }
 }

@@ -64,7 +64,7 @@
         </where>
     </sql>
 
-    <select id="selectOne" resultType="boardDetailResponse" parameterType="long">
+    <select id="selectOne" resultType="BoardDetailResponse" parameterType="long">
         select b.board_id,
                b.category_id,
                b.title,

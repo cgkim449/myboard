@@ -1,9 +1,5 @@
 package com.cgkim.myboardadmin.dao;
 
-import com.cgkim.myboardadmin.vo.board.BoardDetailResponse;
-import com.cgkim.myboardadmin.vo.board.BoardListResponse;
-import com.cgkim.myboardadmin.vo.board.BoardSearchRequest;
-import com.cgkim.myboardadmin.vo.board.BoardVo;
 import com.cgkim.myboardadmin.vo.notice.NoticeDetailResponse;
 import com.cgkim.myboardadmin.vo.notice.NoticeListResponse;
 import com.cgkim.myboardadmin.vo.notice.NoticeSearchRequest;

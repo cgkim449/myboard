@@ -183,8 +183,8 @@ export default {
       },
 
       rules: {
-        title: [value => this.$_ItemFormValidator.validateTitle(value),],
-        content: [value => this.$_ItemFormValidator.validateContent(value)],
+        title: [value => this.$_CommonFormValidator.validateTitle(value),],
+        content: [value => this.$_CommonFormValidator.validateContent(value)],
       },
 
       fileInputKey: 0,
@@ -234,7 +234,7 @@ export default {
 
     async modifyQuestion() {
       if (this.validateForm()) {
-        const validationResult = this.$_ItemFormValidator.validateMultipartFiles(this.form.multipartFiles);
+        const validationResult = this.$_CommonFormValidator.validateMultipartFiles(this.form.multipartFiles);
 
         if (validationResult !== true) {
           alert(validationResult);

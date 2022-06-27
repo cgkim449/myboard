@@ -1,6 +1,7 @@
 package com.cgkim.myboardadmin.service;
 
 import com.cgkim.myboardadmin.dao.AnswerAttachDao;
+import com.cgkim.myboardadmin.dao.FAQAttachDao;
 import com.cgkim.myboardadmin.exception.AttachNotFoundException;
 import com.cgkim.myboardadmin.exception.errorcode.ErrorCode;
 import com.cgkim.myboardadmin.vo.attach.AttachVo;
@@ -11,33 +12,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Q&A 답변 첨부파일 Service
+ * FAQ 첨부파일 Service
  */
 @RequiredArgsConstructor
 @Service
-public class AnswerAttachService {
+public class FAQAttachService {
 
-    private final AnswerAttachDao attachDao;
+    private final FAQAttachDao attachDao;
 
     /**
-     * 특정 게시물의 첨부파일 리스트
+     * 특정 FAQ의 첨부파일 리스트
      *
-     * @param answerId
+     * @param faqId
      * @return List<AttachVo>
      */
-    public List<AttachVo> getList(Long answerId) {
-        return attachDao.selectList(answerId);
+    public List<AttachVo> getList(Long faqId) {
+        return attachDao.selectList(faqId);
     }
 
     /**
      * 특정 첨부파일
      *
-     * @param attachId
+     * @param faqId
      * @return AttachVo
      */
-    public AttachVo getAttachBy(Long attachId) {
+    public AttachVo getAttachBy(Long faqId) {
 
-        AttachVo attachVo = attachDao.selectOne(attachId);
+        AttachVo attachVo = attachDao.selectOne(faqId);
 
         if (attachVo == null) {
             throw new AttachNotFoundException(ErrorCode.ATTACH_NOT_FOUND);

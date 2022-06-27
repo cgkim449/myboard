@@ -1,35 +1,24 @@
 import axios from "axios";
 import {setInterceptors} from "@/api/common/interceptors";
 
-/**
- * 토큰을 전송하는 axios 인스턴스 생성
- */
-function createInstanceWithToken(url) {
+function createInstanceWith(url) {
     return setInterceptors(axios.create({baseURL: `${process.env.VUE_APP_API_URL}${url}`,}));
 }
 
-/**
- * 토큰을 전송하지 않는 axios 인스턴스 생성
- */
-//TODO: 할필요없음
-function createInstanceWithoutToken() {
-    return axios.create({baseURL: process.env.VUE_APP_API_URL,});
-}
+export const instance = createInstanceWith("");
 
-export const instanceWithoutToken = createInstanceWithoutToken()
+export const adminInstance = createInstanceWith("admin");
 
-export const adminInstance = createInstanceWithToken("admin");
+export const boardsInstance = createInstanceWith("admin/boards");
+export const boardAttachesInstance = createInstanceWith("admin/board-attaches");
+export const commentsInstance = createInstanceWith("admin/comments");
 
-export const boardsInstance = createInstanceWithToken("admin/boards");
-export const boardAttachesInstance = createInstanceWithToken("admin/attaches");
-export const commentsInstance = createInstanceWithToken("admin/comments");
+export const questionsInstance = createInstanceWith("admin/questions");
+export const questionAttachesInstance = createInstanceWith("admin/question-attaches");
+export const answersInstance = createInstanceWith("admin/answers");
+export const answerAttachesInstance = createInstanceWith("admin/answer-attaches");
 
-export const questionsInstance = createInstanceWithToken("admin/questions");
-export const questionAttachesInstance = createInstanceWithToken("admin/question-attaches");
-export const answersInstance = createInstanceWithToken("admin/answers");
-export const answerAttachesInstance = createInstanceWithToken("admin/answer-attaches");
+export const faqsInstance = createInstanceWith("admin/faqs");
 
-export const faqsInstance = createInstanceWithToken("admin/faqs");
-
-export const noticesInstance = createInstanceWithToken("admin/notices");
-export const noticeAttachesInstance = createInstanceWithToken("admin/notice-attaches");
+export const noticesInstance = createInstanceWith("admin/notices");
+export const noticeAttachesInstance = createInstanceWith("admin/notice-attaches");

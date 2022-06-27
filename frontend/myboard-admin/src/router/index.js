@@ -155,13 +155,20 @@ router.beforeEach(async (to, from, next)=>{
 
   let status;
 
-  try{
-    const response = await adminCheck();
-    status = response.status;
-    console.log(status)
-  } catch(error) {
-    status = error.response.data.status;
-    console.log(status)
+  if(to.path !== "/admin/login") {
+
+    try{
+
+      const response = await adminCheck();
+      status = response.status;
+      console.log(status)
+
+    } catch(error) {
+
+      status = error.response.data.status;
+      console.log(status)
+
+    }
   }
 
   if(to.matched.some(record  => record.meta.requiresAuth) && status !== 200) {

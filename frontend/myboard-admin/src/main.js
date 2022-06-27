@@ -10,13 +10,13 @@ import AnswerServicePlugin from "@/plugins/services/AnswerServicePlugin";
 import MemberServicePlugin from "@/plugins/services/MemberServicePlugin";
 import FAQServicePlugin from "@/plugins/services/FAQServicePlugin";
 import NoticeServicePlugin from "@/plugins/services/NoticeServicePlugin";
-import ItemFormValidatorPlugin from "@/plugins/validators/ItemFormValidatorPlugin";
+import CommonFormValidatorPlugin from "@/plugins/validators/CommonFormValidatorPlugin";
 import {ValidationObserver, ValidationProvider} from "vee-validate";
 import VueCookies from "vue-cookies";
 
 Vue.config.productionTip = false
 
-Vue.use(ItemFormValidatorPlugin);
+Vue.use(CommonFormValidatorPlugin);
 
 Vue.use(BoardServicePlugin);
 Vue.use(QuestionServicePlugin);

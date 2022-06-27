@@ -21,6 +21,20 @@
         where faq_id = #{faqId}
     </update>
 
+    <update id="update" parameterType="FAQUpdateRequest">
+        update tbl_faq
+        set title = #{title},
+            content = #{content},
+            update_date = now()
+        where faq_id = #{faqId}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        delete
+        from tbl_faq
+        where faq_id = #{faqId}
+    </delete>
+
     <select id="selectList" resultType="faqListResponse" parameterType="java.lang.Integer">
         select f.faq_id,
                f.title,
@@ -36,5 +50,24 @@
             where f.category_id = #{categoryId}
         </if>
         order by f.register_date desc, f.faq_id desc
+    </select>
+
+    <select id="selectOne" resultType="FAQDetailResponse" parameterType="long">
+        select f.faq_id,
+               f.category_id,
+               f.title,
+               f.content,
+               f.has_attach,
+               f.register_date,
+               f.update_date,
+               ct.name category_name,
+               a.nickname admin_nickname,
+               a.username admin_username
+        from tbl_faq as f
+            join tbl_category ct
+                on f.category_id = ct.category_id
+            left join tbl_admin a
+                on f.admin_id = a.admin_id
+        where f.faq_id = #{boardId}
     </select>
 </mapper>

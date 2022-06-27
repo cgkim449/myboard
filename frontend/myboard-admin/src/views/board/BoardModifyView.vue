@@ -149,8 +149,8 @@ export default {
       rules: {
         //TODO: validator에 메서드 만들기
         guestPassword: [value => (value || '').length > 0 || "필수 항목입니다.",],
-        title: [value => this.$_ItemFormValidator.validateTitle(value),],
-        content: [value => this.$_ItemFormValidator.validateContent(value)],
+        title: [value => this.$_CommonFormValidator.validateTitle(value),],
+        content: [value => this.$_CommonFormValidator.validateContent(value)],
       },
 
       boardDetail: {
@@ -200,7 +200,7 @@ export default {
 
     async modifyBoard () {
       if(this.validateForm()) {
-        const validationResult = this.$_ItemFormValidator.validateMultipartFiles(this.form.multipartFiles);
+        const validationResult = this.$_CommonFormValidator.validateMultipartFiles(this.form.multipartFiles);
 
         if(validationResult !== true) {
           alert(validationResult);

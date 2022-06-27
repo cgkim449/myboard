@@ -7,7 +7,7 @@ export function setInterceptors(axiosInstance) {
 
             const token = store.state.token;
 
-            if(token != null) {
+            if(token !== null) {
                 config.headers.Authorization = "Bearer " + token;
             }
 

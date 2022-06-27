@@ -1,6 +1,3 @@
-# insert 문 : 관리자(tbl_admin), 회원(tbl_member), 자유게시판 게시글(tbl_board), 카테고리(tbl_category)
-
-## 전체 복붙해서 실행하시면 됩니다(경고뜨면 Execute All 클릭)
 ## password 는 전부 '1a@@'를 SHA256으로 암호화한 것 https://emn178.github.io/online-tools/sha256.html
 
 ## 관리자, 회원, 자유게시판 게시글/첨부파일/댓글 데이터 전체 삭제

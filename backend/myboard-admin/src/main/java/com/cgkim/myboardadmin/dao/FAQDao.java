@@ -1,6 +1,10 @@
 package com.cgkim.myboardadmin.dao;
 
+import com.cgkim.myboardadmin.vo.board.BoardDetailResponse;
+import com.cgkim.myboardadmin.vo.board.BoardUpdateRequest;
+import com.cgkim.myboardadmin.vo.faq.FAQDetailResponse;
 import com.cgkim.myboardadmin.vo.faq.FAQListResponse;
+import com.cgkim.myboardadmin.vo.faq.FAQUpdateRequest;
 import com.cgkim.myboardadmin.vo.faq.FAQVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -25,6 +29,14 @@ public interface FAQDao {
     List<FAQListResponse> selectList(Integer categoryId);
 
     /**
+     * FAQ 상세 조회
+     *
+     * @param faqId
+     * @return FAQDetailResponse
+     */
+    FAQDetailResponse selectOne(Long faqId);
+
+    /**
      * FAQ 삽입
      *
      * @param faqVo
@@ -44,4 +56,19 @@ public interface FAQDao {
      * @param updateThumbnailUriMap
      */
     void updateThumbnailUri(Map<String,Object> updateThumbnailUriMap);
+
+    /**
+     * FAQ 삭제
+     *
+     * @param faqId
+     */
+    void delete(Long faqId);
+
+    /**
+     * FAQ 수정
+     *
+     * @param faqUpdateRequest
+     * @return int
+     */
+    int update(FAQUpdateRequest faqUpdateRequest);
 }
