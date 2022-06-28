@@ -3,7 +3,7 @@
 
 <br/>
 
-## 서비스
+## 서비스 URL
 <table>
     <th></th>
     <th>사용자 사이트</th>
@@ -42,7 +42,7 @@
 
 <br/>
 
-## 기술 스택
+## 사용 기술
 <table>
 	<tr>
 		<td><strong>Backend<strong></td>
