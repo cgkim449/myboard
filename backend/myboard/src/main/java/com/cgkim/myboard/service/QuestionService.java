@@ -301,7 +301,7 @@ public class QuestionService {
 
         questionDao.updateHasAttach(
                 Map.of(
-                        "id", questionId,
+                        "questionId", questionId,
                         "hasAttach", hasAttach
                 )
         );
