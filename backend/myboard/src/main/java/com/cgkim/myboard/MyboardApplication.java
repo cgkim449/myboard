@@ -4,7 +4,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 //TODO: domain, web 패키지로 분리. vo, dto
 
-//TODO: 자유게시판 검색 지금 guest_nickname 만임. 멤버도 해야됨.
 //TODO: question mapper select count 에서 불필요한 join 없애기
 
 //TODO: 참고로 update 에 마이바티스 if 쓰는건 좋지 않다.

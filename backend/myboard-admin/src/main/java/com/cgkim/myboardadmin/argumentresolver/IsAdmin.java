@@ -6,7 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * TODO: 주석
+ * - 목적
+ *  - 공통 코드 분리 : NativeWebRequest 에서 isAdmin 값 꺼내는 코드를 분리
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)

@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 /**
- * 토큰 검증
+ * - 요청 메시지 헤더에서 토큰 추출 및 검증
+ * - 토큰에서 추출한 username 값을 HttpServletRequest 에 보관
+ *  - 목적: 토큰 추출/검증을 컨트롤러에서 또 하지 않기 위해
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -26,7 +28,8 @@ public class JwtInterceptor implements HandlerInterceptor {
     private final JwtProvider jwtProvider;
 
     /**
-     * 토큰 검증
+     *  - 토큰 검증
+     *  - 토큰에서 추출한 username 값을 HttpServletRequest 에 보관
      *
      * @param request
      * @param response

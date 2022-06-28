@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 전역 Validator, PropertyEditor 등록하는 역할
+ * 역할: 전역 Validator, PropertyEditor 등록
  */
 @Slf4j
 @RequiredArgsConstructor

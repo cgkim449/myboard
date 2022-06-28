@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 모든 예외를 처리하는 역할
+ * 역할: 모든 예외를 처리
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<ErrorResponse> TokenExpiredExceptionHandler(TokenExpiredException exception) {
 
-        log.error("TokenExpiredExceptionException", exception);
+        log.error("handleTokenExpiredException", exception);
 
         return ResponseEntity
                 .status(ErrorCode.TOKEN_EXPIRED.getHttpStatus())
@@ -93,7 +93,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(JWTVerificationException.class)
     public ResponseEntity<ErrorResponse> JWTVerificationExceptionHandler(JWTVerificationException exception) {
 
-        log.error("JWTVerificationExceptionException", exception);
+        log.error("handleJWTVerificationException", exception);
 
         return ResponseEntity
                 .status(ErrorCode.TOKEN_INVALID.getHttpStatus())

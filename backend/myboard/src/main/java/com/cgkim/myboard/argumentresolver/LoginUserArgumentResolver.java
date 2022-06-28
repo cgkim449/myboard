@@ -12,10 +12,10 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
 /**
- * - 역할: preHandle 에서 request 객체에 보관했던 username 값을 꺼내서 컨트롤러 메서드 매개변수에 넣어주는 역할
+ * - 역할
+ *  - preHandle 에서 request 객체에 보관했던 username 값을 꺼내서 컨트롤러 메서드 매개변수에 넣어주는 역할
  * - 목적
- *  - 공통 코드 분리
- *  - preHandle 에서 했던 jwt 검증을 컨트롤러에서 또 하지 않기 위한 목적
+ *  - 공통 코드 분리 : NativeWebRequest 에서 username 값 꺼내는 코드를 분리
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -23,7 +23,8 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
 
     /**
-     * TODO: 주석
+     * - 파라미터에 @LoginUser 가 붙어있는지 검사
+     * - true 를 리턴하면 resolveArgument 가 실행됨
      * 
      * @param parameter
      * @return boolean
