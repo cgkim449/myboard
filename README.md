@@ -27,7 +27,7 @@
 
 <br/>
 
-## API URL 정의
+## RestAPI Documentation
 
 <table>
     <th></th>
@@ -35,8 +35,8 @@
     <th>관리자 사이트</th>
 	<tr>
 		<td><strong>Postman<strong></td>
-		<td><a href="https://documenter.getpostman.com/view/20200406/UzBqp5ZD">API URL 정의</a></td>
-        <td><a href="https://documenter.getpostman.com/view/20200406/UzBtn43W">API URL 정의</a></td>
+		<td><a href="https://documenter.getpostman.com/view/20200406/UzBqp5ZD">RestAPI Documentation</a></td>
+        <td><a href="https://documenter.getpostman.com/view/20200406/UzBtn43W">RestAPI Documentation</a></td>
 	</tr>
 </table>
 
