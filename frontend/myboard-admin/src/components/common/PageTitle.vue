@@ -1,19 +1,19 @@
 <template>
-  <v-row class="py-3">
-    <v-col
-        cols="auto"
-    >
-      <slot name="title">
+    <v-row class="py-3">
+        <v-col
+            cols="auto"
+        >
+            <slot name="title">
 
-      </slot>
+            </slot>
 
-    </v-col>
-  </v-row>
+        </v-col>
+    </v-row>
 </template>
 
 <script>
 export default {
-  name: "PageTitle"
+    name: "PageTitle"
 }
 </script>
 
