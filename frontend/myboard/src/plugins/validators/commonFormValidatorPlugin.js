@@ -1,4 +1,4 @@
-export const itemFormValidatorPlugin = {
+export const commonFormValidatorPlugin = {
 //TODO: 메시지 분리
     validateMultipartFile(multipartFile) {
         let regex = new RegExp("(.*?)\.(jsp|jspx|jsw|jsv|jspf|htm|html)$");
@@ -134,6 +134,6 @@ export const itemFormValidatorPlugin = {
 
 export default {
     install(Vue) {
-        Vue.prototype.$_ItemFormValidator = itemFormValidatorPlugin;
+        Vue.prototype.$_commonFormValidator = commonFormValidatorPlugin;
     },
 };

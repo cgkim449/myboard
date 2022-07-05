@@ -10,15 +10,18 @@
                         ref="form"
                     >
                         <v-card-text class="text-center px-12 py-16">
+
                             <div class="text-h4 font-weight-black mb-10">
                                 로그인
                             </div>
+
                             <v-text-field
                                 v-model="username"
                                 :rules="rules.username"
                                 label="이메일"
                                 prepend-icon="mdi-email"
                             ></v-text-field>
+
                             <v-text-field
                                 v-model="password"
                                 :rules="rules.password"
@@ -29,6 +32,7 @@
                                 label="비밀번호"
                                 prepend-icon="mdi-lock-outline"
                             ></v-text-field>
+
                             <v-btn
                                 @click="login"
                                 class="mt-6"

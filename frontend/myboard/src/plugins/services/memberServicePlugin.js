@@ -1,4 +1,7 @@
-import {memberLogin, createMember} from "@/api/auth";
+import {
+    memberLogin,
+    createMember
+} from "@/api/auth";
 
 export const memberServicePlugin = {
     signUp: (user) => {
@@ -11,6 +14,6 @@ export const memberServicePlugin = {
 
 export default {
     install(Vue) {
-        Vue.prototype.$_MemberService = memberServicePlugin;
+        Vue.prototype.$_memberService = memberServicePlugin;
     },
 };

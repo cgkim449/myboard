@@ -1,19 +1,15 @@
-import {getAnswerDetail} from "@/api/answers";
-import {downloadAnswerAttach} from "@/api/answerAttaches";
+import {
+    downloadAnswerAttach
+} from "@/api/answerAttaches";
 
 export const answerServicePlugin = {
-    fetchAnswer: (id) => {
-        return getAnswerDetail(id);
-    },
-
     async downloadAttach(attachId) {
         try {
             const response = await downloadAnswerAttach(attachId);
 
-            //TODO: 이 방식 다시 생각해보기
-            let fileURL = window.URL.createObjectURL(new Blob([response.data]));
-            console.log(response);
-            let filename = decodeURI(response.headers['content-disposition'].split("UTF-8''")[1])
+            //TODO: 다른 방법으로 바꾸기
+            const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+            const filename = decodeURI(response.headers['content-disposition'].split("UTF-8''")[1])
             let fileLink = document.createElement('a');
             fileLink.href = fileURL;
             fileLink.setAttribute('download', filename);
@@ -29,6 +25,6 @@ export const answerServicePlugin = {
 
 export default {
     install(Vue) {
-        Vue.prototype.$_AnswerService = answerServicePlugin;
+        Vue.prototype.$_answerService = answerServicePlugin;
     },
 };

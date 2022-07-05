@@ -134,7 +134,7 @@ export default {
                 };
 
                 try {
-                    const response = await this.$_MemberService.signUp(member);
+                    const response = await this.$_memberService.signUp(member);
                     const username = response.headers.location.split("/")[2];
                     this.moveToLoginPage(username);
 

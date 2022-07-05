@@ -1,10 +1,10 @@
 <template>
     <v-container>
-        <PageTitle>
+        <CommonPageTitle>
             <h2 slot="title" @click="moveToBoardList" v-bind:style="{ cursor: 'pointer' }">
                 자유게시판
             </h2>
-        </PageTitle>
+        </CommonPageTitle>
 
         <v-row>
             <v-col
@@ -168,14 +168,14 @@
 </template>
 
 <script>
-import PageTitle from "@/components/common/PageTitle";
+import CommonPageTitle from "@/components/common/CommonPageTitle";
 
 //TODO: 이미지 첨부햇을때 미리보기 기능?
 
 export default {
     name: "BoardWriteView",
     components: {
-        PageTitle,
+        CommonPageTitle,
     },
     data: function () {
         const defaultForm = Object.freeze({
@@ -192,13 +192,13 @@ export default {
             form: Object.assign({}, defaultForm),
 
             rules: {
-                guestNickname: [value => this.$_ItemFormValidator.validateGuestNickname(value),],
-                guestPassword: [value => this.$_ItemFormValidator.validateGuestPassword(value),],
-                guestPasswordConfirm: [value => this.$_ItemFormValidator.validateGuestPasswordConfirm(value, this.form.guestPassword),],
-                categoryId: [value => this.$_ItemFormValidator.validateCategoryId(value),],
-                title: [value => this.$_ItemFormValidator.validateTitle(value),],
-                content: [value => this.$_ItemFormValidator.validateContent(value),],
-                multipartFiles: [value => this.$_ItemFormValidator.validateMultipartFiles(value),],
+                guestNickname: [value => this.$_commonFormValidator.validateGuestNickname(value),],
+                guestPassword: [value => this.$_commonFormValidator.validateGuestPassword(value),],
+                guestPasswordConfirm: [value => this.$_commonFormValidator.validateGuestPasswordConfirm(value, this.form.guestPassword),],
+                categoryId: [value => this.$_commonFormValidator.validateCategoryId(value),],
+                title: [value => this.$_commonFormValidator.validateTitle(value),],
+                content: [value => this.$_commonFormValidator.validateContent(value),],
+                multipartFiles: [value => this.$_commonFormValidator.validateMultipartFiles(value),],
             },
 
             categories: [
@@ -229,9 +229,9 @@ export default {
 
                 let response;
                 if (this.$store.getters.loggedIn) {
-                    response = await this.$_BoardService.writeMemberBoard(formData);
+                    response = await this.$_boardService.writeMemberBoard(formData);
                 } else {
-                    response = await this.$_BoardService.writeGuestBoard(formData);
+                    response = await this.$_boardService.writeGuestBoard(formData);
                 }
 
                 this.moveToBoardDetail(response.headers.location);

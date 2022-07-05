@@ -72,24 +72,21 @@ public class MemberService {
 
         MemberVo memberVo = memberDao.selectByUsername(username);
 
-        if (isUsernameNotCorrect(memberVo)) {
-            throw new LoginFailedException(ErrorCode.LOGIN_FAILED);
-        }
-
         password = sha256PasswordEncoder.getHash(password);
-
-        if (isPasswordNotCorrect(password, memberVo)) {
+        
+        if (isMemberNotFound(memberVo) || isPasswordMismatch(password, memberVo)) {
             throw new LoginFailedException(ErrorCode.LOGIN_FAILED);
         }
 
         return memberVo;
     }
 
-    private boolean isPasswordNotCorrect(String password, MemberVo memberVo) {
+    //TODO: 메서드명 다시 고민
+    private boolean isPasswordMismatch(String password, MemberVo memberVo) {
         return !memberVo.getPassword().equals(password);
     }
 
-    private boolean isUsernameNotCorrect(MemberVo memberVo) {
+    private boolean isMemberNotFound(MemberVo memberVo) {
         return memberVo == null;
     }
 

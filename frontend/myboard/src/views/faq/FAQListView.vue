@@ -1,10 +1,10 @@
 <template>
     <v-container>
-        <PageTitle>
+        <CommonPageTitle>
             <h2 slot="title">
                 FAQ
             </h2>
-        </PageTitle>
+        </CommonPageTitle>
 
         <v-row>
             <v-col>
@@ -96,12 +96,12 @@
 
 <script>
 import {formatDate} from "@/utils/filters";
-import PageTitle from "@/components/common/PageTitle";
+import CommonPageTitle from "@/components/common/CommonPageTitle";
 
 export default {
     name: "FAQListView",
     components: {
-        PageTitle
+        CommonPageTitle
     },
     data() {
         return {
@@ -123,12 +123,12 @@ export default {
     },
     methods: {
         async search(categoryId) {
-            const {data} = await this.$_FAQService.fetchFAQList(categoryId);
+            const {data} = await this.$_faqService.fetchFAQList(categoryId);
             this.faqList = data.faqList;
         },
     },
     async created() {
-        const {data} = await this.$_FAQService.fetchFAQList(0);
+        const {data} = await this.$_faqService.fetchFAQList(0);
         this.faqList = data.faqList;
     },
 }

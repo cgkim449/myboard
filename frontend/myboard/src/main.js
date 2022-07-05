@@ -3,22 +3,22 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
-import BoardServicePlugin from "@/plugins/services/BoardServicePlugin";
+import boardServicePlugin from "@/plugins/services/boardServicePlugin";
 import {formatBoardTitle, formatDate, formatQuestionNickname,} from "@/utils/filters";
-import MemberServicePlugin from "@/plugins/services/MemberServicePlugin";
-import QuestionServicePlugin from "@/plugins/services/QuestionServicePlugin";
+import MemberServicePlugin from "@/plugins/services/memberServicePlugin";
+import QuestionServicePlugin from "@/plugins/services/questionServicePlugin";
 import VueCookies from "vue-cookies";
-import AnswerServicePlugin from "@/plugins/services/AnswerServicePlugin";
-import FAQServicePlugin from "@/plugins/services/FAQServicePlugin";
+import AnswerServicePlugin from "@/plugins/services/answerServicePlugin";
+import FAQServicePlugin from "@/plugins/services/faqServicePlugin";
 import {ValidationObserver, ValidationProvider} from 'vee-validate';
-import ItemFormValidatorPlugin from "@/plugins/validators/ItemFormValidatorPlugin";
-import NoticeServicePlugin from "@/plugins/services/NoticeServicePlugin";
+import commonFormValidatorPlugin from "@/plugins/validators/commonFormValidatorPlugin";
+import NoticeServicePlugin from "@/plugins/services/noticeServicePlugin";
 
 Vue.config.productionTip = false
 
-Vue.use(ItemFormValidatorPlugin);
+Vue.use(commonFormValidatorPlugin);
 
-Vue.use(BoardServicePlugin);
+Vue.use(boardServicePlugin);
 Vue.use(QuestionServicePlugin);
 Vue.use(AnswerServicePlugin);
 Vue.use(MemberServicePlugin);
@@ -43,3 +43,5 @@ new Vue({
 }).$mount('#app')
 
 //TODO: 로그인하고 내가 쓴 qna 상세 페이지에서 로그아웃 햇을시 처리
+//TODO: js 리팩토링.
+//  - 예외 처리

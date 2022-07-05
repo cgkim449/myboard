@@ -1,5 +1,14 @@
-import {patchQuestion, createQuestion, deleteQuestion, getQuestionDetail, getQuestionList} from "@/api/questions";
-import {downloadQuestionAttach} from "@/api/questionAttaches";
+import {
+    patchQuestion,
+    createQuestion,
+    deleteQuestion,
+    getQuestionDetail,
+    getQuestionList
+} from "@/api/questions";
+
+import {
+    downloadQuestionAttach
+} from "@/api/questionAttaches";
 
 export const questionServicePlugin = {
     fetchQuestionList: (searchCondition) => {
@@ -40,6 +49,6 @@ export const questionServicePlugin = {
 
 export default {
     install(Vue) {
-        Vue.prototype.$_QuestionService = questionServicePlugin;
+        Vue.prototype.$_questionService = questionServicePlugin;
     },
 };

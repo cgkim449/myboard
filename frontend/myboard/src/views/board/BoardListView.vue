@@ -1,73 +1,60 @@
 <template>
     <v-container>
-        <NoticeDialog
+        <CommonNoticeDialog
             v-on:blockNoticeCookieNotFound="fetchNotice"
             v-bind:fetchedNoticeDetail="noticeDetail"
-        ></NoticeDialog>
+        ></CommonNoticeDialog>
 
-        <PageTitle>
+        <CommonPageTitle>
             <h2 slot="title" @click="initSearchCondition" v-bind:style="{ cursor: 'pointer' }">
                 자유게시판
             </h2>
-        </PageTitle>
+        </CommonPageTitle>
 
-        <SearchForm
+        <CommonSearchForm
             v-on:searchBtnClick="search"
             v-bind:updatedSearchCondition="searchCondition"
-        ></SearchForm>
+        ></CommonSearchForm>
 
-        <BoardList
+        <TheBoardList
             v-on:ListViewBtnClick="switchToListView"
-            v-on:GalleryViewBtnClick="switchToGalleryView"
+            v-on:GridViewBtnClick="switchToGridView"
             v-bind:updatedBoardTotalCount="boardTotalCount"
-            v-bind:updatedListView="listView"
+            v-bind:updatedIsListView="isListView"
             v-bind:fetchedBoardList="boardList"
-        ></BoardList>
+        ></TheBoardList>
 
-        <Pagination
+        <CommonPagination
             v-on:pageBtnClick="movePage"
             v-bind:updatedPage="searchCondition.page"
             v-bind:itemTotalCount="boardTotalCount"
-        ></Pagination>
+        ></CommonPagination>
 
-        <v-row>
-            <v-spacer></v-spacer>
-            <v-col
-                cols="auto"
-            >
-                <v-btn
-                    @click="moveToBoardWrite"
-                    color="secondary"
-                >
-                    글쓰기
-                </v-btn>
-            </v-col>
-        </v-row>
+        <TheBoardListBottomNavigation/>
 
-        <v-row>
-            <v-col>
-
-            </v-col>
-        </v-row>
     </v-container>
 </template>
 
 <script>
-import PageTitle from "@/components/common/PageTitle";
-import SearchForm from "@/components/common/SearchForm";
-import BoardList from "@/components/board/BoardList";
-import Pagination from "@/components/common/Pagination";
-import NoticeDialog from "@/components/common/NoticeDialog";
+import CommonPageTitle from "@/components/common/CommonPageTitle";
+import CommonSearchForm from "@/components/common/CommonSearchForm";
+import TheBoardList from "@/components/board/TheBoardList";
+import CommonPagination from "@/components/common/CommonPagination";
+import CommonNoticeDialog from "@/components/common/CommonNoticeDialog";
+import TheBoardListBottomNavigation from "@/components/board/TheBoardListBottomNavigation";
 
 export default {
     name: "BoardListView",
+
     components: {
-        NoticeDialog,
-        PageTitle,
-        SearchForm,
-        BoardList,
-        Pagination
+        TheBoardListBottomNavigation,
+        CommonNoticeDialog,
+        CommonPageTitle,
+        CommonSearchForm,
+        TheBoardList,
+        CommonPagination
     },
+
     data() {
         return {
             noticeDetail: {},
@@ -80,31 +67,35 @@ export default {
                 page: 1,
             },
 
-            listView: true,
+            isListView: true,
 
             boardTotalCount: 0,
             boardList: [],
         };
     },
+
     async created() {
         this.updateSearchConditionByQuery();
-        this.updateListViewByQuery();
+        this.updateIsListViewByQuery();
 
         await this.fetchBoardList(this.searchCondition);
     },
+
     computed: {},
+
     watch: {
         async "$route.query"() {
             this.updateSearchConditionByQuery();
-            this.updateListViewByQuery();
+            this.updateIsListViewByQuery();
 
             await this.fetchBoardList(this.searchCondition);
         },
     },
+
     methods: {
         async fetchNotice() {
             try {
-                const {data} = await this.$_NoticeService.fetchLatestNoticeDetail();
+                const {data} = await this.$_noticeService.fetchLatestNoticeDetail();
 
                 this.noticeDetail = data.noticeDetail;
 
@@ -116,7 +107,7 @@ export default {
         async fetchBoardList(searchCondition) {
             try {
 
-                const {data} = await this.$_BoardService.fetchBoardList(searchCondition);
+                const {data} = await this.$_boardService.fetchBoardList(searchCondition);
 
                 this.boardList = data.boardList;
                 this.boardTotalCount = data.boardTotalCount;
@@ -124,11 +115,10 @@ export default {
             } catch (error) {
                 console.log(error.response.data.errorMessages)
             }
-
         },
 
         async search(searchCondition) {
-            this.updateQueryParameter(this.listView, searchCondition);
+            this.updateQueryParameter(this.isListView, searchCondition);
 
             await this.fetchBoardList(searchCondition);
         },
@@ -145,8 +135,8 @@ export default {
             this.search(searchCondition);
         },
 
-        updateListViewByQuery() {
-            this.listView = this.$route.query.listView === undefined ? true : this.$route.query.listView === "true";
+        updateIsListViewByQuery() {
+            this.isListView = this.$route.query.isListView === undefined ? true : this.$route.query.isListView === "true";
         },
 
         updateSearchConditionByQuery() {
@@ -162,34 +152,29 @@ export default {
             this.searchCondition.toDate = updatedToDate === undefined ? "" : updatedToDate;
             this.searchCondition.page = updatedPage === undefined ? 1 : Number(updatedPage);
         },
+
         //TODO: 뷰 모드 바꾸는데 지금 api 호출할필요없는데 하고잇음. 수정해야됨.
         switchToListView() {
-            this.listView = true;
+            this.isListView = true;
             this.updateQueryParameter(true, this.searchCondition);
         },
 
-        switchToGalleryView() {
-            this.listView = false;
+        switchToGridView() {
+            this.isListView = false;
             this.updateQueryParameter(false, this.searchCondition);
         },
 
         movePage(page) {
             this.searchCondition.page = page;
-            this.updateQueryParameter(this.listView, this.searchCondition);
+            this.updateQueryParameter(this.isListView, this.searchCondition);
         },
 
-        moveToBoardWrite() {
-            this.$router.push({
-                name: "BoardWriteView",
-                query: this.$route.query,
-            });
-        },
 
-        updateQueryParameter(listView, searchCondition) {
+        updateQueryParameter(isListView, searchCondition) {
             this.$router.push({
                 path: 'boards',
                 query: {
-                    listView: listView,
+                    isListView: isListView,
                     ...searchCondition
                 }
             }).catch(() => {
@@ -198,21 +183,8 @@ export default {
     },
 };
 </script>
+
 <style scoped>
-.v-text-field >>> input {
-    font-size: 0.875em;
-}
 
-.v-text-field >>> label {
-    font-size: 0.875em;
-}
-
-.v-text-field >>> button {
-    font-size: 0.875em;
-}
-
-.v-text-field--outlined >>> fieldset {
-    border-color: rgba(209, 209, 209, 1);
-}
 </style>
 

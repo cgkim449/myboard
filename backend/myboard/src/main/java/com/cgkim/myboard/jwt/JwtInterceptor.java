@@ -1,17 +1,14 @@
 package com.cgkim.myboard.jwt;
 
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
 
 /**
  * - 요청 메시지 헤더에서 토큰 추출 및 검증
@@ -22,8 +19,6 @@ import java.lang.reflect.Method;
 @RequiredArgsConstructor
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
-
-    private static final HttpMethod ALLOW_HTTP_METHOD = HttpMethod.OPTIONS;
 
     private final JwtProvider jwtProvider;
 
@@ -42,7 +37,9 @@ public class JwtInterceptor implements HandlerInterceptor {
                              Object handler
     ) {
 
-        if (ALLOW_HTTP_METHOD.matches(request.getMethod())) {
+        final HttpMethod ALLOWED_HTTP_METHOD = HttpMethod.OPTIONS;
+
+        if (ALLOWED_HTTP_METHOD.matches(request.getMethod())) {
             return true;
         }
 

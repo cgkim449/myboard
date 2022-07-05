@@ -1,4 +1,6 @@
-import {getFAQList} from "@/api/faqs";
+import {
+    getFAQList
+} from "@/api/faqs";
 
 export const faqServicePlugin = {
     fetchFAQList: (categoryId) => {
@@ -8,6 +10,6 @@ export const faqServicePlugin = {
 
 export default {
     install(Vue) {
-        Vue.prototype.$_FAQService = faqServicePlugin;
+        Vue.prototype.$_faqService = faqServicePlugin;
     },
 };

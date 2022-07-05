@@ -1,11 +1,11 @@
 <template>
     <v-container>
 
-        <PageTitle>
+        <CommonPageTitle>
             <h2 slot="title" @click="moveToQuestionList" v-bind:style="{ cursor: 'pointer' }">
                 Q&A
             </h2>
-        </PageTitle>
+        </CommonPageTitle>
 
         <v-card flat outlined class="px-8 py-8">
             <v-form
@@ -152,12 +152,12 @@
 </template>
 
 <script>
-import PageTitle from "@/components/common/PageTitle";
+import CommonPageTitle from "@/components/common/CommonPageTitle";
 
 export default {
     name: "QuestionWriteView",
     components: {
-        PageTitle
+        CommonPageTitle
     },
     data: function () {
         return {
@@ -171,10 +171,10 @@ export default {
             },
 
             rules: {
-                categoryId: [value => this.$_ItemFormValidator.validateCategoryId(value),],
-                title: [value => this.$_ItemFormValidator.validateTitle(value),],
-                content: [value => this.$_ItemFormValidator.validateContent(value),],
-                multipartFiles: [value => this.$_ItemFormValidator.validateMultipartFiles(value),],
+                categoryId: [value => this.$_commonFormValidator.validateCategoryId(value),],
+                title: [value => this.$_commonFormValidator.validateTitle(value),],
+                content: [value => this.$_commonFormValidator.validateContent(value),],
+                multipartFiles: [value => this.$_commonFormValidator.validateMultipartFiles(value),],
             },
 
             categories: [
@@ -196,7 +196,7 @@ export default {
             if (this.validateForm()) {
                 let formData = this.prepareFormData();
 
-                let {headers} = await this.$_QuestionService.writeQuestion(formData);
+                let {headers} = await this.$_questionService.writeQuestion(formData);
 
                 this.moveToQuestionDetail(headers.location);
             }

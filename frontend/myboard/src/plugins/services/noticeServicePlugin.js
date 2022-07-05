@@ -1,5 +1,15 @@
-import {getNoticeDetail, getNoticeList, createNotice, deleteNotice, patchNotice, getLatestNoticeDetail} from "@/api/notices";
-import {downloadAttach} from "@/api/noticeAttaches";
+import {
+    getNoticeDetail,
+    getNoticeList,
+    createNotice,
+    deleteNotice,
+    patchNotice,
+    getLatestNoticeDetail
+} from "@/api/notices";
+
+import {
+    downloadAttach
+} from "@/api/noticeAttaches";
 
 export const noticeServicePlugin = {
     fetchNoticeList: (searchCondition) => {
@@ -43,6 +53,6 @@ export const noticeServicePlugin = {
 
 export default {
     install(Vue) {
-        Vue.prototype.$_NoticeService = noticeServicePlugin;
+        Vue.prototype.$_noticeService = noticeServicePlugin;
     },
 };

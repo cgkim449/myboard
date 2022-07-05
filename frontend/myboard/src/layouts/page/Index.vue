@@ -1,7 +1,7 @@
 <template>
   <v-app>
-    <PageBar></PageBar>
-    <PageView></PageView>
+    <PageBar/>
+    <PageView/>
   </v-app>
 </template>
 

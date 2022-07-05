@@ -1,74 +1,50 @@
 <template>
     <v-container>
-        <PageTitle>
+        <CommonPageTitle>
             <h2 slot="title" @click="initSearchCondition" v-bind:style="{ cursor: 'pointer'}">
                 Q&A
             </h2>
-        </PageTitle>
+        </CommonPageTitle>
 
-        <SearchForm
+        <CommonSearchForm
             v-on:searchBtnClick="search"
             v-bind:updatedSearchCondition="searchCondition"
-        ></SearchForm>
+        ></CommonSearchForm>
 
-        <QuestionList
+        <TheQuestionList
             v-on:ListViewBtnClick="switchToListView"
-            v-on:GalleryViewBtnClick="switchToGalleryView"
+            v-on:GridViewBtnClick="switchToGridView"
             v-bind:updatedQuestionTotalCount="questionTotalCount"
-            v-bind:updatedListView="listView"
+            v-bind:updatedIsListView="isListView"
             v-bind:fetchedQuestionList="questionList"
-        ></QuestionList>
+        ></TheQuestionList>
 
-        <Pagination
+        <CommonPagination
             v-on:pageBtnClick="movePage"
             v-bind:updatedPage="searchCondition.page"
             v-bind:itemTotalCount="questionTotalCount"
-        ></Pagination>
+        ></CommonPagination>
 
-        <v-row>
-            <v-spacer></v-spacer>
+        <TheQuestionListBottomNavigation/>
 
-            <v-col
-                cols="auto"
-            >
-                <router-link
-                    style="text-decoration: none;"
-                    :to="{
-              name: 'QuestionWriteView',
-              query: this.$route.query
-            }"
-                >
-                    <v-btn
-                        color="secondary"
-                    >
-                        질문하기
-
-                    </v-btn>
-                </router-link>
-            </v-col>
-        </v-row>
-
-        <v-row>
-            <v-col>
-
-            </v-col>
-        </v-row>
     </v-container>
 </template>
 
 <script>
-import PageTitle from "@/components/common/PageTitle";
-import SearchForm from "@/components/common/SearchForm";
-import QuestionList from "@/components/question/QuestionList";
-import Pagination from "@/components/common/Pagination";
+import CommonPageTitle from "@/components/common/CommonPageTitle";
+import CommonSearchForm from "@/components/common/CommonSearchForm";
+import TheQuestionList from "@/components/question/TheQuestionList";
+import CommonPagination from "@/components/common/CommonPagination";
+import TheQuestionListBottomNavigation from "@/components/question/TheQuestionListBottomNavigation";
 
 export default {
     name: "QuestionListView",
     components: {
-        Pagination,
-        QuestionList,
-        PageTitle,
-        SearchForm
+        TheQuestionListBottomNavigation,
+        CommonPagination,
+        TheQuestionList,
+        CommonPageTitle,
+        CommonSearchForm
     },
     data() {
         return {
@@ -80,7 +56,7 @@ export default {
                 page: 1,
             },
 
-            listView: true,
+            isListView: true,
 
             questionTotalCount: 0,
             questionList: [],
@@ -89,7 +65,7 @@ export default {
     async created() {
 
         this.updateSearchConditionByQuery();
-        this.updateListViewByQuery();
+        this.updateIsListViewByQuery();
 
         await this.fetchQuestionList(this.searchCondition);
     },
@@ -98,7 +74,7 @@ export default {
         async "$route.query"() {
 
             this.updateSearchConditionByQuery();
-            this.updateListViewByQuery();
+            this.updateIsListViewByQuery();
 
             await this.fetchQuestionList(this.searchCondition);
         },
@@ -108,7 +84,7 @@ export default {
 
             try {
 
-                const {data} = await this.$_QuestionService.fetchQuestionList(searchCondition);
+                const {data} = await this.$_questionService.fetchQuestionList(searchCondition);
 
                 this.questionList = data.questionList;
                 this.questionTotalCount = data.questionTotalCount;
@@ -120,7 +96,7 @@ export default {
 
         async search(searchCondition) {
 
-            this.updateQueryParameter(this.listView, searchCondition);
+            this.updateQueryParameter(this.isListView, searchCondition);
 
             await this.fetchQuestionList(searchCondition);
         },
@@ -137,8 +113,8 @@ export default {
             this.search(searchCondition);
         },
 
-        updateListViewByQuery() {
-            this.listView = this.$route.query.listView === undefined ? true : this.$route.query.listView === "true";
+        updateIsListViewByQuery() {
+            this.isListView = this.$route.query.isListView === undefined ? true : this.$route.query.isListView === "true";
         },
 
         updateSearchConditionByQuery() {
@@ -156,25 +132,25 @@ export default {
         },
 
         switchToListView() {
-            this.listView = true;
-            this.updateQueryParameter(this.listView, this.searchCondition);
+            this.isListView = true;
+            this.updateQueryParameter(this.isListView, this.searchCondition);
         },
 
-        switchToGalleryView() {
-            this.listView = false;
-            this.updateQueryParameter(this.listView, this.searchCondition);
+        switchToGridView() {
+            this.isListView = false;
+            this.updateQueryParameter(this.isListView, this.searchCondition);
         },
 
         movePage(page) {
             this.searchCondition.page = page;
-            this.updateQueryParameter(this.listView, this.searchCondition);
+            this.updateQueryParameter(this.isListView, this.searchCondition);
         },
 
-        updateQueryParameter(listView, searchCondition) {
+        updateQueryParameter(isListView, searchCondition) {
             this.$router.push({
                 path: "questions",
                 query: {
-                    listView: listView,
+                    isListView: isListView,
                     ...searchCondition
                 }
             }).catch(() => {

@@ -1,43 +1,42 @@
 <template>
     <!--  <v-container v-if="!isEmpty(boardDetail)">-->
     <v-container>
-        <PageTitle>
+        <CommonPageTitle>
             <h2 slot="title" @click="moveToBoardList" v-bind:style="{ cursor: 'pointer' }">
                 자유게시판
             </h2>
-        </PageTitle>
+        </CommonPageTitle>
 
         <v-row justify="center">
             <v-col
                 cols="12"
             >
-                <ItemDetail
+                <CommonItemDetail
                     v-bind:fetchedItemDetail="boardDetail"
-                ></ItemDetail>
+                ></CommonItemDetail>
 
-                <AttachList
+                <CommonAttachList
                     v-if="boardDetail.hasAttach"
                     v-bind:fetchedAttachList="boardDetail.attachList"
                     v-bind:attachOf="attachOf"
-                ></AttachList>
+                ></CommonAttachList>
 
                 <v-card outlined class="px-1 pt-1 mt-3">
-                    <CommentList
+                    <TheBoardDetailCommentList
                         v-on:deleteCommentBtnClick="deleteComment"
                         v-on:initCommentDeleteResponseStatus="initCommentDeleteResponseStatus"
                         v-bind:commentDeleteResponseStatus="commentDeleteResponseStatus"
                         v-bind:fetchedCommentList="boardDetail.commentList"
-                    ></CommentList>
+                    ></TheBoardDetailCommentList>
 
-                    <CommentWriteForm
+                    <TheBoardDetailCommentWriteForm
                         v-on:saveCommentBtnClick="writeComment"
                         v-on:initCommentSaveResponseStatus="initCommentSaveResponseStatus"
                         v-bind:commentSaveResponseStatus="commentSaveResponseStatus"
-                    ></CommentWriteForm>
+                    ></TheBoardDetailCommentWriteForm>
                 </v-card>
 
-
-                <!--        TODO: 컴포넌트로 분리-->
+<!--TODO: 컴포넌트 분리-->
                 <v-card elevation="0">
                     <v-card-text>
                         <v-row justify="center">
@@ -220,25 +219,24 @@
                 </v-card>
             </v-col>
         </v-row>
-
     </v-container>
 </template>
 
 <script>
-import AttachList from "@/components/common/AttachList";
-import CommentList from "@/components/board/CommentList";
-import CommentWriteForm from "@/components/board/CommentWriteForm";
-import ItemDetail from "@/components/common/ItemDetail";
-import PageTitle from "@/components/common/PageTitle";
+import CommonAttachList from "@/components/common/CommonAttachList";
+import TheBoardDetailCommentList from "@/components/board/TheBoardDetailCommentList";
+import TheBoardDetailCommentWriteForm from "@/components/board/TheBoardDetailCommentWriteForm";
+import CommonItemDetail from "@/components/common/CommonItemDetail";
+import CommonPageTitle from "@/components/common/CommonPageTitle";
 
 export default {
     name: "BoardDetailView",
     components: {
-        PageTitle,
-        ItemDetail,
-        AttachList,
-        CommentList,
-        CommentWriteForm
+        CommonPageTitle,
+        CommonItemDetail,
+        CommonAttachList,
+        TheBoardDetailCommentList,
+        TheBoardDetailCommentWriteForm
     },
     data() {
         return {
@@ -282,20 +280,20 @@ export default {
         },
 
         async fetchBoardDetail(boardId) {
-            const {data} = await this.$_BoardService.fetchBoard(boardId);
+            const {data} = await this.$_boardService.fetchBoard(boardId);
 
             this.boardDetail = data.boardDetail;
         },
 
         async fetchCommentList(boardId) {
-            const {data} = await this.$_BoardService.fetchCommentList(boardId);
+            const {data} = await this.$_boardService.fetchCommentList(boardId);
 
             this.boardDetail.commentList = data.commentList;
         },
 
         async deleteComment(deleteCommentRequest) {
             try {
-                const {status} = await this.$_BoardService.deleteComment(deleteCommentRequest);
+                const {status} = await this.$_boardService.deleteComment(deleteCommentRequest);
                 this.commentDeleteResponseStatus = status;
 
                 alert('삭제되었습니다.');
@@ -314,9 +312,9 @@ export default {
                 let commentSaveResponse;
 
                 if (this.$store.getters.loggedIn) {
-                    commentSaveResponse = await this.$_BoardService.writeMemberComment(commentSaveRequest);
+                    commentSaveResponse = await this.$_boardService.writeMemberComment(commentSaveRequest);
                 } else {
-                    commentSaveResponse = await this.$_BoardService.writeGuestComment(commentSaveRequest)
+                    commentSaveResponse = await this.$_boardService.writeGuestComment(commentSaveRequest)
                 }
 
                 this.commentSaveResponseStatus = commentSaveResponse.status;
@@ -357,7 +355,7 @@ export default {
 
         async deleteMyBoard() {
             try {
-                await this.$_BoardService.removeBoard({
+                await this.$_boardService.removeBoard({
                     boardId: this.boardDetail.boardId
                 });
                 alert('삭제되었습니다.');
@@ -375,14 +373,14 @@ export default {
 
                 if (action === 'delete') {
 
-                    await this.$_BoardService.removeBoard(this.guestPasswordCheckRequest);
+                    await this.$_boardService.removeBoard(this.guestPasswordCheckRequest);
                     alert('삭제되었습니다.');
 
                     this.moveToBoardList();
 
                 } else if (action === 'modify') {
 
-                    await this.$_BoardService.checkBoardPw(this.guestPasswordCheckRequest);
+                    await this.$_boardService.checkBoardPw(this.guestPasswordCheckRequest);
 
                     this.moveToBoardModify();
                 }

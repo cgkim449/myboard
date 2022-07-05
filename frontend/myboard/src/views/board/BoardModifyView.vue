@@ -1,10 +1,10 @@
 <template>
     <v-container>
-        <PageTitle>
+        <CommonPageTitle>
             <h2 slot="title">
                 자유게시판
             </h2>
-        </PageTitle>
+        </CommonPageTitle>
 
         <v-row>
             <v-col
@@ -86,7 +86,7 @@
                                     <v-row>
                                         <v-col>
                                             <p v-for="attach in boardDetail.attachList">
-                        <span v-on:click="$_BoardService.downloadAttach(attach.attachId)" style="cursor:pointer;">
+                        <span v-on:click="$_boardService.downloadAttach(attach.attachId)" style="cursor:pointer;">
 
                           <v-icon>mdi-attachment</v-icon>
                           {{ attach.name }}.{{ attach.extension }} - {{ attach.size }} byte
@@ -161,12 +161,12 @@
 </template>
 
 <script>
-import PageTitle from "@/components/common/PageTitle";
+import CommonPageTitle from "@/components/common/CommonPageTitle";
 
 export default {
     name: "BoardModifyView",
     components: {
-        PageTitle
+        CommonPageTitle
     },
     data() {
         return {
@@ -179,8 +179,8 @@ export default {
             rules: {
                 //TODO: validator에 메서드 만들기
                 guestPassword: [value => (value || '').length > 0 || "필수 항목입니다.",],
-                title: [value => this.$_ItemFormValidator.validateTitle(value),],
-                content: [value => this.$_ItemFormValidator.validateContent(value)],
+                title: [value => this.$_commonFormValidator.validateTitle(value),],
+                content: [value => this.$_commonFormValidator.validateContent(value)],
             },
 
             boardDetail: {
@@ -199,7 +199,7 @@ export default {
     async created() {
         let boardId = this.$route.params.boardId;
 
-        const {data} = await this.$_BoardService.fetchBoard(boardId);
+        const {data} = await this.$_boardService.fetchBoard(boardId);
 
         this.boardDetail = data.boardDetail;
         this.form.title = data.boardDetail.title;
@@ -230,7 +230,7 @@ export default {
 
         async modifyBoard() {
             if (this.validateForm()) {
-                const validationResult = this.$_ItemFormValidator.validateMultipartFiles(this.form.multipartFiles);
+                const validationResult = this.$_commonFormValidator.validateMultipartFiles(this.form.multipartFiles);
 
                 if (validationResult !== true) {
                     alert(validationResult);
@@ -240,7 +240,7 @@ export default {
                 let formData = this.prepareFormData();
 
                 try {
-                    await this.$_BoardService.updateBoard(formData);
+                    await this.$_boardService.updateBoard(formData);
 
                     this.moveToBoardDetail(this.boardDetail.boardId);
                 } catch (error) {

@@ -1,10 +1,10 @@
 <template>
     <v-container>
-        <PageTitle>
+        <CommonPageTitle>
             <h2 slot="title" @click="moveToQuestionList" v-bind:style="{ cursor: 'pointer' }">
                 Q&A
             </h2>
-        </PageTitle>
+        </CommonPageTitle>
 
         <v-row justify="center">
             <v-col
@@ -19,15 +19,15 @@
             <v-col
                 cols="12"
             >
-                <ItemDetail
+                <CommonItemDetail
                     v-bind:fetchedItemDetail="questionDetail"
-                ></ItemDetail>
+                ></CommonItemDetail>
 
-                <AttachList
+                <CommonAttachList
                     v-if="questionDetail.hasAttach"
                     v-bind:fetchedAttachList="questionDetail.attachList"
                     v-bind:attachOf="attachOf1"
-                ></AttachList>
+                ></CommonAttachList>
 
             </v-col>
         </v-row>
@@ -65,16 +65,16 @@
                 <v-col
                     cols="12"
                 >
-                    <ItemDetail
+                    <CommonItemDetail
                         v-bind:fetchedItemDetail="questionDetail.answer"
                         v-bind:itemType="itemType"
-                    ></ItemDetail>
+                    ></CommonItemDetail>
 
-                    <AttachList
+                    <CommonAttachList
                         v-if="questionDetail.answer.hasAttach"
                         v-bind:fetchedAttachList="questionDetail.answer.attachList"
                         v-bind:attachOf="attachOf2"
-                    ></AttachList>
+                    ></CommonAttachList>
                 </v-col>
             </template>
 
@@ -135,16 +135,16 @@
 </template>
 
 <script>
-import ItemDetail from "@/components/common/ItemDetail";
-import AttachList from "@/components/common/AttachList";
-import PageTitle from "@/components/common/PageTitle";
+import CommonItemDetail from "@/components/common/CommonItemDetail";
+import CommonAttachList from "@/components/common/CommonAttachList";
+import CommonPageTitle from "@/components/common/CommonPageTitle";
 
 export default {
     name: "QuestionDetailView",
     components: {
-        AttachList,
-        ItemDetail,
-        PageTitle
+        CommonAttachList,
+        CommonItemDetail,
+        CommonPageTitle
     },
     data() {
         return {
@@ -165,13 +165,13 @@ export default {
     },
     methods: {
         async fetchQuestionDetail(questionId) {
-            const {data} = await this.$_QuestionService.fetchQuestion(questionId);
+            const {data} = await this.$_questionService.fetchQuestion(questionId);
             this.questionDetail = data.questionDetail;
         },
 
         async removeQuestion() {
             try {
-                await this.$_QuestionService.removeQuestion(this.questionDetail.questionId);
+                await this.$_questionService.removeQuestion(this.questionDetail.questionId);
 
                 alert("삭제되었습니다.")
 

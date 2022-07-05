@@ -1,10 +1,10 @@
 <template>
     <v-container>
-        <PageTitle>
+        <CommonPageTitle>
             <h2 slot="title">
                 Q&A
             </h2>
-        </PageTitle>
+        </CommonPageTitle>
 
         <v-row>
             <v-col
@@ -90,7 +90,7 @@
                                     <v-row>
                                         <v-col>
                                             <p v-for="attach in questionDetail.attachList">
-                        <span v-on:click="$_QuestionService.downloadAttach(attach.attachId)" style="cursor:pointer;">
+                        <span v-on:click="$_questionService.downloadAttach(attach.attachId)" style="cursor:pointer;">
 
                           <v-icon>mdi-attachment</v-icon>
                           {{ attach.name }}.{{ attach.extension }} - {{ attach.size }} byte
@@ -162,12 +162,12 @@
 </template>
 
 <script>
-import PageTitle from "@/components/common/PageTitle";
+import CommonPageTitle from "@/components/common/CommonPageTitle";
 
 export default {
     name: "QuestionModifyView",
     components: {
-        PageTitle
+        CommonPageTitle
     },
     data() {
         return {
@@ -182,8 +182,8 @@ export default {
             },
 
             rules: {
-                title: [value => this.$_ItemFormValidator.validateTitle(value),],
-                content: [value => this.$_ItemFormValidator.validateContent(value)],
+                title: [value => this.$_commonFormValidator.validateTitle(value),],
+                content: [value => this.$_commonFormValidator.validateContent(value)],
             },
 
             fileInputKey: 0,
@@ -198,7 +198,7 @@ export default {
     async created() {
         let questionId = this.$route.params.questionId;
 
-        const {data} = await this.$_QuestionService.fetchQuestion(questionId);
+        const {data} = await this.$_questionService.fetchQuestion(questionId);
 
         this.questionDetail = data.questionDetail;
 
@@ -233,7 +233,7 @@ export default {
 
         async modifyQuestion() {
             if (this.validateForm()) {
-                const validationResult = this.$_ItemFormValidator.validateMultipartFiles(this.form.multipartFiles);
+                const validationResult = this.$_commonFormValidator.validateMultipartFiles(this.form.multipartFiles);
 
                 if (validationResult !== true) {
                     alert(validationResult);
@@ -244,7 +244,7 @@ export default {
 
                 try {
 
-                    await this.$_QuestionService.updateQuestion(formData);
+                    await this.$_questionService.updateQuestion(formData);
                 } catch (error) {
 
                     alert(error.response.data.errorMessage)

@@ -16,6 +16,7 @@ import FAQListView from "@/views/faq/FAQListView";
 import store from "@/store";
 import QuestionModifyView from "@/views/question/QuestionModifyView";
 import TestView from "@/views/TestView";
+import {loginCheck} from "@/api/auth";
 
 Vue.use(VueRouter)
 
@@ -116,18 +117,33 @@ const router = new VueRouter({
     routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     console.log("from: ", from.path);
     console.log("to: ", to.path);
 
-    //TODO: api 호출
-    if (to.meta.auth && !store.getters.loggedIn) {
+    if (to.meta.auth) {
 
-        alert("로그인 후 이용이 가능합니다")
+        if(!store.getters.loggedIn) {
 
-        next({path: '/login', query: {toPath: to.path}});
+            alert("로그인 후 이용이 가능합니다")
 
-        return;
+            next({path: '/login', query: {toPath: to.path}});
+
+            return;
+        }
+
+        //TODO: GlobalExceptionHandler. 인터셉터에서
+        try {
+
+            await loginCheck();
+
+        } catch(error) {
+            alert("로그인 후 이용이 가능합니다")
+
+            next({path: '/login', query: {toPath: to.path}});
+
+            return;
+        }
     }
 
     next();
