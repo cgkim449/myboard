@@ -77,7 +77,7 @@
               <span
                   class="d-flex start"
               >
-                {{ item.registerDate | formatDate }}
+                {{ item.registerDate | formatRegisterDate }}
               </span>
                     </template>
 
@@ -85,7 +85,7 @@
               <span
                   class="d-flex start"
               >
-                {{ item.updateDate | formatDate }}
+                {{ item.updateDate | formatRegisterDate }}
               </span>
                     </template>
                 </v-data-table>
@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import {formatDate} from "@/utils/filters";
+import {formatRegisterDate} from "@/utils/filters";
 import CommonPageTitle from "@/components/common/CommonPageTitle";
 
 export default {

@@ -8,10 +8,10 @@
                     cols="2"
                 >
                     <template v-if="$store.getters.loggedIn">
-                        <!--                  TODO: state 에 직접 v-model 걸지 말아야 -->
-                        <v-text-field disabled dense style="height: 48px !important; " outlined
-                                      v-model="$store.state.nickname">
-                        </v-text-field>
+                        <v-text-field
+                            disabled dense style="height: 48px !important; " outlined
+                            v-model="$store.state.nickname"
+                        />
                     </template>
 
                     <template v-else>
@@ -21,8 +21,7 @@
                             label="닉네임"
                             outlined
                             v-model="commentSaveRequest.guestNickname"
-                        >
-                        </v-text-field>
+                        />
 
                         <v-text-field
                             dense
@@ -31,8 +30,7 @@
                             label="비밀번호"
                             outlined
                             v-model="commentSaveRequest.guestPassword"
-                        >
-                        </v-text-field>
+                        />
                     </template>
                 </v-col>
 
@@ -46,7 +44,7 @@
                         label="댓글을 입력해주세요."
                         v-on:keydown.enter.exact.prevent="clickSaveCommentBtn"
                         v-on:keydown.enter.shift.exact.prevent="commentSaveRequest.content += '\n'"
-                    ></v-textarea>
+                    />
                 </v-col>
 
                 <v-col
@@ -68,13 +66,18 @@
 </template>
 
 <script>
+/**
+ * 자유게시판 상세 조회 댓글 입력 폼
+ */
 export default {
     name: "TheBoardDetailCommentWriteForm",
+
     props: {
         commentSaveResponseStatus: {
             type: Number,
         },
     },
+
     data() {
         return {
             commentSaveRequest: {
@@ -84,22 +87,33 @@ export default {
             },
         }
     },
+
     watch: {
+        /**
+         * 댓글 등록 성공시 댓글 입력 폼 초기화
+         */
         commentSaveResponseStatus() {
             if (this.commentSaveResponseStatus === 201) {
-                this.initComment();
+
+                this.initCommentWriteForm();
+
                 this.$emit("initCommentSaveResponseStatus")
             }
         }
     },
+
     methods: {
+        /**
+         * 댓글 저장 버튼 클릭
+         */
         clickSaveCommentBtn() {
             this.$emit("saveCommentBtnClick", this.commentSaveRequest);
         },
-        validateForm() {
-            return this.$refs.form.validate()
-        },
-        initComment() {
+
+        /**
+         * 댓글 입력 폼 초기화
+         */
+        initCommentWriteForm() {
             this.commentSaveRequest.content = "";
             this.commentSaveRequest.guestNickname = "";
             this.commentSaveRequest.guestPassword = "";
@@ -107,7 +121,3 @@ export default {
     },
 }
 </script>
-
-<style scoped>
-
-</style>

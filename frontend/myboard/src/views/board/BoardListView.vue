@@ -43,6 +43,9 @@ import CommonPagination from "@/components/common/CommonPagination";
 import CommonNoticeDialog from "@/components/common/CommonNoticeDialog";
 import TheBoardListBottomNavigation from "@/components/board/TheBoardListBottomNavigation";
 
+/**
+ * 게시물 목록 조회 페이지
+ */
 export default {
     name: "BoardListView",
 
@@ -74,55 +77,82 @@ export default {
         };
     },
 
+    /**
+     * 게시물 목록 조회 api 호출
+     *
+     * @returns {Promise<void>}
+     */
     async created() {
-        this.updateSearchConditionByQuery();
-        this.updateIsListViewByQuery();
+        this.updateDataByQueryString();
 
         await this.fetchBoardList(this.searchCondition);
     },
 
-    computed: {},
-
     watch: {
+        /**
+         * 쿼리스트링 변할때마다 api 호출
+         * 브라우저 뒤로가기, 앞으로가기 할때 api 호출해야돼서 필요
+         *
+         * @returns {Promise<void>}
+         */
         async "$route.query"() {
-            this.updateSearchConditionByQuery();
-            this.updateIsListViewByQuery();
+            this.updateDataByQueryString();
 
             await this.fetchBoardList(this.searchCondition);
         },
     },
 
     methods: {
+        /**
+         * 검색조건, 보기모드 타입 값을 쿼리스트링에서 추출
+         */
+        updateDataByQueryString() {
+            this.updateSearchConditionByQueryString();
+            this.updateTableTypeByQueryString();
+        },
+
+        /**
+         * 공지사항 상세 조회 api 호출
+         *
+         * @returns {Promise<void>}
+         */
         async fetchNotice() {
-            try {
-                const {data} = await this.$_noticeService.fetchLatestNoticeDetail();
+            const {data} = await this.$_noticeService.fetchLatestNoticeDetail();
 
-                this.noticeDetail = data.noticeDetail;
-
-            } catch (error) {
-                console.log(error.response.data.errorMessages)
-            }
+            this.noticeDetail = data.noticeDetail;
         },
 
+        /**
+         * 게시물 목록 조회 api 호출
+         *
+         * @param searchCondition
+         * @returns {Promise<void>}
+         */
         async fetchBoardList(searchCondition) {
-            try {
+            const {data} = await this.$_boardService.fetchBoardList(searchCondition);
 
-                const {data} = await this.$_boardService.fetchBoardList(searchCondition);
-
-                this.boardList = data.boardList;
-                this.boardTotalCount = data.boardTotalCount;
-
-            } catch (error) {
-                console.log(error.response.data.errorMessages)
-            }
+            this.boardList = data.boardList;
+            this.boardTotalCount = data.boardTotalCount;
         },
 
+        /**
+         * 검색
+         *
+         * @param searchCondition
+         * @returns {Promise<void>}
+         */
         async search(searchCondition) {
-            this.updateQueryParameter(this.isListView, searchCondition);
+            const newQueryString = {
+                isListView : this.isListView,
+                searchCondition: searchCondition,
+            };
 
-            await this.fetchBoardList(searchCondition);
+            this.updateQueryString(newQueryString);
         },
 
+        /**
+         * 검색조건 초기화
+         */
         initSearchCondition() {
             const searchCondition = {
                 categoryId: "0",
@@ -135,56 +165,90 @@ export default {
             this.search(searchCondition);
         },
 
-        updateIsListViewByQuery() {
-            this.isListView = this.$route.query.isListView === undefined ? true : this.$route.query.isListView === "true";
+        /**
+         * 보기모드 타입 값을 쿼리스트링에서 추출
+         */
+        updateTableTypeByQueryString() {
+            this.isListView = this.$route.query.isListView ? this.$route.query.isListView === "true" : true;
         },
 
-        updateSearchConditionByQuery() {
+        /**
+         * 검색조건 값을 쿼리스트링에서 추출
+         */
+        updateSearchConditionByQueryString() {
             const updatedCategoryId = this.$route.query.categoryId;
             const updatedKeyword = this.$route.query.keyword;
             const updatedFromDate = this.$route.query.fromDate;
             const updatedToDate = this.$route.query.toDate;
             const updatedPage = this.$route.query.page;
 
-            this.searchCondition.categoryId = updatedCategoryId === undefined ? "0" : updatedCategoryId;
-            this.searchCondition.keyword = updatedKeyword === undefined ? "" : updatedKeyword;
-            this.searchCondition.fromDate = updatedFromDate === undefined ? "" : updatedFromDate;
-            this.searchCondition.toDate = updatedToDate === undefined ? "" : updatedToDate;
-            this.searchCondition.page = updatedPage === undefined ? 1 : Number(updatedPage);
+            this.searchCondition.categoryId = updatedCategoryId ? updatedCategoryId : "0";
+            this.searchCondition.keyword = updatedKeyword ? updatedKeyword : "";
+            this.searchCondition.fromDate = updatedFromDate ? updatedFromDate : "";
+            this.searchCondition.toDate = updatedToDate ? updatedToDate : "";
+            this.searchCondition.page = updatedPage ? Number(updatedPage) : 1;
         },
 
-        //TODO: 뷰 모드 바꾸는데 지금 api 호출할필요없는데 하고잇음. 수정해야됨.
+        /**
+         * 보기모드 변경(리스트 모드)
+         */
         switchToListView() {
             this.isListView = true;
-            this.updateQueryParameter(true, this.searchCondition);
+
+            const newQueryString = {
+                isListView : this.isListView,
+                searchCondition: this.searchCondition,
+            };
+
+            this.updateQueryString(newQueryString);
         },
 
+        /**
+         * 보기 모드 변경(그리드 모드)
+         */
         switchToGridView() {
             this.isListView = false;
-            this.updateQueryParameter(false, this.searchCondition);
+
+            const newQueryString = {
+                isListView : this.isListView,
+                searchCondition: this.searchCondition,
+            };
+
+            this.updateQueryString(newQueryString);
         },
 
+        /**
+         * page 이동
+         *
+         * @param page
+         */
         movePage(page) {
             this.searchCondition.page = page;
-            this.updateQueryParameter(this.isListView, this.searchCondition);
+
+            const newQueryString = {
+                isListView : this.isListView,
+                searchCondition: this.searchCondition,
+            };
+
+            this.updateQueryString(newQueryString);
         },
 
-
-        updateQueryParameter(isListView, searchCondition) {
+        /**
+         * 쿼리스트링 변경.
+         * 변경되면 watch 에서 api 호출함
+         *
+         * @param newQueryString
+         */
+        updateQueryString(newQueryString) {
             this.$router.push({
                 path: 'boards',
                 query: {
-                    isListView: isListView,
-                    ...searchCondition
+                    isListView: newQueryString.isListView,
+                    ...newQueryString.searchCondition
                 }
-            }).catch(() => {
-            });
+            }).catch(()=>{});
         },
     },
 };
 </script>
-
-<style scoped>
-
-</style>
 

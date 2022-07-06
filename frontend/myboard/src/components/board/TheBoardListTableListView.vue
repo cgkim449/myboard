@@ -19,36 +19,27 @@
                 </template>
 
                 <template v-slot:item.title="{ item }">
-                            <span
-                                @click="moveToBoardDetail(item.boardId)"
-                                v-bind:style="{ cursor: 'pointer' }"
-                                class="d-flex start"
-                            >
-                                {{ item.title | formatBoardTitle }}
-                            </span>
+                    <span
+                        @click="$_routerPush.goToBoardDetail(item.boardId, $route.query)"
+                        v-bind:style="{ cursor: 'pointer' }"
+                        class="d-flex start"
+                    >
+                        {{ item.title | formatBoardTitle }}
+                    </span>
                 </template>
 
                 <template v-slot:item.nickname="{ item }">
-
-                            <span v-if="isMemberBoard(item)">
-                                {{ item.memberNickname }}
-                            </span>
-
-                    <span v-if="isGuestBoard(item)">
-                                {{ item.guestNickname }}
-                            </span>
-
-                    <span v-if="isAdminBoard(item)">
-                                {{ item.adminNickname }}
-                            </span>
+                    <span v-if="item.memberNickname">{{ item.memberNickname }}</span>
+                    <span v-if="item.guestNickname">{{ item.guestNickname }}</span>
+                    <span v-if="item.adminNickname">{{ item.adminNickname }}</span>
                 </template>
 
                 <template v-slot:item.registerDate="{ item }">
-                    {{ item.registerDate | formatDate }}
+                    {{ item.registerDate | formatRegisterDate }}
                 </template>
 
                 <template v-slot:item.updateDate="{ item }">
-                    {{ formatUpdateDateOf(item) }}
+                    {{ item.updateDate | formatUpdateDate(item.registerDate) }}
                 </template>
             </v-data-table>
         </v-col>
@@ -56,10 +47,14 @@
 </template>
 
 <script>
-import {formatDate} from "@/utils/filters";
+import {formatRegisterDate} from "@/utils/filters";
 
+/**
+ * 자유게시판 테이블 리스트 모드
+ */
 export default {
     name: "TheBoardListTableListView",
+
     props: {
         boardListTableHeaders: {
             type: Array,
@@ -69,36 +64,5 @@ export default {
             type: Array,
         },
     },
-
-    methods: {
-        isMemberBoard(item) {
-            return item.memberNickname !== null;
-        },
-
-        isGuestBoard(item) {
-            return item.guestNickname !== null;
-        },
-
-        isAdminBoard(item) {
-            return item.adminNickname !== null;
-        },
-
-        moveToBoardDetail(boardId) {
-
-            this.$router.push({
-                name: "BoardDetailView",
-                params: {boardId},
-                query: this.$route.query
-            });
-        },
-
-        formatUpdateDateOf(board) {
-            return board.registerDate === board.updateDate ? '-' : formatDate(board.updateDate);
-        }
-    }
 }
 </script>
-
-<style scoped>
-
-</style>

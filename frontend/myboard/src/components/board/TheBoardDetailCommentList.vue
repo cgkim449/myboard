@@ -9,27 +9,20 @@
                 <v-col
                     cols="2"
                 >
-                    <template v-if="comment.guestNickname != null">
-                        {{ comment.guestNickname }}
-                    </template>
-
-                    <template v-else-if="comment.memberNickname != null">
-                        {{ comment.memberNickname }}
-                    </template>
-
-                    <template v-else-if="comment.adminNickname != null">
-                        {{ comment.adminNickname }}
-                    </template>
+                    <span v-if="comment.guestNickname">{{ comment.guestNickname }}</span>
+                    <span v-else-if="comment.memberNickname">{{ comment.memberNickname }}</span>
+                    <span v-else-if="comment.adminNickname"><{{ comment.adminNickname }}</span>
                 </v-col>
+
                 <v-col>
-                    {{ comment.content }}
+                    <div v-html="$options.filters.replaceCRLFWithBrTag(comment.content)"/>
                 </v-col>
 
                 <v-col
                     cols="auto"
                 >
                     <!--익명 댓글 삭제는 모달 띄움-->
-                    <template v-if="comment.guestNickname !== null">
+                    <template v-if="comment.guestNickname">
                         <v-btn
                             icon
                             x-small
@@ -38,27 +31,24 @@
                             von="on"
 
                             @click.stop="showDeleteGuestCommentDialog = true"
-                            @click="clickDeleteGuestCommentDialog(comment.commentId)"
+                            @click="clickDeleteGuestCommentBtn(comment.commentId)"
                         >
                             x
                         </v-btn>
                     </template>
 
                     <!-- 로그인사용자 '내댓글 삭제'는 모달 안띄움-->
-                    <template
-                        v-else-if="comment.memberNickname !== null && $store.state.nickname === comment.memberNickname">
+                    <template v-else-if="isMyMemberComment(comment)">
                         <v-btn
                             icon
                             x-small
                             color="red lighten-2"
                             class="mb-1"
-                            @click="clickDeleteCommentBtn(comment.commentId)"
+                            @click="clickDeleteMyCommentBtn(comment.commentId)"
                         >
                             x
                         </v-btn>
                     </template>
-
-                    <!--TODO: 관리자 댓글은 삭제 버튼 안보임-->
                 </v-col>
 
                 <v-col
@@ -68,7 +58,7 @@
                 </v-col>
             </v-row>
 
-            <v-divider></v-divider>
+            <v-divider/>
         </v-card-text>
 
         <!--익명댓글 삭제 모달-->
@@ -93,16 +83,15 @@
                                     prepend-icon="mdi-lock-outline"
                                     v-model="deleteCommentRequest.guestPassword"
                                     label="비밀번호를 입력해주세요."
-                                    v-on:keyup.enter="clickDeleteCommentBtn(deleteCommentRequest.commentId)"
+                                    v-on:keyup.enter="clickDeleteMyCommentBtn(deleteCommentRequest.commentId)"
                                 ></v-text-field>
                             </v-col>
-
                         </v-row>
                     </v-container>
                 </v-card-text>
 
                 <v-card-actions>
-                    <v-spacer></v-spacer>
+                    <v-spacer/>
 
                     <v-btn
                         color="blue darken-1"
@@ -115,20 +104,23 @@
                     <v-btn
                         color="blue darken-1"
                         text
-                        @click="clickDeleteCommentBtn(deleteCommentRequest.commentId)"
+                        @click="clickDeleteMyCommentBtn(deleteCommentRequest.commentId)"
                     >
                         확인
                     </v-btn>
                 </v-card-actions>
-
             </v-card>
         </v-dialog>
     </div>
 </template>
 
 <script>
+/**
+ * 자유게시판 상세 조회 댓글 목록
+ */
 export default {
     name: "TheBoardDetailCommentList",
+
     props: {
         fetchedCommentList: {
             type: Array,
@@ -138,59 +130,88 @@ export default {
             type: Number,
         },
     },
+
     data() {
         return {
             showDeleteGuestCommentDialog: false,
+
             deleteCommentRequest: {
                 guestPassword: "",
                 commentId: 0,
             },
         }
     },
+
     computed: {
+        /**
+         * 댓글 총 갯수
+         *
+         * @returns {number|*}
+         */
         commentTotalCount() {
-            if (this.fetchedCommentList === undefined) {
-                return
+            if (!this.fetchedCommentList) {
+                return;
             }
             return this.fetchedCommentList.length
         },
     },
+
     watch: {
+        /**
+         * 익명 댓글 삭제 모달이 닫히면 입력했었던 비밀번호값 초기화
+         */
         showDeleteGuestCommentDialog() {
             if (!this.showDeleteGuestCommentDialog) {
-                this.initDeleteCommentRequest();
+
+                this.deleteCommentRequest = {};
             }
         },
+
+        /**
+         * 익명 댓글 삭제 성공시 모달 창 닫음
+         */
         commentDeleteResponseStatus() {
             if (this.commentDeleteResponseStatus === 204) {
+
                 this.showDeleteGuestCommentDialog = false
+
                 this.deleteCommentRequest = {};
+
                 this.$emit("initCommentDeleteResponseStatus")
             }
         },
     },
+
     methods: {
-        initDeleteCommentRequest(dialog) {
-            if (!dialog) {
-                this.deleteCommentRequest = {};
-            }
-        },
-        async clickDeleteGuestCommentDialog(commentId) {
-            console.log(commentId)
+        /**
+         * 익명 댓글 삭제 버튼 클릭
+         *
+         * @param commentId
+         */
+        clickDeleteGuestCommentBtn(commentId) {
             this.deleteCommentRequest.commentId = commentId;
         },
 
-        clickDeleteCommentBtn(commentId) {
+        /**
+         * (로그인 사용자) 내 댓글 삭제 버튼 클릭
+         *
+         * @param commentId
+         */
+        clickDeleteMyCommentBtn(commentId) {
             this.deleteCommentRequest.commentId = commentId;
 
             this.$emit("deleteCommentBtnClick", this.deleteCommentRequest);
-
-
         },
+
+        /**
+         * 로그인 사용자 본인의 댓글인지 여부
+         *
+         * @param comment
+         * @returns {*|boolean}
+         */
+        isMyMemberComment(comment) {
+            return comment.memberNickname && this.$store.state.nickname === comment.memberNickname;
+        }
     },
 }
 </script>
-
-<style scoped>
-
-</style>

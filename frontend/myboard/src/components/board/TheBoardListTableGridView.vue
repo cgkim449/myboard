@@ -11,7 +11,7 @@
                         >
                             <v-card outlined>
                                 <v-img
-                                    @click="moveToBoardDetail(board.boardId)"
+                                    @click="$_routerPush.goToBoardDetail(board.boardId, $route.query)"
                                     v-bind:style="{ cursor: 'pointer'}"
                                     :src="board.thumbnailUri"
                                     class="white--text align-end"
@@ -28,25 +28,10 @@
 
                                         <br>
 
-                                        <small
-                                            class="font-weight-bold"
-                                            v-if="isAdminBoard(board)"
-                                        >
-                                            {{ board.adminNickname }}
-                                        </small>
-
-                                        <small
-                                            class="font-weight-bold"
-                                            v-if="isMemberBoard(board)"
-                                        >
-                                            {{ board.memberNickname }}
-                                        </small>
-
-                                        <small
-                                            class="font-weight-bold"
-                                            v-if="isGuestBoard(board)"
-                                        >
-                                            {{ board.guestNickname }}
+                                        <small class="font-weight-bold">
+                                            <span v-if="board.adminNickname">{{ board.adminNickname }}</span>
+                                            <span v-if="board.memberNickname">{{ board.memberNickname }}</span>
+                                            <span v-if="board.guestNickname">{{ board.guestNickname }}</span>
                                         </small>
 
                                         <br>
@@ -55,8 +40,7 @@
 
                                         <br>
 
-                                        <small>{{ board.registerDate | formatDate }}</small>
-
+                                        <small>{{ board.registerDate | formatRegisterDate }}</small>
                                     </v-col>
                                 </v-card-actions>
                             </v-card>
@@ -69,8 +53,11 @@
 </template>
 
 <script>
-import {formatDate} from "@/utils/filters";
+import {formatRegisterDate} from "@/utils/filters";
 
+/**
+ * 자유게시판 테이블 그리드 모드
+ */
 export default {
     name: "TheBoardListTableGridView",
 
@@ -83,36 +70,5 @@ export default {
             type: Array,
         },
     },
-
-    methods: {
-        isMemberBoard(item) {
-            return item.memberNickname !== null;
-        },
-
-        isGuestBoard(item) {
-            return item.guestNickname !== null;
-        },
-
-        isAdminBoard(item) {
-            return item.adminNickname !== null;
-        },
-
-        moveToBoardDetail(boardId) {
-
-            this.$router.push({
-                name: "BoardDetailView",
-                params: {boardId},
-                query: this.$route.query
-            });
-        },
-
-        formatUpdateDateOf(board) {
-            return board.registerDate === board.updateDate ? '-' : formatDate(board.updateDate);
-        }
-    }
 }
 </script>
-
-<style scoped>
-
-</style>

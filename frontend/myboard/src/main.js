@@ -4,33 +4,44 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import boardServicePlugin from "@/plugins/services/boardServicePlugin";
-import {formatBoardTitle, formatDate, formatQuestionNickname,} from "@/utils/filters";
-import MemberServicePlugin from "@/plugins/services/memberServicePlugin";
-import QuestionServicePlugin from "@/plugins/services/questionServicePlugin";
+import {
+  formatBoardTitle,
+  formatRegisterDate,
+  formatQuestionNickname,
+  formatUpdateDate,
+  replaceCRLFWithBrTag,
+} from "@/utils/filters";
+import memberServicePlugin from "@/plugins/services/memberServicePlugin";
+import questionServicePlugin from "@/plugins/services/questionServicePlugin";
 import VueCookies from "vue-cookies";
-import AnswerServicePlugin from "@/plugins/services/answerServicePlugin";
-import FAQServicePlugin from "@/plugins/services/faqServicePlugin";
+import answerServicePlugin from "@/plugins/services/answerServicePlugin";
+import faqServicePlugin from "@/plugins/services/faqServicePlugin";
 import {ValidationObserver, ValidationProvider} from 'vee-validate';
 import commonFormValidatorPlugin from "@/plugins/validators/commonFormValidatorPlugin";
-import NoticeServicePlugin from "@/plugins/services/noticeServicePlugin";
+import noticeServicePlugin from "@/plugins/services/noticeServicePlugin";
+import routerPushPlugin from "@/plugins/routerPushPlugin";
 
 Vue.config.productionTip = false
 
 Vue.use(commonFormValidatorPlugin);
 
 Vue.use(boardServicePlugin);
-Vue.use(QuestionServicePlugin);
-Vue.use(AnswerServicePlugin);
-Vue.use(MemberServicePlugin);
-Vue.use(FAQServicePlugin);
-Vue.use(NoticeServicePlugin);
+Vue.use(questionServicePlugin);
+Vue.use(answerServicePlugin);
+Vue.use(memberServicePlugin);
+Vue.use(faqServicePlugin);
+Vue.use(noticeServicePlugin);
+
+Vue.use(routerPushPlugin);
 
 Vue.use(VueCookies);
 // Vue.$cookies.config("7d");
 
-Vue.filter("formatDate", formatDate);
+Vue.filter("formatRegisterDate", formatRegisterDate);
+Vue.filter("formatUpdateDate", formatUpdateDate);
 Vue.filter("formatBoardTitle", formatBoardTitle);
 Vue.filter("formatQuestionNickname", formatQuestionNickname);
+Vue.filter("replaceCRLFWithBrTag", replaceCRLFWithBrTag);
 
 Vue.component('ValidationObserver', ValidationObserver);
 Vue.component('ValidationProvider', ValidationProvider);

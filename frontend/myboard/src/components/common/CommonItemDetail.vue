@@ -25,12 +25,12 @@
                 <v-col
                     cols="auto"
                 >
-                    <span>등록일시 {{ fetchedItemDetail.registerDate | formatDate }}</span>
+                    <span>등록일시 {{ fetchedItemDetail.registerDate | formatRegisterDate }}</span>
                     <v-divider
                         class="mx-4"
                         vertical
                     ></v-divider>
-                    <span>수정일시 {{ fetchedItemDetail.updateDate | formatDate }}</span>
+                    <span>수정일시 {{ fetchedItemDetail.updateDate | formatRegisterDate }}</span>
                 </v-col>
             </v-row>
 

@@ -42,8 +42,10 @@ const createGuestBoard = (formData) => {
  * 게시글 삭제
  */
 const deleteBoard = (request) => {
+
     console.log(request)
-    if(request.guestPassword === undefined) { //회원이 자기 글 삭제 요청
+
+    if(!request.guestPassword) { //회원이 자기 글 삭제 요청
         return boardsInstance.delete(
             `/${request.boardId}`
         );

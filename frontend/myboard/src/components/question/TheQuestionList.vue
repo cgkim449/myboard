@@ -102,7 +102,7 @@
                         </template>
 
                         <template v-slot:item.registerDate="{item}">
-                            {{ item.registerDate | formatDate }}
+                            {{ item.registerDate | formatRegisterDate }}
                         </template>
 
                         <template v-slot:item.updateDate="{item}">
@@ -192,7 +192,7 @@
                                                     }}</small><br>
 
                                                 <small>조회수: {{ question.viewCount }}</small><br>
-                                                <small>{{ question.registerDate | formatDate }}</small><br>
+                                                <small>{{ question.registerDate | formatRegisterDate }}</small><br>
                                                 <small class="font-weight-bold primary--text"
                                                        v-if="question.answerId !== null">처리완료</small>
                                                 <small class="font-weight-bold"
@@ -211,7 +211,7 @@
 </template>
 
 <script>
-import {formatDate} from "@/utils/filters";
+import {formatRegisterDate} from "@/utils/filters";
 
 export default {
     name: "TheQuestionList",
@@ -314,7 +314,7 @@ export default {
             });
         },
         formatUpdateDate(question) {
-            return question.registerDate === question.updateDate ? '-' : formatDate(question.updateDate);
+            return question.registerDate === question.updateDate ? '-' : formatRegisterDate(question.updateDate);
         }
     }
 }

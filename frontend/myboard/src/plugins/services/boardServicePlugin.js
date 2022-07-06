@@ -36,16 +36,16 @@ export const boardServicePlugin = {
         return createGuestBoard(formData);
     },
 
-    removeBoard(board) {
-        return deleteBoard(board);
+    removeBoard(data) {
+        return deleteBoard(data);
     },
 
     updateBoard(formData) {
         return patchBoard(formData);
     },
 
-    checkBoardPw(board) {
-        return checkBoardPw(board);
+    checkBoardPw(data) {
+        return checkBoardPw(data);
     },
 
     writeMemberComment(formData) {

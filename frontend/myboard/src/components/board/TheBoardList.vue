@@ -27,21 +27,17 @@
         </v-row>
 
         <template v-if="updatedIsListView">
-
             <TheBoardListTableListView
                 v-bind:boardListTableHeaders="boardListTableHeaders"
                 v-bind:fetchedBoardList="fetchedBoardList"
             ></TheBoardListTableListView>
-
         </template>
 
         <template v-else>
-
             <TheBoardListTableGridView
                 v-bind:boardListTableHeaders="boardListTableHeaders"
                 v-bind:fetchedBoardList="fetchedBoardList"
             ></TheBoardListTableGridView>
-
         </template>
     </div>
 </template>
@@ -50,6 +46,9 @@
 import TheBoardListTableListView from "@/components/board/TheBoardListTableListView";
 import TheBoardListTableGridView from "@/components/board/TheBoardListTableGridView";
 
+/**
+ * 게시물 목록 영역
+ */
 export default {
     name: "TheBoardList",
     components: {TheBoardListTableGridView, TheBoardListTableListView},
@@ -131,27 +130,39 @@ export default {
     },
 
     computed: {
+        /**
+         * 그리드 모드 버튼 클릭시 바뀐 버튼 색
+         *
+         * @returns {string}
+         */
         updatedGridViewBtnColor() {
             return this.updatedIsListView ? 'secondary' : 'primary';
         },
 
+        /**
+         * 리스트 모드 버튼 클릭시 바뀐 버튼 색
+         *
+         * @returns {string}
+         */
         updatedListViewBtnColor() {
             return this.updatedIsListView ? 'primary' : 'secondary';
         }
     },
 
     methods: {
+        /**
+         * 그리드 모드 버튼 클릭
+         */
         clickGridViewBtn() {
             this.$emit("GridViewBtnClick");
         },
 
+        /**
+         * 리스트 모드 버튼 클릭
+         */
         clickListViewBtn() {
             this.$emit("ListViewBtnClick");
         },
     }
 }
 </script>
-
-<style scoped>
-
-</style>

@@ -1,11 +1,12 @@
 <template>
     <v-row>
         <v-spacer/>
+
         <v-col
             cols="auto"
         >
             <v-btn
-                @click="moveToBoardWrite"
+                @click="$_routerPush.goToBoardWrite($route.query)"
                 color="secondary"
             >
                 글쓰기
@@ -15,20 +16,10 @@
 </template>
 
 <script>
+/**
+ * 자유게시판 하단 네비게이션
+ */
 export default {
     name: "TheBoardListBottomNavigation",
-
-    methods: {
-        moveToBoardWrite() {
-            this.$router.push({
-                name: "BoardWriteView",
-                query: this.$route.query,
-            });
-        },
-    }
 }
 </script>
-
-<style scoped>
-
-</style>

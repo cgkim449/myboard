@@ -1,22 +1,62 @@
-function formatDate(value) {
-    if (value === undefined) {
+/**
+ * 게시물 등록일 가공
+ *
+ * @param registerDate
+ * @returns {string|*}
+ */
+function formatRegisterDate(registerDate) {
+    if (!registerDate) {
         return;
     }
-    return value.substring(0, 16);
+    return registerDate.substring(0, 16);
 }
 
-function formatBoardTitle(value) {
-    if (value === undefined) {
+/**
+ * 게시물 수정일 가공
+ *
+ * @param registerDate
+ * @param updateDate
+ * @returns {string|*}
+ */
+function formatUpdateDate(updateDate, registerDate) {
+    if (!updateDate || !registerDate) {
         return;
     }
-    return value.length > 40 ? value.substring(0, 40).concat("...") : value;
+    return registerDate === updateDate ? '-' : formatRegisterDate(updateDate);
 }
 
-function formatQuestionNickname(value) {
-    if (value === undefined) {
+/**
+ * 게시물 제목 가공
+ *
+ * @param boardTitle
+ * @returns {string|*}
+ */
+function formatBoardTitle(boardTitle) {
+    if (!boardTitle) {
         return;
     }
-    return value.substring(0, 1).concat("*").concat(value.substring(value.length - 1));
+    return boardTitle.length > 40 ? boardTitle.substring(0, 40).concat("...") : boardTitle;
 }
 
-export {formatDate, formatBoardTitle, formatQuestionNickname}
+/**
+ * 질문 작성자 별명 가공
+ *
+ * @param questionNickname
+ * @returns {string|*}
+ */
+function formatQuestionNickname(questionNickname) {
+    if (!questionNickname) {
+        return;
+    }
+    return questionNickname.substring(0, 1).concat("*").concat(questionNickname.substring(questionNickname.length - 1));
+}
+
+function replaceCRLFWithBrTag(content) {
+    if (!content) {
+        return;
+    }
+
+    return content.replaceAll("\r\n", " <br/> ").replaceAll("\r", " <br/> ").replaceAll("\n", " <br/> ");
+}
+
+export {formatRegisterDate, formatUpdateDate, formatBoardTitle, formatQuestionNickname, replaceCRLFWithBrTag}

@@ -1,8 +1,9 @@
-import router from "@/router";
 import store from "@/store";
+import {globalExceptionHandler} from "@/api/common/globalExceptionHandler";
 
 export function setInterceptors(axiosInstance) {
     axiosInstance.interceptors.request.use(
+
         function (config) {
             const token = store.state.token;
 
@@ -12,22 +13,21 @@ export function setInterceptors(axiosInstance) {
 
             return config;
         },
+
         function (error) {
             return Promise.reject(error);
         },
     );
 
     axiosInstance.interceptors.response.use(
+
         function (response) {
             return response;
         },
+
         async function (error) {
-            //TODO: enum
-            if(error.response.data.errorCode === "A002") { //토큰 만료
-                alert(error.response.data.errorMessage)
-                await store.dispatch("LOGOUT");
-                router.go();
-            }
+
+            await globalExceptionHandler.handleException(error);
 
             return Promise.reject(error);
         },
