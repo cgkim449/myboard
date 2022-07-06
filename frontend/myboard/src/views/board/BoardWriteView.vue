@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <CommonPageTitle>
-            <h2 slot="title" @click="moveToBoardList" v-bind:style="{ cursor: 'pointer' }">
+            <h2 slot="title" @click="$_routerPush.goToBoardList($route.query)" v-bind:style="{ cursor: 'pointer' }">
                 자유게시판
             </h2>
         </CommonPageTitle>
@@ -128,7 +128,7 @@
                                     cols="auto"
                                 >
                                     <v-btn
-                                        @click="moveToBoardList"
+                                        @click="$_routerPush.goToBoardList($route.query)"
                                         outlined
                                     >
                                         취소
@@ -171,12 +171,16 @@
 import CommonPageTitle from "@/components/common/CommonPageTitle";
 
 //TODO: 이미지 첨부햇을때 미리보기 기능?
-
+/**
+ * 게시물 작성 페이지
+ */
 export default {
     name: "BoardWriteView",
+
     components: {
         CommonPageTitle,
     },
+
     data: function () {
         const defaultForm = Object.freeze({
             guestNickname: '',
@@ -208,9 +212,11 @@ export default {
             ],
         }
     },
-    created() {
-    },
+
+    created() {},
+
     computed: {},
+
     methods: {
         validateForm() {
             return this.$refs.form.validate()
@@ -234,7 +240,7 @@ export default {
                     response = await this.$_boardService.writeGuestBoard(formData);
                 }
 
-                this.moveToBoardDetail(response.headers.location);
+                await this.$_routerPush.goToBoardDetailByLocationHeader(response.headers.location, this.$route.query);
             }
         },
 
@@ -255,21 +261,6 @@ export default {
             }
 
             return formData;
-        },
-
-        moveToBoardDetail(location) {
-            this.$router.push({
-                path: location,
-                query: this.$route.query
-            }).catch(() => {
-            });
-        },
-
-        moveToBoardList() {
-            this.$router.push({
-                name: "BoardListView",
-                query: this.$route.query
-            });
         },
     },
 }

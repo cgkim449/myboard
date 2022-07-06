@@ -18,6 +18,21 @@ export const routerPushPlugin = {
     },
 
     /**
+     * 게시물 상세조회로 이동
+     *
+     * @param location
+     * @param query
+     * @returns {Promise<void>}
+     */
+    async goToBoardDetailByLocationHeader(location, query) {
+
+        await this.$router.push({
+            path: location,
+            query: query
+        });
+    },
+
+    /**
      * 게시물 작성 페이지로 이동
      *
      * @param query
