@@ -4,37 +4,37 @@
 <mapper namespace="com.cgkim.myboard.dao.MemberDao">
 
     <select id="selectByUsername" resultType="memberVo">
-        select member_id,
+        SELECT member_id,
                username,
                password,
                nickname,
                register_date,
                update_date
-        from tbl_member
-        where username = #{username}
+        FROM tbl_member
+        WHERE username = #{username}
     </select>
 
     <select id="selectCountByUsername" resultType="java.lang.Integer">
-        select count(*)
-        from tbl_member
-        where username = #{username}
+        SELECT count(*)
+        FROM tbl_member
+        WHERE username = #{username}
     </select>
 
     <select id="selectCountByNickname" resultType="java.lang.Integer">
-        select count(*)
-        from tbl_member
-        where nickname = #{nickname}
+        SELECT count(*)
+        FROM tbl_member
+        WHERE nickname = #{nickname}
     </select>
 
     <select id="selectMemberIdByUsername" resultType="java.lang.Long">
-        select member_id
-        from tbl_member
-        where username = #{username}
+        SELECT member_id
+        FROM tbl_member
+        WHERE username = #{username}
     </select>
 
     <insert id="insert" parameterType="signUpRequest" useGeneratedKeys="true" keyProperty="memberId">
-        insert
-        into tbl_member (username, password, nickname)
-        values (#{username}, #{password}, #{nickname})
+        INSERT
+        INTO tbl_member (username, password, nickname)
+        VALUES (#{username}, #{password}, #{nickname})
     </insert>
 </mapper>

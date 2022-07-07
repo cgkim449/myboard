@@ -4,7 +4,7 @@
 <mapper namespace="com.cgkim.myboard.dao.QuestionDao">
 
     <select id="selectList" resultType="questionListResponse" parameterType="questionSearchRequest">
-        select q.question_id,
+        SELECT q.question_id,
                q.category_id,
                q.title,
                q.content,
@@ -18,27 +18,27 @@
                m.nickname member_nickname,
                a.nickname admin_nickname,
                an.answer_id
-        from tbl_question as q
-            join tbl_category ct
-                on q.category_id = ct.category_id
-            left join tbl_member m
-                on q.member_id = m.member_id
-            left join tbl_admin a
-                on q.admin_id = a.admin_id
-            left join tbl_answer an
-                on q.question_id = an.question_id
+        FROM tbl_question AS q
+            JOIN tbl_category ct
+                ON q.category_id = ct.category_id
+            LEFT JOIN tbl_member m
+                ON q.member_id = m.member_id
+            LEFT JOIN tbl_admin a
+                ON q.admin_id = a.admin_id
+            LEFT JOIN tbl_answer an
+                ON q.question_id = an.question_id
         <include refid="searchCondition"/>
-        order by q.register_date desc, q.question_id desc
-        limit #{offset}, #{limit}
+        ORDER BY q.register_date DESC, q.question_id DESC
+        LIMIT #{offset}, #{limit}
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer" parameterType="questionSearchRequest">
-        select count(*)
-        from tbl_question as q
-            left join tbl_member m
-                on q.member_id = m.member_id
-            left join tbl_admin a
-                on q.admin_id = a.admin_id
+        SELECT count(*)
+        FROM tbl_question AS q
+            LEFT JOIN tbl_member m
+                ON q.member_id = m.member_id
+            LEFT JOIN tbl_admin a
+                ON q.admin_id = a.admin_id
         <include refid="searchCondition"/>
     </select>
 
@@ -48,41 +48,41 @@
                 q.register_date <![CDATA[>=]]> #{fromDate}
             </if>
             <if test="toDate != null">
-                and q.register_date <![CDATA[<=]]> #{toDate}
+                AND q.register_date <![CDATA[<=]]> #{toDate}
             </if>
             <if test = "categoryId != 0 and categoryId != null">
-                and q.category_id = #{categoryId}
+                AND q.category_id = #{categoryId}
             </if>
             <if test = "keyword != null">
-                and (
-                     q.title like concat('%',#{keyword},'%')
-                     or q.content like concat('%',#{keyword},'%')
-                     or m.nickname like concat('%',#{keyword},'%')
-                     or a.nickname like concat('%',#{keyword},'%')
+                AND (
+                     q.title LIKE concat('%',#{keyword},'%')
+                     OR q.content LIKE concat('%',#{keyword},'%')
+                     OR m.nickname LIKE concat('%',#{keyword},'%')
+                     OR a.nickname LIKE concat('%',#{keyword},'%')
                     )
             </if>
         </where>
     </sql>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="questionId">
-        insert into tbl_question (member_id, category_id, title, content, is_secret)
-        values(#{memberId}, #{categoryId}, #{title}, #{content}, #{isSecret});
+        INSERT INTO tbl_question (member_id, category_id, title, content, is_secret)
+        VALUES (#{memberId}, #{categoryId}, #{title}, #{content}, #{isSecret});
     </insert>
 
     <update id="updateThumbnailUri" parameterType="map">
-        update tbl_question
-        set thumbnail_uri = #{thumbnailUri}
-        where question_id = #{questionId}
+        UPDATE tbl_question
+        SET thumbnail_uri = #{thumbnailUri}
+        WHERE question_id = #{questionId}
     </update>
 
     <update id="updateHasAttach" parameterType="map">
-        update tbl_question
-        set has_attach = #{hasAttach}
-        where question_id = #{questionId}
+        UPDATE tbl_question
+        SET has_attach = #{hasAttach}
+        WHERE question_id = #{questionId}
     </update>
 
     <select id="selectOne" resultType="questionDetailResponse" parameterType="long">
-        select q.question_id,
+        SELECT q.question_id,
                q.category_id,
                q.title,
                q.content,
@@ -96,46 +96,46 @@
                m.nickname member_nickname,
                a.username admin_username,
                a.nickname admin_nickname
-        from tbl_question as q
-            join tbl_category ct
-                on q.category_id = ct.category_id
-            left join tbl_member m
-                on q.member_id = m.member_id
-            left join tbl_admin a
-                on q.admin_id = a.admin_id
-        where q.question_id = #{questionId}
+        FROM tbl_question AS q
+            JOIN tbl_category ct
+                ON q.category_id = ct.category_id
+            LEFT JOIN tbl_member m
+                ON q.member_id = m.member_id
+            LEFT JOIN tbl_admin a
+                ON q.admin_id = a.admin_id
+        WHERE q.question_id = #{questionId}
     </select>
 
     <select id="selectMemberId" resultType="java.lang.Long" parameterType="Long">
-        select member_id
-        from tbl_question
-        where question_id = #{questionId}
+        SELECT member_id
+        FROM tbl_question
+        WHERE question_id = #{questionId}
     </select>
 
     <select id="selectAdminId" resultType="java.lang.Long">
-        select admin_id
-        from tbl_question
-        where question_id = #{questionId}
+        SELECT admin_id
+        FROM tbl_question
+        WHERE question_id = #{questionId}
     </select>
 
     <update id="increaseViewCnt" parameterType="long">
-        update tbl_question
-        set view_count = view_count + 1
-        where question_id = #{questionId}
+        UPDATE tbl_question
+        SET view_count = view_count + 1
+        WHERE question_id = #{questionId}
     </update>
 
     <update id="update" parameterType="questionUpdateRequest">
-        update tbl_question
-        set title = #{title},
+        UPDATE tbl_question
+        SET title = #{title},
             content = #{content},
             is_secret = #{isSecret},
-            update_date = now()
-        where question_id = #{questionId}
+            update_date = NOW()
+        WHERE question_id = #{questionId}
     </update>
 
     <delete id="delete" parameterType="long">
-        delete
-        from tbl_question
-        where question_id = #{questionId}
+        DELETE
+        FROM tbl_question
+        WHERE question_id = #{questionId}
     </delete>
 </mapper>

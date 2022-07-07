@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cgkim.myboard.dao.AnswerAttachDao">
     <select id="selectList" resultType="attachVo" parameterType="long">
-        select attach_id,
+        SELECT attach_id,
                answer_id,
                upload_path,
                uuid,
@@ -11,12 +11,12 @@
                extension,
                is_image,
                size
-        from tbl_answer_attach
-        where answer_id = #{answerId};
+        FROM tbl_answer_attach
+        WHERE answer_id = #{answerId};
     </select>
 
     <select id="selectOne" resultType="attachVo" parameterType="long">
-        select attach_id,
+        SELECT attach_id,
                answer_id,
                upload_path,
                uuid,
@@ -26,19 +26,19 @@
                size,
                register_date,
                update_date
-        from tbl_answer_attach
-        where attach_id = #{attachId};
+        FROM tbl_answer_attach
+        WHERE attach_id = #{attachId};
     </select>
 
     <insert id="insert" parameterType="attachVo">
-        insert
-        into tbl_answer_attach (answer_id, upload_path, uuid, name, extension, is_image, size)
-        values (#{answerId}, #{uploadPath}, #{uuid}, #{name}, #{extension}, #{isImage}, #{size});
+        INSERT
+        INTO tbl_answer_attach (answer_id, upload_path, uuid, name, extension, is_image, size)
+        VALUES (#{answerId}, #{uploadPath}, #{uuid}, #{name}, #{extension}, #{isImage}, #{size});
     </insert>
 
     <delete id="delete" parameterType="long">
-        delete
-        from tbl_answer_attach
-        where attach_id = #{attachId}
+        DELETE
+        FROM tbl_answer_attach
+        WHERE attach_id = #{attachId}
     </delete>
 </mapper>

@@ -3,7 +3,7 @@
 <mapper namespace="com.cgkim.myboard.dao.NoticeDao">
 
     <select id="selectList" resultType="noticeListResponse" parameterType="noticeSearchRequest">
-        select n.notice_id,
+        SELECT n.notice_id,
                n.title,
                n.content,
                n.has_attach,
@@ -11,19 +11,19 @@
                n.register_date,
                n.update_date,
                a.nickname admin_nickname
-        from tbl_notice as n
-            left join tbl_admin a
-                on n.admin_id = a.admin_id
+        FROM tbl_notice AS n
+            LEFT JOIN tbl_admin a
+                ON n.admin_id = a.admin_id
         <include refid="noticeSearchCondition"/>
-        order by n.register_date desc, n.notice_id desc
-        limit #{offset}, #{limit}
+        ORDER BY n.register_date DESC, n.notice_id DESC
+        LIMIT #{offset}, #{limit}
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer" parameterType="noticeSearchRequest">
-        select count(*)
-        from tbl_notice as n
-            left join tbl_admin a
-                on n.admin_id = a.admin_id
+        SELECT count(*)
+        FROM tbl_notice AS n
+            LEFT JOIN tbl_admin a
+                ON n.admin_id = a.admin_id
         <include refid="noticeSearchCondition"/>
     </select>
 
@@ -34,20 +34,20 @@
                 n.register_date <![CDATA[>=]]> #{fromDate}
             </if>
             <if test="toDate != null">
-                and n.register_date <![CDATA[<=]]> #{toDate}
+                AND n.register_date <![CDATA[<=]]> #{toDate}
             </if>
             <if test = "keyword != null">
-                and (
-                     n.title like concat('%',#{keyword},'%')
-                     or n.content like concat('%',#{keyword},'%')
-                     or a.nickname like concat('%',#{keyword},'%')
+                AND (
+                     n.title LIKE concat('%',#{keyword},'%')
+                     OR n.content LIKE concat('%',#{keyword},'%')
+                     OR a.nickname LIKE concat('%',#{keyword},'%')
                     )
             </if>
         </where>
     </sql>
 
     <select id="selectOne" resultType="noticeDetailResponse" parameterType="long">
-        select n.notice_id,
+        SELECT n.notice_id,
                n.title,
                n.content,
                n.has_attach,
@@ -55,14 +55,14 @@
                n.update_date,
                a.nickname admin_nickname,
                a.username admin_username
-        from tbl_notice as n
-            left join tbl_admin a
-                on n.admin_id = a.admin_id
-        where n.notice_id = #{noticeId}
+        FROM tbl_notice AS n
+            LEFT JOIN tbl_admin a
+                ON n.admin_id = a.admin_id
+        WHERE n.notice_id = #{noticeId}
     </select>
 
     <select id="selectLatestOne" resultType="noticeDetailResponse">
-        select n.notice_id,
+        SELECT n.notice_id,
                n.title,
                n.content,
                n.has_attach,
@@ -70,10 +70,10 @@
                n.update_date,
                a.nickname admin_nickname,
                a.username admin_username
-        from tbl_notice as n
-            left join tbl_admin a
-                on n.admin_id = a.admin_id
-        order by n.register_date desc, n.notice_id desc
-        limit 1
+        FROM tbl_notice AS n
+            LEFT JOIN tbl_admin a
+                ON n.admin_id = a.admin_id
+        ORDER BY n.register_date DESC, n.notice_id DESC
+        LIMIT 1
     </select>
 </mapper>

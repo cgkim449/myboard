@@ -3,7 +3,7 @@
 <mapper namespace="com.cgkim.myboard.dao.BoardDao">
 
     <select id="selectList" resultType="boardListResponse" parameterType="boardSearchRequest">
-        select b.board_id,
+        SELECT b.board_id,
                b.category_id,
                b.title,
                b.content,
@@ -17,25 +17,25 @@
                ct.name category_name,
                m.nickname member_nickname,
                a.nickname admin_nickname
-        from tbl_board as b
-            join tbl_category ct
-                on b.category_id = ct.category_id
-            left join tbl_member m
-                on b.member_id = m.member_id
-            left join tbl_admin a
-                on b.admin_id = a.admin_id
+        FROM tbl_board AS b
+            JOIN tbl_category ct
+                ON b.category_id = ct.category_id
+            LEFT JOIN tbl_member m
+                ON b.member_id = m.member_id
+            LEFT JOIN tbl_admin a
+                ON b.admin_id = a.admin_id
         <include refid="boardSearchCondition"/>
-        order by b.register_date desc, b.board_id desc
-        limit #{offset}, #{limit}
+        ORDER BY b.register_date DESC, b.board_id DESC
+        LIMIT #{offset}, #{limit}
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer" parameterType="boardSearchRequest">
-        select count(*)
-        from tbl_board as b
-            left join tbl_member m
-                on b.member_id = m.member_id
-            left join tbl_admin a
-                on b.admin_id = a.admin_id
+        SELECT count(*)
+        FROM tbl_board AS b
+            LEFT JOIN tbl_member m
+                ON b.member_id = m.member_id
+            LEFT JOIN tbl_admin a
+                ON b.admin_id = a.admin_id
         <include refid="boardSearchCondition"/>
     </select>
 
@@ -46,25 +46,25 @@
                 b.register_date <![CDATA[>=]]> #{fromDate}
             </if>
             <if test="toDate != null">
-                and b.register_date <![CDATA[<=]]> #{toDate}
+                AND b.register_date <![CDATA[<=]]> #{toDate}
             </if>
             <if test = "categoryId != 0 and categoryId != null">
-                and b.category_id = #{categoryId}
+                AND b.category_id = #{categoryId}
             </if>
             <if test = "keyword != null">
-                and (
-                     b.title like concat('%',#{keyword},'%')
-                     or b.content like concat('%',#{keyword},'%')
-                     or b.guest_nickname like concat('%',#{keyword},'%')
-                     or a.nickname like concat('%',#{keyword},'%')
-                     or m.nickname like concat('%',#{keyword},'%')
+                AND (
+                     b.title LIKE concat('%',#{keyword},'%')
+                     OR b.content LIKE concat('%',#{keyword},'%')
+                     OR b.guest_nickname LIKE concat('%',#{keyword},'%')
+                     OR a.nickname LIKE concat('%',#{keyword},'%')
+                     OR m.nickname LIKE concat('%',#{keyword},'%')
                     )
             </if>
         </where>
     </sql>
 
     <select id="selectOne" resultType="boardDetailResponse" parameterType="long">
-        select b.board_id,
+        SELECT b.board_id,
                b.category_id,
                b.title,
                b.content,
@@ -79,38 +79,38 @@
                m.nickname member_nickname,
                a.nickname admin_nickname,
                a.username admin_username
-        from tbl_board as b
-            join tbl_category ct
-                on b.category_id = ct.category_id
-            left join tbl_member m
-                on b.member_id = m.member_id
-            left join tbl_admin a
-                on b.admin_id = a.admin_id
-        where b.board_id = #{boardId}
+        FROM tbl_board AS b
+            JOIN tbl_category ct
+                ON b.category_id = ct.category_id
+            LEFT JOIN tbl_member m
+                ON b.member_id = m.member_id
+            LEFT JOIN tbl_admin a
+                ON b.admin_id = a.admin_id
+        WHERE b.board_id = #{boardId}
     </select>
 
     <select id="selectBoardIdByGuestPassword" resultType="long" parameterType="map">
-        select board_id
-        from tbl_board
-        where board_id = #{boardId} and guest_password = #{guestPassword}
+        SELECT board_id
+        FROM tbl_board
+        WHERE board_id = #{boardId} AND guest_password = #{guestPassword}
     </select>
 
     <select id="selectMemberId" resultType="java.lang.Long" parameterType="long">
-        select member_id
-        from tbl_board
-        where board_id = #{boardId}
+        SELECT member_id
+        FROM tbl_board
+        WHERE board_id = #{boardId}
     </select>
 
     <select id="selectGuestNickname" resultType="String">
-        select guest_nickname
-        from tbl_board
-        where board_id = #{boardId}
+        SELECT guest_nickname
+        FROM tbl_board
+        WHERE board_id = #{boardId}
     </select>
 
     <select id="selectAdminId" resultType="java.lang.Long">
-        select admin_id
-        from tbl_board
-        where board_id = #{boardId}
+        SELECT admin_id
+        FROM tbl_board
+        WHERE board_id = #{boardId}
     </select>
 
     <update id="increaseViewCnt" parameterType="long">
@@ -120,45 +120,45 @@
     </update>
 
     <update id="updateHasAttach" parameterType="map">
-        update tbl_board
-        set has_attach = #{hasAttach}
-        where board_id = #{boardId}
+        UPDATE tbl_board
+        SET has_attach = #{hasAttach}
+        WHERE board_id = #{boardId}
     </update>
 
     <update id="update" parameterType="BoardUpdateRequest">
-        update tbl_board
-        set title = #{title},
+        UPDATE tbl_board
+        SET title = #{title},
             content = #{content},
             update_date = now()
-        where board_id = #{boardId}
+        WHERE board_id = #{boardId}
     </update>
 
     <update id="updateThumbnailUri" parameterType="map">
-        update tbl_board
-        set thumbnail_uri = #{thumbnailUri}
-        where board_id = #{boardId}
+        UPDATE tbl_board
+        SET thumbnail_uri = #{thumbnailUri}
+        WHERE board_id = #{boardId}
     </update>
 
     <insert id="insertGuestBoard" useGeneratedKeys="true" keyProperty="boardId">
-        insert
-        into tbl_board (category_id, title, content, guest_nickname, guest_password)
-        values(#{categoryId}, #{title}, #{content}, #{guestNickname}, #{guestPassword});
+        INSERT
+        INTO tbl_board (category_id, title, content, guest_nickname, guest_password)
+        VALUES(#{categoryId}, #{title}, #{content}, #{guestNickname}, #{guestPassword});
     </insert>
 
     <insert id="insertMemberBoard" useGeneratedKeys="true" keyProperty="boardId">
-        insert
-        into tbl_board (member_id, category_id, title, content)
-        values(#{memberId}, #{categoryId}, #{title}, #{content});
+        INSERT
+        INTO tbl_board (member_id, category_id, title, content)
+        VALUES(#{memberId}, #{categoryId}, #{title}, #{content});
     </insert>
     <insert id="insertAdminBoard" useGeneratedKeys="true" keyProperty="boardId">
-        insert
-        into tbl_board (admin_id, category_id, title, content)
-        values(#{adminId}, #{categoryId}, #{title}, #{content});
+        INSERT
+        INTO tbl_board (admin_id, category_id, title, content)
+        VALUES(#{adminId}, #{categoryId}, #{title}, #{content});
     </insert>
 
     <delete id="deleteByBoardId" parameterType="long">
-        delete
-        from tbl_board
-        where board_id = #{boardId}
+        DELETE
+        FROM tbl_board
+        WHERE board_id = #{boardId}
     </delete>
 </mapper>

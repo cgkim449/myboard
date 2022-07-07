@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cgkim.myboard.dao.QuestionAttachDao">
     <select id="selectListByQuestionId" resultType="attachVo" parameterType="long">
-        select attach_id,
+        SELECT attach_id,
                question_id,
                upload_path,
                uuid,
@@ -11,12 +11,12 @@
                extension,
                is_image,
                size
-        from tbl_question_attach
-        where question_id = #{questionId};
+        FROM tbl_question_attach
+        WHERE question_id = #{questionId};
     </select>
 
     <select id="selectOneByAttachId" resultType="attachVo" parameterType="long">
-        select attach_id,
+        SELECT attach_id,
                question_id,
                upload_path,
                uuid,
@@ -26,31 +26,31 @@
                size,
                register_date,
                update_date
-        from tbl_question_attach
-        where attach_id = #{attachId};
+        FROM tbl_question_attach
+        WHERE attach_id = #{attachId};
     </select>
 
     <select id="selectCountByQuestionId" resultType="int" parameterType="long">
-        select count(*)
-        from tbl_question_attach
-        where question_id = #{questionId};
+        SELECT count(*)
+        FROM tbl_question_attach
+        WHERE question_id = #{questionId};
     </select>
 
     <insert id="insert" parameterType="attachVo">
-        insert
-        into tbl_question_attach (question_id, upload_path, uuid, name, extension, is_image, size)
-        values (#{questionId}, #{uploadPath}, #{uuid}, #{name}, #{extension}, #{isImage}, #{size});
+        INSERT
+        INTO tbl_question_attach (question_id, upload_path, uuid, name, extension, is_image, size)
+        VALUES (#{questionId}, #{uploadPath}, #{uuid}, #{name}, #{extension}, #{isImage}, #{size});
     </insert>
 
     <delete id="deleteByQuestionId" parameterType="long" >
-        delete
-        from tbl_question_attach
-        where question_id = #{questionId}
+        DELETE
+        FROM tbl_question_attach
+        WHERE question_id = #{questionId}
     </delete>
 
     <delete id="deleteByAttachId" parameterType="long">
-        delete
-        from tbl_question_attach
-        where attach_id = #{attachId}
+        DELETE
+        FROM tbl_question_attach
+        WHERE attach_id = #{attachId}
     </delete>
 </mapper>

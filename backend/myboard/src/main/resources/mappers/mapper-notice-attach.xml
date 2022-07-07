@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cgkim.myboard.dao.NoticeAttachDao">
     <select id="selectList" resultType="attachVo" parameterType="long">
-        select attach_id,
+        SELECT attach_id,
                notice_id,
                upload_path,
                uuid,
@@ -11,12 +11,12 @@
                extension,
                is_image,
                size
-        from tbl_notice_attach
-        where notice_id = #{noticeId};
+        FROM tbl_notice_attach
+        WHERE notice_id = #{noticeId};
     </select>
 
     <select id="selectOne" resultType="attachVo" parameterType="long">
-        select attach_id,
+        SELECT attach_id,
                notice_id,
                upload_path,
                uuid,
@@ -26,13 +26,13 @@
                size,
                register_date,
                update_date
-        from tbl_notice_attach
-        where attach_id = #{attachId};
+        FROM tbl_notice_attach
+        WHERE attach_id = #{attachId};
     </select>
 
     <select id="selectCountByNoticeId" resultType="int" parameterType="long">
-        select count(*)
-        from tbl_notice_attach
-        where notice_id = #{noticeId};
+        SELECT count(*)
+        FROM tbl_notice_attach
+        WHERE notice_id = #{noticeId};
     </select>
 </mapper>

@@ -1,260 +1,259 @@
 #TODO: pk, constraint 등을 alter table 로 수정
-#TODO: 예약어는 대문자로 수정
 
-create table tbl_admin
+CREATE TABLE tbl_admin
 (
-    admin_id      int auto_increment comment '관리자 ID'
-        primary key,
-    username      varchar(30)                           not null comment '이메일',
-    password      char(64)                              not null comment '비밀번호',
-    nickname      varchar(30)                           not null comment '별명',
-    register_date timestamp default current_timestamp() null comment '등록일',
-    update_date   timestamp default current_timestamp() null comment '수정일',
-    constraint admin_nickname_uindex
-        unique (nickname),
-    constraint admin_username_uindex
-        unique (username)
+    admin_id      INT AUTO_INCREMENT COMMENT '관리자 ID'
+        PRIMARY KEY,
+    username      VARCHAR(30)                           NOT NULL COMMENT '이메일',
+    password      CHAR(64)                              NOT NULL COMMENT '비밀번호',
+    nickname      VARCHAR(30)                           NOT NULL COMMENT '별명',
+    register_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '등록일',
+    update_date   TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '수정일',
+    CONSTRAINT admin_nickname_uindex
+        UNIQUE (nickname),
+    CONSTRAINT admin_username_uindex
+        UNIQUE (username)
 )
-    comment '관리자' engine = InnoDB;
+    COMMENT '관리자';
 
-create table tbl_category
+CREATE TABLE tbl_category
 (
-    category_id   int                                   not null comment '카테고리 ID'
-        primary key,
-    name          varchar(30)                           not null comment '이름',
-    register_date timestamp default current_timestamp() null comment '등록일',
-    update_date   timestamp default current_timestamp() null comment '수정일'
+    category_id   INT                                   NOT NULL COMMENT '카테고리 ID',
+    name          VARCHAR(30)                           NOT NULL COMMENT '이름',
+    register_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '등록일',
+    update_date   TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '수정일',
+    PRIMARY KEY (category_id)
 )
-    comment '카테고리' engine = InnoDB;
+    COMMENT '카테고리';
 
-create table tbl_faq
+CREATE TABLE tbl_faq
 (
-    faq_id        int auto_increment comment 'FAQ ID'
-        primary key,
-    admin_id      int                                    not null comment '관리자 ID',
-    category_id   int                                    not null comment '카테고리 ID',
-    title         varchar(100)                           not null comment '제목',
-    content       text                                   not null comment '내용',
-    view_count    int        default 0                   null comment '조회수',
-    has_attach    tinyint(1) default 0                   null comment '첨부파일 유무',
-    thumbnail_uri varchar(100)                           null comment '썸네일 URI',
-    register_date timestamp  default current_timestamp() null comment '등록일',
-    update_date   timestamp  default current_timestamp() null comment '수정일',
-    constraint faq_admin_admin_id_fk
-        foreign key (admin_id) references tbl_admin (admin_id),
-    constraint faq_category_category_id_fk
-        foreign key (category_id) references tbl_category (category_id)
+    faq_id        INT AUTO_INCREMENT COMMENT 'FAQ ID'
+        PRIMARY KEY,
+    admin_id      INT                                    NOT NULL COMMENT '관리자 ID',
+    category_id   INT                                    NOT NULL COMMENT '카테고리 ID',
+    title         VARCHAR(100)                           NOT NULL COMMENT '제목',
+    content       TEXT                                   NOT NULL COMMENT '내용',
+    view_count    INT        DEFAULT 0                   NULL COMMENT '조회수',
+    has_attach    TINYINT(1) DEFAULT 0                   NULL COMMENT '첨부파일 유무',
+    thumbnail_uri VARCHAR(100)                           NULL COMMENT '썸네일 URI',
+    register_date TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '등록일',
+    update_date   TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '수정일',
+    CONSTRAINT faq_admin_admin_id_fk
+        FOREIGN KEY (admin_id) REFERENCES tbl_admin (admin_id),
+    CONSTRAINT faq_category_category_id_fk
+        FOREIGN KEY (category_id) REFERENCES tbl_category (category_id)
 )
-    comment 'FAQ' engine = InnoDB;
+    COMMENT 'FAQ';
 
-create table tbl_faq_attach
+CREATE TABLE tbl_faq_attach
 (
-    attach_id     int auto_increment comment '첨부파일 ID'
-        primary key,
-    faq_id        int                                    not null comment 'faq ID',
-    upload_path   varchar(200)                           not null comment '저장 경로',
-    uuid          varchar(100)                           not null comment 'UUID',
-    name          varchar(100)                           not null comment '이름',
-    extension     varchar(20)                            not null comment '확장자',
-    is_image      tinyint(1) default 0                   null comment '이미지 여부',
-    size          int                                    not null comment '파일 크기',
-    register_date timestamp  default current_timestamp() null comment '등록일',
-    update_date   timestamp  default current_timestamp() null comment '수정일',
-    constraint faq_attach_faq_faq_id_fk
-        foreign key (faq_id) references tbl_faq (faq_id)
+    attach_id     INT AUTO_INCREMENT COMMENT '첨부파일 ID'
+        PRIMARY KEY,
+    faq_id        INT                                    NOT NULL COMMENT 'faq ID',
+    upload_path   VARCHAR(200)                           NOT NULL COMMENT '저장 경로',
+    uuid          VARCHAR(100)                           NOT NULL COMMENT 'UUID',
+    name          VARCHAR(100)                           NOT NULL COMMENT '이름',
+    extension     VARCHAR(20)                            NOT NULL COMMENT '확장자',
+    is_image      TINYINT(1) DEFAULT 0                   NULL COMMENT '이미지 여부',
+    size          INT                                    NOT NULL COMMENT '파일 크기',
+    register_date TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '등록일',
+    update_date   TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '수정일',
+    CONSTRAINT faq_attach_faq_faq_id_fk
+        FOREIGN KEY (faq_id) REFERENCES tbl_faq (faq_id)
 )
-    comment 'faq 첨부파일' engine = InnoDB;
+    COMMENT 'faq 첨부파일';
 
-create table tbl_member
+CREATE TABLE tbl_member
 (
-    member_id     int auto_increment comment '회원 ID'
-        primary key,
-    username      varchar(30)                           not null comment '이메일',
-    password      char(64)                              not null comment '비밀번호',
-    nickname      varchar(30)                           not null comment '별명',
-    register_date timestamp default current_timestamp() null comment '등록일',
-    update_date   timestamp default current_timestamp() null comment '수정일',
-    constraint member_nickname_uindex
-        unique (nickname),
-    constraint member_username_uindex
-        unique (username)
+    member_id     INT AUTO_INCREMENT COMMENT '회원 ID'
+        PRIMARY KEY,
+    username      VARCHAR(30)                           NOT NULL COMMENT '이메일',
+    password      CHAR(64)                              NOT NULL COMMENT '비밀번호',
+    nickname      VARCHAR(30)                           NOT NULL COMMENT '별명',
+    register_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '등록일',
+    update_date   TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '수정일',
+    CONSTRAINT member_nickname_uindex
+        UNIQUE (nickname),
+    CONSTRAINT member_username_uindex
+        UNIQUE (username)
 )
-    comment '회원' engine = InnoDB;
+    COMMENT '회원';
 
-create table tbl_board
+CREATE TABLE tbl_board
 (
-    board_id       int auto_increment comment '게시물 ID'
-        primary key,
-    category_id    int                                    not null comment '카테고리 ID',
-    member_id      int                                    null comment '회원 ID',
-    admin_id       int                                    null comment '관리자 ID',
-    guest_nickname varchar(30)                            null comment '익명 게시자 별명',
-    guest_password char(64)                               null comment '익명 게시자 비밀번호',
-    title          varchar(100)                           not null comment '제목',
-    content        text                                   not null comment '내용',
-    view_count     int        default 0                   null comment '조회수',
-    has_attach     tinyint(1) default 0                   null comment '첨부파일 유무',
-    thumbnail_uri  varchar(100)                           null comment '썸네일 URI',
-    register_date  timestamp  default current_timestamp() null comment '등록일',
-    update_date    timestamp  default current_timestamp() null comment '수정일',
-    constraint board_admin_admin_id_fk
-        foreign key (admin_id) references tbl_admin (admin_id),
-    constraint board_category_category_id_fk
-        foreign key (category_id) references tbl_category (category_id),
-    constraint board_member_member_id_fk
-        foreign key (member_id) references tbl_member (member_id)
+    board_id       INT AUTO_INCREMENT COMMENT '게시물 ID'
+        PRIMARY KEY,
+    category_id    INT                                    NOT NULL COMMENT '카테고리 ID',
+    member_id      INT                                    NULL COMMENT '회원 ID',
+    admin_id       INT                                    NULL COMMENT '관리자 ID',
+    guest_nickname VARCHAR(30)                            NULL COMMENT '익명 게시자 별명',
+    guest_password CHAR(64)                               NULL COMMENT '익명 게시자 비밀번호',
+    title          VARCHAR(100)                           NOT NULL COMMENT '제목',
+    content        TEXT                                   NOT NULL COMMENT '내용',
+    view_count     INT        DEFAULT 0                   NULL COMMENT '조회수',
+    has_attach     TINYINT(1) DEFAULT 0                   NULL COMMENT '첨부파일 유무',
+    thumbnail_uri  VARCHAR(100)                           NULL COMMENT '썸네일 URI',
+    register_date  TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '등록일',
+    update_date    TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '수정일',
+    CONSTRAINT board_admin_admin_id_fk
+        FOREIGN KEY (admin_id) REFERENCES tbl_admin (admin_id),
+    CONSTRAINT board_category_category_id_fk
+        FOREIGN KEY (category_id) REFERENCES tbl_category (category_id),
+    CONSTRAINT board_member_member_id_fk
+        FOREIGN KEY (member_id) REFERENCES tbl_member (member_id)
 )
-    comment '자유게시판' engine = InnoDB;
+    COMMENT '자유게시판';
 
-create table tbl_board_attach
+CREATE TABLE tbl_board_attach
 (
-    attach_id     int auto_increment comment '첨부파일 ID'
-        primary key,
-    board_id      int                                    not null comment '게시글 ID',
-    upload_path   varchar(200)                           not null comment '저장 경로',
-    uuid          varchar(100)                           not null comment 'UUID',
-    name          varchar(100)                           not null comment '이름',
-    extension     varchar(20)                            not null comment '확장자',
-    is_image      tinyint(1) default 0                   null comment '이미지 여부',
-    size          int                                    not null comment '파일 크기',
-    register_date timestamp  default current_timestamp() null comment '등록일',
-    update_date   timestamp  default current_timestamp() null comment '수정일',
-    constraint board_attach_board_board_id_fk
-        foreign key (board_id) references tbl_board (board_id)
+    attach_id     INT AUTO_INCREMENT COMMENT '첨부파일 ID'
+        PRIMARY KEY,
+    board_id      INT                                    NOT NULL COMMENT '게시글 ID',
+    upload_path   VARCHAR(200)                           NOT NULL COMMENT '저장 경로',
+    uuid          VARCHAR(100)                           NOT NULL COMMENT 'UUID',
+    name          VARCHAR(100)                           NOT NULL COMMENT '이름',
+    extension     VARCHAR(20)                            NOT NULL COMMENT '확장자',
+    is_image      TINYINT(1) DEFAULT 0                   NULL COMMENT '이미지 여부',
+    size          INT                                    NOT NULL COMMENT '파일 크기',
+    register_date TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '등록일',
+    update_date   TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '수정일',
+    CONSTRAINT board_attach_board_board_id_fk
+        FOREIGN KEY (board_id) REFERENCES tbl_board (board_id)
 )
-    comment '자유게시판 첨부파일' engine = InnoDB;
+    COMMENT '자유게시판 첨부파일';
 
-create table tbl_comment
+CREATE TABLE tbl_comment
 (
-    comment_id     int auto_increment comment '댓글 ID'
-        primary key,
-    board_id       int                                   not null comment '게시글 ID',
-    member_id      int                                   null comment '회원 ID',
-    admin_id       int                                   null comment '관리자 ID',
-    guest_nickname varchar(30)                           null comment '익명 댓글 작성자 별명',
-    guest_password char(64)                              null comment '익명 댓글 작성자 비밀번호',
-    content        varchar(1000)                         not null comment '내용',
-    register_date  timestamp default current_timestamp() null comment '등록일',
-    update_date    timestamp default current_timestamp() null comment '수정일',
-    constraint comment_admin_admin_id_fk
-        foreign key (admin_id) references tbl_admin (admin_id),
-    constraint comment_board_board_id_fk
-        foreign key (board_id) references tbl_board (board_id),
-    constraint comment_member_member_id_fk
-        foreign key (member_id) references tbl_member (member_id)
+    comment_id     INT AUTO_INCREMENT COMMENT '댓글 ID'
+        PRIMARY KEY,
+    board_id       INT                                   NOT NULL COMMENT '게시글 ID',
+    member_id      INT                                   NULL COMMENT '회원 ID',
+    admin_id       INT                                   NULL COMMENT '관리자 ID',
+    guest_nickname VARCHAR(30)                           NULL COMMENT '익명 댓글 작성자 별명',
+    guest_password CHAR(64)                              NULL COMMENT '익명 댓글 작성자 비밀번호',
+    content        VARCHAR(1000)                         NOT NULL COMMENT '내용',
+    register_date  TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '등록일',
+    update_date    TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '수정일',
+    CONSTRAINT comment_admin_admin_id_fk
+        FOREIGN KEY (admin_id) REFERENCES tbl_admin (admin_id),
+    CONSTRAINT comment_board_board_id_fk
+        FOREIGN KEY (board_id) REFERENCES tbl_board (board_id),
+    CONSTRAINT comment_member_member_id_fk
+        FOREIGN KEY (member_id) REFERENCES tbl_member (member_id)
 )
-    comment '자유게시판 댓글' engine = InnoDB;
+    COMMENT '자유게시판 댓글';
 
-create table tbl_notice
+CREATE TABLE tbl_notice
 (
-    notice_id     int auto_increment comment '공지사항 ID'
-        primary key,
-    admin_id      int                                    not null comment '관리자 ID',
-    title         varchar(100)                           not null comment '제목',
-    content       text                                   not null comment '내용',
-    has_attach    tinyint(1) default 0                   null comment '첨부파일 유무',
-    thumbnail_uri varchar(100)                           null comment '썸네일 URI',
-    register_date timestamp  default current_timestamp() null comment '등록일',
-    update_date   timestamp  default current_timestamp() null comment '수정일',
-    constraint notice_admin_admin_id_fk
-        foreign key (admin_id) references tbl_admin (admin_id)
+    notice_id     INT AUTO_INCREMENT COMMENT '공지사항 ID'
+        PRIMARY KEY,
+    admin_id      INT                                    NOT NULL COMMENT '관리자 ID',
+    title         VARCHAR(100)                           NOT NULL COMMENT '제목',
+    content       TEXT                                   NOT NULL COMMENT '내용',
+    has_attach    TINYINT(1) DEFAULT 0                   NULL COMMENT '첨부파일 유무',
+    thumbnail_uri VARCHAR(100)                           NULL COMMENT '썸네일 URI',
+    register_date TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '등록일',
+    update_date   TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '수정일',
+    CONSTRAINT notice_admin_admin_id_fk
+        FOREIGN KEY (admin_id) REFERENCES tbl_admin (admin_id)
 )
-    comment '공지사항' engine = InnoDB;
+    COMMENT '공지사항';
 
-create table tbl_notice_attach
+CREATE TABLE tbl_notice_attach
 (
-    attach_id     int auto_increment comment '첨부파일 ID'
-        primary key,
-    notice_id     int                                    not null comment '공지사항 ID',
-    upload_path   varchar(200)                           not null comment '저장 경로',
-    uuid          varchar(100)                           not null comment 'UUID',
-    name          varchar(100)                           not null comment '이름',
-    extension     varchar(20)                            not null comment '확장자',
-    is_image      tinyint(1) default 0                   null comment '이미지 여부',
-    size          int                                    not null comment '파일 크기',
-    register_date timestamp  default current_timestamp() null comment '등록일',
-    update_date   timestamp  default current_timestamp() null comment '수정일',
-    constraint notice_attach_notice_notice_id_fk
-        foreign key (notice_id) references tbl_notice (notice_id)
+    attach_id     INT AUTO_INCREMENT COMMENT '첨부파일 ID'
+        PRIMARY KEY,
+    notice_id     INT                                    NOT NULL COMMENT '공지사항 ID',
+    upload_path   VARCHAR(200)                           NOT NULL COMMENT '저장 경로',
+    uuid          VARCHAR(100)                           NOT NULL COMMENT 'UUID',
+    name          VARCHAR(100)                           NOT NULL COMMENT '이름',
+    extension     VARCHAR(20)                            NOT NULL COMMENT '확장자',
+    is_image      TINYINT(1) DEFAULT 0                   NULL COMMENT '이미지 여부',
+    size          INT                                    NOT NULL COMMENT '파일 크기',
+    register_date TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '등록일',
+    update_date   TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '수정일',
+    CONSTRAINT notice_attach_notice_notice_id_fk
+        FOREIGN KEY (notice_id) REFERENCES tbl_notice (notice_id)
 )
-    comment '공지사항 첨부파일' engine = InnoDB;
+    COMMENT '공지사항 첨부파일';
 
-create table tbl_question
+CREATE TABLE tbl_question
 (
-    question_id   int auto_increment comment '질문 ID'
-        primary key,
-    category_id   int                                    not null comment '카테고리 ID',
-    member_id     int                                    null comment '회원 ID',
-    admin_id      int                                    null comment '관리자 ID',
-    title         varchar(100)                           not null comment '제목',
-    content       text                                   not null comment '내용',
-    view_count    int        default 0                   null comment '조회수',
-    has_attach    tinyint(1) default 0                   null comment '첨부파일 유무',
-    thumbnail_uri varchar(100)                           null comment '썸네일 URI',
-    is_secret     tinyint(1) default 0                   null comment '비밀글 여부',
-    register_date timestamp  default current_timestamp() null comment '등록일',
-    update_date   timestamp  default current_timestamp() null comment '수정일',
-    constraint question_admin_admin_id_fk
-        foreign key (admin_id) references tbl_admin (admin_id),
-    constraint question_category_category_id_fk
-        foreign key (category_id) references tbl_category (category_id),
-    constraint question_member_member_id_fk
-        foreign key (member_id) references tbl_member (member_id)
+    question_id   INT AUTO_INCREMENT COMMENT '질문 ID'
+        PRIMARY KEY,
+    category_id   INT                                    NOT NULL COMMENT '카테고리 ID',
+    member_id     INT                                    NULL COMMENT '회원 ID',
+    admin_id      INT                                    NULL COMMENT '관리자 ID',
+    title         VARCHAR(100)                           NOT NULL COMMENT '제목',
+    content       TEXT                                   NOT NULL COMMENT '내용',
+    view_count    INT        DEFAULT 0                   NULL COMMENT '조회수',
+    has_attach    TINYINT(1) DEFAULT 0                   NULL COMMENT '첨부파일 유무',
+    thumbnail_uri VARCHAR(100)                           NULL COMMENT '썸네일 URI',
+    is_secret     TINYINT(1) DEFAULT 0                   NULL COMMENT '비밀글 여부',
+    register_date TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '등록일',
+    update_date   TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '수정일',
+    CONSTRAINT question_admin_admin_id_fk
+        FOREIGN KEY (admin_id) REFERENCES tbl_admin (admin_id),
+    CONSTRAINT question_category_category_id_fk
+        FOREIGN KEY (category_id) REFERENCES tbl_category (category_id),
+    CONSTRAINT question_member_member_id_fk
+        FOREIGN KEY (member_id) REFERENCES tbl_member (member_id)
 )
-    comment 'Q&A 질문' engine = InnoDB;
+    COMMENT 'Q&A 질문';
 
-create table tbl_answer
+CREATE TABLE tbl_answer
 (
-    answer_id     int auto_increment comment '답변 ID'
-        primary key,
-    question_id   int                                    not null comment '질문 ID',
-    admin_id      int                                    not null comment '관리자 ID',
-    title         varchar(100)                           not null comment '제목',
-    content       text                                   not null comment '내용',
-    view_count    int        default 0                   null comment '조회수',
-    has_attach    tinyint(1) default 0                   null comment '첨부파일 유무',
-    thumbnail_uri varchar(100)                           null comment '썸네일 URI',
-    register_date timestamp  default current_timestamp() null comment '등록일',
-    update_date   timestamp  default current_timestamp() null comment '수정일',
-    constraint answer_admin_admin_id_fk
-        foreign key (admin_id) references tbl_admin (admin_id),
-    constraint answer_question_question_id_fk
-        foreign key (question_id) references tbl_question (question_id)
+    answer_id     INT AUTO_INCREMENT COMMENT '답변 ID'
+        PRIMARY KEY,
+    question_id   INT                                    NOT NULL COMMENT '질문 ID',
+    admin_id      INT                                    NOT NULL COMMENT '관리자 ID',
+    title         VARCHAR(100)                           NOT NULL COMMENT '제목',
+    content       TEXT                                   NOT NULL COMMENT '내용',
+    view_count    INT        DEFAULT 0                   NULL COMMENT '조회수',
+    has_attach    TINYINT(1) DEFAULT 0                   NULL COMMENT '첨부파일 유무',
+    thumbnail_uri VARCHAR(100)                           NULL COMMENT '썸네일 URI',
+    register_date TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '등록일',
+    update_date   TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '수정일',
+    CONSTRAINT answer_admin_admin_id_fk
+        FOREIGN KEY (admin_id) REFERENCES tbl_admin (admin_id),
+    CONSTRAINT answer_question_question_id_fk
+        FOREIGN KEY (question_id) REFERENCES tbl_question (question_id)
 )
-    comment 'Q&A 답변' engine = InnoDB;
+    COMMENT 'Q&A 답변';
 
-create table tbl_answer_attach
+CREATE TABLE tbl_answer_attach
 (
-    attach_id     int auto_increment comment '첨부파일 ID'
-        primary key,
-    answer_id     int                                    not null comment '답변 ID',
-    upload_path   varchar(200)                           not null comment '저장 경로',
-    uuid          varchar(100)                           not null comment 'UUID',
-    name          varchar(100)                           not null comment '이름',
-    extension     varchar(20)                            not null comment '확장자',
-    is_image      tinyint(1) default 0                   null comment '이미지 여부',
-    size          int                                    not null comment '파일 크기',
-    register_date timestamp  default current_timestamp() null comment '등록일',
-    update_date   timestamp  default current_timestamp() null comment '수정일',
-    constraint answer_attach_answer_answer_id_fk
-        foreign key (answer_id) references tbl_answer (answer_id)
+    attach_id     INT AUTO_INCREMENT COMMENT '첨부파일 ID'
+        PRIMARY KEY,
+    answer_id     INT                                    NOT NULL COMMENT '답변 ID',
+    upload_path   VARCHAR(200)                           NOT NULL COMMENT '저장 경로',
+    uuid          VARCHAR(100)                           NOT NULL COMMENT 'UUID',
+    name          VARCHAR(100)                           NOT NULL COMMENT '이름',
+    extension     VARCHAR(20)                            NOT NULL COMMENT '확장자',
+    is_image      TINYINT(1) DEFAULT 0                   NULL COMMENT '이미지 여부',
+    size          INT                                    NOT NULL COMMENT '파일 크기',
+    register_date TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '등록일',
+    update_date   TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '수정일',
+    CONSTRAINT answer_attach_answer_answer_id_fk
+        FOREIGN KEY (answer_id) REFERENCES tbl_answer (answer_id)
 )
-    comment '답변 첨부파일' engine = InnoDB;
+    COMMENT '답변 첨부파일';
 
-create table tbl_question_attach
+CREATE TABLE tbl_question_attach
 (
-    attach_id     int auto_increment comment '첨부파일 ID'
-        primary key,
-    question_id   int                                    not null comment '질문 ID',
-    upload_path   varchar(200)                           not null comment '저장 경로',
-    uuid          varchar(100)                           not null comment 'UUID',
-    name          varchar(100)                           not null comment '이름',
-    extension     varchar(20)                            not null comment '확장자',
-    is_image      tinyint(1) default 0                   null comment '이미지 여부',
-    size          int                                    not null comment '파일 크기',
-    register_date timestamp  default current_timestamp() null comment '등록일',
-    update_date   timestamp  default current_timestamp() null comment '수정일',
-    constraint question_attach_question_question_id_fk
-        foreign key (question_id) references tbl_question (question_id)
+    attach_id     INT AUTO_INCREMENT COMMENT '첨부파일 ID'
+        PRIMARY KEY,
+    question_id   INT                                    NOT NULL COMMENT '질문 ID',
+    upload_path   VARCHAR(200)                           NOT NULL COMMENT '저장 경로',
+    uuid          VARCHAR(100)                           NOT NULL COMMENT 'UUID',
+    name          VARCHAR(100)                           NOT NULL COMMENT '이름',
+    extension     VARCHAR(20)                            NOT NULL COMMENT '확장자',
+    is_image      TINYINT(1) DEFAULT 0                   NULL COMMENT '이미지 여부',
+    size          INT                                    NOT NULL COMMENT '파일 크기',
+    register_date TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '등록일',
+    update_date   TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NULL COMMENT '수정일',
+    CONSTRAINT question_attach_question_question_id_fk
+        FOREIGN KEY (question_id) REFERENCES tbl_question (question_id)
 )
-    comment 'Q&A 질문 첨부파일' engine = InnoDB;
+    COMMENT 'Q&A 질문 첨부파일';
