@@ -1,21 +1,20 @@
 package com.cgkim.myboard.controller;
 
 import com.cgkim.myboard.argumentresolver.LoginUser;
-import com.cgkim.myboard.exception.MemberNotFoundException;
-import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.exception.LoginRequiredException;
+import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.BoardAttachService;
 import com.cgkim.myboard.service.BoardService;
 import com.cgkim.myboard.service.MemberService;
 import com.cgkim.myboard.util.FileHandler;
 import com.cgkim.myboard.vo.attach.AttachVo;
-import com.cgkim.myboard.vo.common.FileSaveRequest;
 import com.cgkim.myboard.vo.board.BoardDetailResponse;
 import com.cgkim.myboard.vo.board.BoardListResponse;
 import com.cgkim.myboard.vo.board.BoardSaveRequest;
 import com.cgkim.myboard.vo.board.BoardSearchRequest;
 import com.cgkim.myboard.vo.board.BoardUpdateRequest;
+import com.cgkim.myboard.vo.common.FileSaveRequest;
 import com.cgkim.myboard.vo.common.GuestPasswordCheckRequest;
 import com.cgkim.myboard.vo.common.GuestSaveRequest;
 import lombok.RequiredArgsConstructor;
@@ -108,11 +107,8 @@ public class BoardController {
 
         Long memberId = memberService.getMemberIdBy(username);
 
-        if (memberId == null) {
-            throw new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
-        }
-
         List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles()); //물리적 파일 생성
+
         Long boardId = boardService.write(memberId, boardSaveRequest, attachInsertList); //글 작성
 
         return ResponseEntity.created(URI.create("/boards/" + boardId)).body(new SuccessResponse());
@@ -134,10 +130,36 @@ public class BoardController {
     ) throws IOException, NoSuchAlgorithmException {
 
         List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles()); //물리적 파일 생성
-        long boardId = boardService.write(guestSaveRequest, boardSaveRequest, attachInsertList); //글 작성
+        Long boardId = boardService.write(guestSaveRequest, boardSaveRequest, attachInsertList); //글 작성
 
         return ResponseEntity.created(URI.create("/boards/" + boardId)).body(new SuccessResponse());
     }
+
+
+    /**
+     * 게시물 삭제
+     *
+     * @param username
+     * @param guestPasswordCheckRequest
+     * @param boardId
+     * @return ResponseEntity<SuccessResponse>
+     * @throws NoSuchAlgorithmException
+     */
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<SuccessResponse> deleteBoard(@PathVariable Long boardId,
+                                                       @LoginUser String username,
+                                                       @RequestBody(required = false) GuestPasswordCheckRequest guestPasswordCheckRequest
+    ) throws NoSuchAlgorithmException {
+
+        boardService.checkOwner(boardId, username, guestPasswordCheckRequest);
+
+        List<AttachVo> attachDeleteList = attachService.getList(boardId); //첨부파일 삭제 리스트
+        boardService.delete(boardId); //게시물 삭제
+        fileHandler.deleteFiles(attachDeleteList); //물리적 파일 삭제
+
+        return ResponseEntity.noContent().build();
+    }
+
 
     /**
      * 게시물 수정
@@ -173,29 +195,9 @@ public class BoardController {
         return ResponseEntity.ok(new SuccessResponse());
     }
 
-    /**
-     * 게시물 삭제
-     *
-     * @param username
-     * @param guestPasswordCheckRequest
-     * @param boardId
-     * @return ResponseEntity<SuccessResponse>
-     * @throws NoSuchAlgorithmException
-     */
-    @DeleteMapping("/{boardId}")
-    public ResponseEntity<SuccessResponse> deleteBoard(@PathVariable Long boardId,
-                                                       @LoginUser String username,
-                                                       @RequestBody(required = false) GuestPasswordCheckRequest guestPasswordCheckRequest
-    ) throws NoSuchAlgorithmException {
 
-        boardService.checkOwner(boardId, username, guestPasswordCheckRequest);
 
-        List<AttachVo> attachDeleteList = attachService.getList(boardId); //첨부파일 삭제 리스트
-        boardService.delete(boardId); //게시물 삭제
-        fileHandler.deleteFiles(attachDeleteList); //물리적 파일 삭제
 
-        return ResponseEntity.noContent().build();
-    }
 
     /**
      * 익명 글 비밀번호 확인

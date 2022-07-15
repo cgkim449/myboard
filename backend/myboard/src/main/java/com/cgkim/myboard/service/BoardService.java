@@ -252,6 +252,19 @@ public class BoardService {
     }
 
     /**
+     * 게시물 삭제
+     *
+     * @param boardId
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(Long boardId) {
+
+        commentDao.deleteByBoardId(boardId);
+        boardAttachDao.deleteByBoardId(boardId);
+        boardDao.deleteByBoardId(boardId);
+    }
+
+    /**
      * 게시물 소유권 인증
      *
      * @param boardId
@@ -310,18 +323,7 @@ public class BoardService {
         }
     }
 
-    /**
-     * 게시물 삭제
-     *
-     * @param boardId
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void delete(Long boardId) {
 
-        commentDao.deleteByBoardId(boardId);
-        boardAttachDao.deleteByBoardId(boardId);
-        boardDao.deleteByBoardId(boardId);
-    }
 
     /**
      * 익명 게시물 비밀번호 체크

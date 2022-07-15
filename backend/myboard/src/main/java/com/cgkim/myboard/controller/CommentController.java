@@ -1,9 +1,8 @@
 package com.cgkim.myboard.controller;
 
 import com.cgkim.myboard.argumentresolver.LoginUser;
-import com.cgkim.myboard.exception.MemberNotFoundException;
-import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.exception.LoginRequiredException;
+import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.CommentService;
 import com.cgkim.myboard.service.MemberService;
@@ -71,10 +70,6 @@ public class CommentController {
         }
 
         Long memberId = memberService.getMemberIdBy(username);
-
-        if (memberId == null) {
-            throw new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
-        }
 
         Long commentId = commentService.writeComment(memberId, commentSaveRequest);
 

@@ -1,9 +1,8 @@
 package com.cgkim.myboard.controller;
 
 import com.cgkim.myboard.argumentresolver.LoginUser;
-import com.cgkim.myboard.exception.MemberNotFoundException;
-import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.exception.LoginRequiredException;
+import com.cgkim.myboard.exception.errorcode.ErrorCode;
 import com.cgkim.myboard.response.SuccessResponse;
 import com.cgkim.myboard.service.MemberService;
 import com.cgkim.myboard.service.QuestionAttachService;
@@ -105,10 +104,6 @@ public class QuestionController {
         }
 
         Long memberId = memberService.getMemberIdBy(username);
-
-        if (memberId == null) {
-            throw new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
-        }
 
         List<AttachVo> attachInsertList = fileHandler.createFiles(fileSaveRequest.getMultipartFiles()); //첨부파일 생성 (C://upload)
         Long questionId = questionService.write(memberId, questionSaveRequest, attachInsertList); //회원 질문 작성
